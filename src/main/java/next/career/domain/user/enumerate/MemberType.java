@@ -2,7 +2,6 @@ package next.career.domain.user.enumerate;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import next.career.domain.user.entity.Member;
 
 @Getter
 @RequiredArgsConstructor

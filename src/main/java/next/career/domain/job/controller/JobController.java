@@ -5,6 +5,7 @@ import next.career.domain.job.service.JobService;
 import next.career.global.apiPayload.response.ApiResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -15,8 +16,8 @@ public class JobController {
 
     // 전체 채용 조회
     @GetMapping()
-    public ApiResponse<?> getAllJob(){
-        jobService.getAllJob();
+    public ApiResponse<?> getAllJob(@RequestParam int page, @RequestParam int size){
+        jobService.getAllJob(page, size);
         return ApiResponse.success();
     }
 

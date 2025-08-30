@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-class Position {
+public class Position {
     private String title;
     private String industryCode;
     private String industryName;

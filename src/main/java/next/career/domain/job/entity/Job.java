@@ -2,6 +2,10 @@ package next.career.domain.job.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import next.career.domain.job.entity.embedded.CloseType;
+import next.career.domain.job.entity.embedded.Company;
+import next.career.domain.job.entity.embedded.Salary;
+import next.career.domain.job.entity.embedded.Position;
 
 import java.time.LocalDateTime;
 
@@ -15,18 +19,16 @@ public class Job {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // 내부 DB PK
+    private Long id;
 
-    private String externalId; // API에서 제공하는 id (예: 27614114)
+    private String externalId;
 
     private String url;
     private boolean active;
 
-    // 회사 정보
     @Embedded
     private Company company;
 
-    // 포지션 정보
     @Embedded
     private Position position;
 

@@ -7,6 +7,7 @@ import next.career.domain.job.entity.embedded.Company;
 import next.career.domain.job.entity.embedded.Salary;
 import next.career.domain.job.entity.embedded.Position;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,37 +16,22 @@ public class Job {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long jobId;
+    private Long id; // 내부 PK (자동 생성)
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String externalId;
-
-    private String url;
-    private boolean active;
-
-    @Embedded
-    private Company company;
-
-    @Embedded
-    private Position position;
-
-    private String keyword;
-
-    @Embedded
-    private Salary salary;
-
-    private LocalDateTime postingDate;
-    private LocalDateTime modificationDate;
-    private LocalDateTime openingDate;
-    private LocalDateTime expirationDate;
-
-    @Embedded
-    private CloseType closeType;
-
-    private Long readCount;
-    private Long applyCount;
+    private String jobId;           // 공고 고유 식별자
+    private String companyName;     // 기업명
+    private String companyLogo;     // 기업 로고 (URL or 이미지 경로)
+    private String jobTitle;        // 직무명
+    private String jobCategory;     // 직무 분야 (산업)
+    private String workLocation;    // 근무 지역
+    private String employmentType;  // 고용 형태 (정규직, 계약직 등)
+    private String salary;          // 급여
+    private String workPeriod;      // 근무 기간
+    private String experience;      // 경력 요구사항
+    private String requiredSkills;  // 필요 기술
+    private String preferredSkills; // 우대 사항
+    private LocalDate postingDate;  // 공고 등록일
+    private LocalDate closingDate;  // 공고 마감일
+    private String applyLink;       // 지원 링크
 
 }

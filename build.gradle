@@ -43,6 +43,7 @@ dependencies {
 	// MySQL JDBC Driver (정답 좌표)
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
+	runtimeOnly 'org.postgresql:postgresql'
 
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

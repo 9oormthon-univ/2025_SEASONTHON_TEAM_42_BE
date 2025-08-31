@@ -21,7 +21,7 @@ public class GetJobDto {
         private List<JobDto.AllResponse> jobDtoList;
 
         public static AllResponse of(Page<JobDto.AllResponse> jobDtoList){
-            AllResponse.builder()
+            return AllResponse.builder()
                     .jobDtoList(jobDtoList.getContent())
                     .totalElements(jobDtoList.getTotalElements())
                     .numberOfElements(jobDtoList.getNumberOfElements())

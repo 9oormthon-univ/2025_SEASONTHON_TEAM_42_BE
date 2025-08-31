@@ -12,7 +12,7 @@ public class Prompt {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long prompotId;
+    private Long promptId;
 
     private String content;
 

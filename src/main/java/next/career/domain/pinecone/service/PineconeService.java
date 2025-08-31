@@ -1,41 +1,52 @@
-ㄷpackage next.career.domain.pinecone.service;
+package next.career.domain.pinecone.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import next.career.domain.embedding.service.EmbeddingService;
 import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PineconeService {
 
     @Value("${pinecone.api-key}")
     private String apiKey;
 
+    private final WebClient pineconeClient;
+
     private final EmbeddingService embeddingService;
 
-    private String jobHost;
+    public Mono<Void> saveJobVector(Long jobId) {
+        String id = String.valueOf(jobId);
 
-        public void saveJobVector(Long jobId) {
+        return embeddingService.getEmbeddingJob(jobId)
+                .flatMap(vector -> {
+                    Map<String, Object> body = Map.of(
+                            "vectors", List.of(Map.of("id", id, "values", vector))
+                    );
 
-            String id = String.valueOf(jobId);
-            List<Float> vector = embeddingService.getEmbeddingJob(jobId);
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Api-Key", apiKey);
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            Map<String, Object> requestBody = Map.of("vectors", List.of(Map.of("id", id, "values", vector)));
-
-            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
-            restTemplate.exchange(jobHost + "/vectors/upsert", HttpMethod.POST, entity, String.class);
-        }
+                    return pineconeClient.post()
+                            .uri("/vectors/upsert")
+                            .header("Api-Key", apiKey)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .bodyValue(body)
+                            .retrieve()
+                            .toBodilessEntity()
+                            .then();
+                })
+                .doOnError(e -> log.warn("upsert failed id={}", id, e));
+    }
 
 }

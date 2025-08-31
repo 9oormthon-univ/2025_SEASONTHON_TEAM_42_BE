@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -20,8 +22,8 @@ public class EmbeddingService {
     private final WebClient openAiClient;
     private final JobRepository jobRepository;
 
+    private static final DateTimeFormatter F = DateTimeFormatter.ISO_LOCAL_DATE;
 
-    // open ai embedding
     private Mono<List<Float>> getEmbeddingMono(String text) {
 
         Map<String, Object> body = Map.of(
@@ -44,10 +46,49 @@ public class EmbeddingService {
                 });
     }
 
-//    public List<Float> getEmbeddingJob(Long jobId) {
-//        Job job = jobRepository.findById(jobId)
-//                .orElseThrow(() -> new CoreException(GlobalErrorType.JOB_NOTFOUND));
-//
-//
-//    }
+    public Mono<List<Float>> getEmbeddingJob(Long jobId) {
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new CoreException(GlobalErrorType.JOB_NOT_FOUND_ERROR));
+
+        String embeddingJobText = toEmbeddingJobText(job);
+        return getEmbeddingMono(embeddingJobText);
+    }
+
+    private String toEmbeddingJobText(Job job) {
+        return """
+            직무명: %s
+            직무 분야: %s
+            기업명: %s
+            근무 지역: %s
+            고용 형태: %s
+            경력: %s
+            필수 기술: %s
+            우대 사항: %s
+            급여: %s
+            근무 기간: %s
+            공고 등록일: %s
+            공고 마감일: %s
+            """.formatted(
+                nz(job.getJobTitle()),
+                nz(job.getJobCategory()),
+                nz(job.getCompanyName()),
+                nz(job.getWorkLocation()),
+                nz(job.getEmploymentType()),
+                nz(job.getExperience()),
+                nz(job.getRequiredSkills()),
+                nz(job.getPreferredSkills()),
+                nz(job.getSalary()),
+                nz(job.getWorkPeriod()),
+                fmt(job.getPostingDate()),
+                fmt(job.getClosingDate())
+        );
+    }
+
+    private static String nz(String s) {
+        return s == null ? "" : s;
+    }
+
+    private static String fmt(LocalDate d) {
+        return d == null ? "" : d.format(F);
+    }
 }

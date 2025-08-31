@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import next.career.domain.job.entity.Job;
 import next.career.domain.job.repository.JobRepository;
 import next.career.domain.job.service.dto.JobDto;
+import next.career.domain.openai.OpenAiService;
+import next.career.domain.openai.dto.RecommendDto;
 import next.career.domain.pinecone.service.PineconeService;
 import next.career.global.apiPayload.exception.CoreException;
 import next.career.global.apiPayload.exception.GlobalErrorType;
@@ -20,6 +22,7 @@ public class JobService {
 
     private final JobRepository jobRepository;
     private final PineconeService pineconeService;
+    private final OpenAiService openAiService;
 
     public Page<JobDto.AllResponse> getAllJob(Long userId, int page, int size) {
 
@@ -52,8 +55,8 @@ public class JobService {
         return null;
     }
 
-    public void recommendOccupation(Long userId) {
-
+    public RecommendDto.OccupationResponse recommendOccupation(Long userId) {
+        return openAiService.getRecommendOccupation(userId);
     }
 
     public void recommendJob(Long id) {

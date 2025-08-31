@@ -1,7 +1,9 @@
 package next.career.domain.job.service;
 
 import lombok.RequiredArgsConstructor;
+import next.career.domain.job.controller.dto.GetJobDto;
 import next.career.domain.job.entity.Job;
+import next.career.domain.job.repository.JobCustomRepository;
 import next.career.domain.job.repository.JobRepository;
 import next.career.domain.job.service.dto.JobDto;
 import next.career.domain.openai.OpenAiService;
@@ -23,12 +25,11 @@ public class JobService {
     private final JobRepository jobRepository;
     private final PineconeService pineconeService;
     private final OpenAiService openAiService;
+    private final JobCustomRepository jobCustomRepository;
 
-    public Page<JobDto.AllResponse> getAllJob(Long userId, int page, int size) {
+    public Page<JobDto.AllResponse> getAllJob(GetJobDto.SearchRequest request, Long userId, Pageable pageable) {
 
-        Pageable pageable = PageRequest.of(page, size);
-
-        return jobRepository.findAll(pageable)
+        return jobCustomRepository.findAll(request, pageable)
                 .map(job -> JobDto.AllResponse.of(
                         job,
                         getRecommendScore(job, userId),

@@ -7,6 +7,7 @@ import next.career.domain.job.service.dto.JobDto;
 import next.career.domain.openai.dto.RecommendDto;
 import next.career.global.apiPayload.response.ApiResponse;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,8 +21,10 @@ public class JobController {
 
     // 전체 채용 조회
 //    @GetMapping()
-//    public ApiResponse<GetJobDto.AllResponse> getAllJob(@RequestParam int page, @RequestParam int size){
-//        Page<JobDto.AllResponse> jobDtoList = jobService.getAllJob(page, size);
+//    public ApiResponse<GetJobDto.AllResponse> getAllJob(
+//            GetJobDto.SearchRequest searchRequest,
+//            Pageable pageable){
+//        Page<JobDto.AllResponse> jobDtoList = jobService.getAllJob(pageable);
 //        return ApiResponse.success(GetJobDto.AllResponse.of(jobDtoList));
 //    }
 //

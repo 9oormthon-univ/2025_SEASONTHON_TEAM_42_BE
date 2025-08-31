@@ -1,9 +1,6 @@
 package next.career.domain.job.controller.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import next.career.domain.job.service.dto.JobDto;
 import org.springframework.data.domain.Page;
 
@@ -27,6 +24,17 @@ public class GetJobDto {
                     .numberOfElements(jobDtoList.getNumberOfElements())
                     .build();
         }
+    }
 
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @Setter
+    @Builder
+    public static class SearchRequest{
+        private String keyword;
+        private String workLocation;
+        private String employmentType;
+        private String jobCategory;
     }
 }

@@ -9,6 +9,7 @@ import next.career.domain.user.enumerate.MemberType;
 import next.career.global.BaseTimeEntity;
 import org.hibernate.annotations.SQLDelete;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Getter
@@ -24,7 +25,7 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false, columnDefinition = "varchar(320)")
     private String email;
 
-    @Column(nullable = false, columnDefinition = "varchar(20)")
+    @Column(columnDefinition = "varchar(20)")
     private String phoneNumber;
 
     @Column(columnDefinition = "varchar(20)")

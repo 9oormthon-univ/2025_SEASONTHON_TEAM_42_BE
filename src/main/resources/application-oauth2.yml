@@ -4,10 +4,11 @@ spring:
       client:
         registration:
           kakao:
-            client-id: 72fdbf6027779ff1d0fbfaa24f965345
-            client-secret: 1dudNpkAfjmTw3cOFfTmcXHg0UEYUkWG  # Add this
             client-name: Kakao
+            client-id: 72fdbf6027779ff1d0fbfaa24f965345
+            client-secret: 1dudNpkAfjmTw3cOFfTmcXHg0UEYUkWG
             authorization-grant-type: authorization_code
+            client-authentication-method: client_secret_post
             redirect-uri: "http://localhost:8080/login/oauth2/code/kakao"
         provider:
           kakao:
@@ -17,4 +18,4 @@ spring:
             user-name-attribute: id
 app:
   oauth2:
-    success-redirect: http://localhost:3000/oauth2/success
+    success-redirect: http://localhost:8000/oauth2/success

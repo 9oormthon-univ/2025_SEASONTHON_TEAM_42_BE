@@ -1,0 +1,85 @@
+name: Staging Deployment Workflow
+
+on:
+  push:
+    branches: [ "develop" ]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    env:
+      SPRING_PROFILES_ACTIVE: test
+    steps:
+      # 1. 리포지토리 체크아웃
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. JDK 21 설정
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Create application-stage.properties
+        run: |
+          echo "${{ secrets.APPLICATION_YAML }}" > ./src/main/resources/application.yaml
+          echo "${{ secrets.APPLICATION_OAUTH2_YAML }}" > ./src/main/resources/application-oauth2.yaml
+          echo "${{ secrets.APPLICATION_SWAGGER_YAML }}" > ./src/main/resources/application-swagger.yaml
+          echo "${{ secrets.APPLICATION_TEST_YAML }}" > ./src/test/resources/application-test.yaml
+
+      - name: Build with Gradle Wrapper
+        run: ./gradlew clean build --info --stacktrace --no-daemon
+
+      - name: Docker login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Set image tag
+        id: vars
+        run: echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/ncareer:${{ env.IMAGE_TAG }} -f deploy/Dockerfile .
+
+      - name: Docker Hub push
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/ncareer:${{ env.IMAGE_TAG }}
+
+      - name: Checkout manifest repository
+        uses: actions/checkout@v4
+        with:
+          repository: 'X-Kusitms-1/MANIFEST' # 매니페스트 리포지토리 이름으로 변경
+          token: ${{ secrets.PAT }}       # 또는 개인 액세스 토큰 사용
+          path: 'manifest'                # clone할 경로 지정
+
+      - name: Update deployment.yml
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
+        run: |
+          # 새 이미지 태그로 deployment.yml 업데이트
+          sed -i "s|image:.*|image: ${DOCKERHUB_USERNAME}/ncareer:${IMAGE_TAG}|g" manifest/ncareer/deployment.yml
+          
+          # 변경사항 확인
+          echo "Updated deployment.yml:"
+          cat manifest/ncareer/deployment.yml
+
+      # 6. 변경사항 커밋 및 푸시
+      - name: Commit and push changes
+        env:
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
+        run: |
+          cd manifest
+          git config --local user.email "kjeng7897@gmail.com"
+          git config --local user.name "SeongHo5356"
+          git add ncareer/deployment.yml
+          git commit -m "Update image tag to $IMAGE_TAG" || exit 0
+          git push

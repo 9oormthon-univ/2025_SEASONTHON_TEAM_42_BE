@@ -37,7 +37,14 @@ jobs:
           echo "${{ secrets.APPLICATION_TEST_YAML }}" > ./src/test/resources/application-test.yaml
 
       - name: Build with Gradle Wrapper
+        env:
+          SPRING_PROFILES_ACTIVE: test
+          SPRING_DATASOURCE_URL: jdbc:h2:mem:nextcareer;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE
+          SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.h2.Driver
+          SPRING_DATASOURCE_USERNAME: sa
+          SPRING_DATASOURCE_PASSWORD: ""
         run: ./gradlew clean build --info --stacktrace --no-daemon
+
 
       - name: Docker login
         uses: docker/login-action@v2

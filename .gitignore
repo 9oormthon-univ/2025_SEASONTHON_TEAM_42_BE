@@ -36,6 +36,7 @@ out/
 ### VS Code ###
 .vscode/
 /src/main/resources/application.yml
+/src/main/resources/application-oauth2.yml
 /src/main/resources/application-cloud.yml
 /src/main/resources/application-swagger.yml
 /src/main/resources/application-actuator.yml

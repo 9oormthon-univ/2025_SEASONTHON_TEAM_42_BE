@@ -1,0 +1,20 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: 72fdbf6027779ff1d0fbfaa24f965345
+            client-secret: 1dudNpkAfjmTw3cOFfTmcXHg0UEYUkWG  # Add this
+            client-name: Kakao
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://localhost:8080/login/oauth2/code/kakao"
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+app:
+  oauth2:
+    success-redirect: http://localhost:3000/oauth2/success

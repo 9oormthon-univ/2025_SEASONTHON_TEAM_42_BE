@@ -1,4 +1,4 @@
-package next.career.domain.user.dto;
+package next.career.domain.user.dto.response;
 
 import lombok.Builder;
 

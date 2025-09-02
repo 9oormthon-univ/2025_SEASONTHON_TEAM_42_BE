@@ -64,7 +64,8 @@ public class JobService {
 
     }
 
-    public void recommendRoadMap() {
+    public RecommendDto.RoadMapResponse recommendRoadMap(Long userId) {
+        return openAiService.getRecommendRoadMap(userId);
 
     }
 

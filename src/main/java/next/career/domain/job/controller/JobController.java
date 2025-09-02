@@ -51,7 +51,7 @@ public class JobController {
     // 맞춤형 로드맵 추천
     @GetMapping("recommend/roadmap")
     public ApiResponse<?> recommendRoadMap(Long userId){
-        jobService.recommendRoadMap();
+        jobService.recommendRoadMap(userId);
         return ApiResponse.success();
 
     }

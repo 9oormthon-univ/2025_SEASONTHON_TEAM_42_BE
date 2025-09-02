@@ -14,6 +14,14 @@ public class RecommendDto {
     @Getter
     @Builder
     public static class OccupationResponse{
-        private List<String> occupations;
+        private List<String> occupationList;
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @Builder
+    public static class RoadMapResponse{
+        private List<String> roadMapList;
     }
 }

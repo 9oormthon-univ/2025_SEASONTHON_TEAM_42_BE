@@ -26,6 +26,7 @@ public enum GlobalErrorType implements ErrorType {
 
     // Open AI
     GET_RECOMMEND_OCCUPATION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "직업 추천에 실패했습니다"),
+    GEt_RECOMMEND_ROADMAP_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "로드맵 추천에 실패했습니다"),
 
     ;
 

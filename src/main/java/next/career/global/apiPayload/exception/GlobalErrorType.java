@@ -26,7 +26,16 @@ public enum GlobalErrorType implements ErrorType {
     FORBIDDEN(HttpStatus.FORBIDDEN, "접근이 금지되었습니다."),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다."),
     JSON_PROCESSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "JSON 처리 중 오류가 발생했습니다."),
-    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다.");
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
+
+    // Job
+    JOB_NOT_FOUND_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "해당하는 일자리를 찾을 수 없습니다"),
+
+    // Open AI
+    GET_RECOMMEND_OCCUPATION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "직업 추천에 실패했습니다"),
+    GEt_RECOMMEND_ROADMAP_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "로드맵 추천에 실패했습니다"),
+
+    ;
 
     private final HttpStatus status;
 

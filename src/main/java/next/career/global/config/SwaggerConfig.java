@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Collections;
 @OpenAPIDefinition(
-        info = @Info(title = "ilhaeng API 명세서", description = "ilhaeng API 명세서", version = "v1"
+        info = @Info(title = "next-career API 명세서", description = "next-career API 명세서", version = "v1"
         ),
         servers = {
                 @Server(url = "${openapi.server.local}", description = "로컬 서버 URL"),

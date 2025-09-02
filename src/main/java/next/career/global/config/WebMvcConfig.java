@@ -19,8 +19,15 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins(devOrigin, prodOrigin)
+                .allowedOriginPatterns(
+                        devOrigin, prodOrigin,
+                        "http://localhost:3000",
+                        "http://127.0.0.1:3000",
+                        "https://api.ilhaeng.cloud"
+                )
                 .allowedMethods("GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .exposedHeaders("Location")
                 .allowCredentials(true)
                 .maxAge(3000);
     }

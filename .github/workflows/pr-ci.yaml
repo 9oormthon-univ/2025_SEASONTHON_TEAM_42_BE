@@ -1,0 +1,31 @@
+name: PR CI (no deploy)
+
+on:
+  pull_request:
+    branches: [ "develop" ]
+    paths-ignore:
+      - '**/*.md'
+      - 'manifest/**'
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - uses: gradle/actions/setup-gradle@v3
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build (skip tests)
+        run: ./gradlew clean bootJar -x test --no-daemon
+
+      # Dockerfile 유효성만 체크(푸시X)
+      - name: Docker build (no push)
+        run: docker build -t temp:test -f deploy/Dockerfile .

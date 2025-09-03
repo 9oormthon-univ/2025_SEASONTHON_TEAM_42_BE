@@ -1,5 +1,8 @@
 package next.career.domain.job.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import next.career.domain.job.controller.dto.GetJobDto;
 import next.career.domain.job.service.JobService;
@@ -13,58 +16,69 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.attribute.UserPrincipal;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/job")
+@Tag(name = "Job API", description = "채용 공고 및 맞춤형 추천 관련 API")
 public class JobController {
 
     private final JobService jobService;
 
     // 전체 채용 조회
     @GetMapping("/all")
-    public ApiResponse<GetJobDto.AllResponse> getAllJob(
-            GetJobDto.SearchRequest searchRequest,
-            Pageable pageable,
-            @AuthenticationPrincipal AuthDetails authDetails){
+    @Operation(summary = "전체 채용 조회", description = "검색 조건과 페이징을 통해 전체 채용 공고 목록을 조회합니다.")
+    public ApiResponse<GetJobDto.SearchAllResponse> getAllJob(
+            @Parameter(description = "검색 조건 DTO") GetJobDto.SearchRequest searchRequest,
+            @Parameter(hidden = true) Pageable pageable,
+            @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
         Member member = authDetails.getUser();
         Page<JobDto.AllResponse> jobDtoList = jobService.getAllJob(searchRequest, member, pageable);
-        return ApiResponse.success(GetJobDto.AllResponse.of(jobDtoList));
+        return ApiResponse.success(GetJobDto.SearchAllResponse.of(jobDtoList));
     }
 
     // 단건 채용 조회
     @GetMapping("/{jobId}")
+    @Operation(summary = "단건 채용 조회", description = "채용 공고 ID로 단일 채용 공고를 조회합니다.")
     public ApiResponse<JobDto.Response> getJob(
-            @PathVariable Long jobId,
-            @AuthenticationPrincipal AuthDetails authDetails){
+            @Parameter(description = "채용 공고 ID", example = "1") @PathVariable Long jobId,
+            @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
         Member member = authDetails.getUser();
         return ApiResponse.success(jobService.getJob(jobId, member));
-
     }
 
     // 맞춤형 직업 추천
     @GetMapping("/recommend/occupation")
-    public ApiResponse<RecommendDto.OccupationResponse> recommendOccupation(
-            @AuthenticationPrincipal AuthDetails authDetails){
+    @Operation(summary = "맞춤형 직업 추천", description = "사용자의 정보를 기반으로 맞춤형 직업을 추천합니다.")
+    public ApiResponse<JobDto.RecommendJob> recommendOccupation(
+            @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
         Member member = authDetails.getUser();
-        return ApiResponse.success(jobService.recommendOccupation(member));
+        List<String> occupationList = jobService.recommendOccupation(member).getOccupationList();
+
+        JobDto.RecommendJob recommendJob = JobDto.RecommendJob.builder()
+                .first(!occupationList.isEmpty() ? occupationList.get(0) : null)
+                .second(occupationList.size() > 1 ? occupationList.get(1) : null)
+                .third(occupationList.size() > 2 ? occupationList.get(2) : null)
+                .build();
+
+        return ApiResponse.success(recommendJob);
     }
 
     // 맞춤형 일자리 추천
     @GetMapping("/recommend/job")
+    @Operation(summary = "맞춤형 일자리 추천", description = "사용자의 정보를 기반으로 맞춤형 일자리를 추천합니다.")
     public ApiResponse<RecommendDto.JobResponse> recommendJob(
-            @AuthenticationPrincipal AuthDetails authDetails
-    ) {
+            @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
         Member member = authDetails.getUser();
         return ApiResponse.success(jobService.recommendJob(member));
     }
 
     // 맞춤형 로드맵 추천
-    @GetMapping("recommend/roadmap")
+    @GetMapping("/recommend/roadmap")
+    @Operation(summary = "맞춤형 로드맵 추천", description = "사용자의 이력 및 관심 직무를 기반으로 커리어 로드맵을 추천합니다.")
     public ApiResponse<?> recommendRoadMap(
-            @AuthenticationPrincipal AuthDetails authDetails){
+            @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
         Member member = authDetails.getUser();
         jobService.recommendRoadMap(member);
         return ApiResponse.success();

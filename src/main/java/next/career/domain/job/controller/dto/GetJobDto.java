@@ -12,13 +12,13 @@ public class GetJobDto {
     @AllArgsConstructor
     @Getter
     @Builder
-    public static class AllResponse {
+    public static class SearchAllResponse {
         private Long totalElements;
         private Integer numberOfElements;
         private List<JobDto.AllResponse> jobDtoList;
 
-        public static AllResponse of(Page<JobDto.AllResponse> jobDtoList){
-            return AllResponse.builder()
+        public static SearchAllResponse of(Page<JobDto.AllResponse> jobDtoList){
+            return SearchAllResponse.builder()
                     .jobDtoList(jobDtoList.getContent())
                     .totalElements(jobDtoList.getTotalElements())
                     .numberOfElements(jobDtoList.getNumberOfElements())

@@ -88,4 +88,14 @@ public class JobDto {
                     .build();
         }
     }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Builder
+    public static class RecommendJob{
+        private String first;
+        private String second;
+        private String third;
+    }
 }

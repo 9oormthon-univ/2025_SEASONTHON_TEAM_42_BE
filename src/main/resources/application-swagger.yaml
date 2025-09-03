@@ -1,0 +1,14 @@
+openapi:
+  server:
+    prod: https://api.ncareer.co.kr
+    local: http://localhost:8080
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+  api-docs:
+    path: /v1/api-docs
+    enabled: true
+  default-produces-media-type: application/json
+  default-consumes-media-type: application/json

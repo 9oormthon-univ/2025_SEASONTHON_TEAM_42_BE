@@ -3,13 +3,18 @@ package next.career.domain.embedding.service;
 import lombok.RequiredArgsConstructor;
 import next.career.domain.job.entity.Job;
 import next.career.domain.job.repository.JobRepository;
+import next.career.domain.user.entity.Member;
+import next.career.domain.user.repository.UserRepository;
 import next.career.global.apiPayload.exception.CoreException;
 import next.career.global.apiPayload.exception.GlobalErrorType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +26,26 @@ public class EmbeddingService {
 
     private final WebClient openAiClient;
     private final JobRepository jobRepository;
+    private final UserRepository userRepository;
 
     private static final DateTimeFormatter F = DateTimeFormatter.ISO_LOCAL_DATE;
+
+    public Mono<List<Float>> getEmbeddingJob(Long jobId) {
+        return Mono.fromCallable(() ->
+                        jobRepository.findById(jobId)
+                                .orElseThrow(() -> new CoreException(GlobalErrorType.JOB_NOT_FOUND_ERROR))
+                )
+                .subscribeOn(Schedulers.boundedElastic())
+                .map(this::toEmbeddingJobText)
+                .flatMap(this::getEmbeddingMono);
+    }
+
+    public Mono<List<Float>> getEmbeddingMember(Member member) {
+        return Mono.just(member)
+                .map(this::toEmbeddingMemberText)
+                .flatMap(this::getEmbeddingMono);
+    }
+
 
     private Mono<List<Float>> getEmbeddingMono(String text) {
 
@@ -46,12 +69,22 @@ public class EmbeddingService {
                 });
     }
 
-    public Mono<List<Float>> getEmbeddingJob(Long jobId) {
-        Job job = jobRepository.findById(jobId)
-                .orElseThrow(() -> new CoreException(GlobalErrorType.JOB_NOT_FOUND_ERROR));
+    private String toEmbeddingMemberText(Member member) {
+        return """
+            나이: %s
+            """.formatted(
+                calculateAge(member.getBirthDate())
+        );
+    }
 
-        String embeddingJobText = toEmbeddingJobText(job);
-        return getEmbeddingMono(embeddingJobText);
+    private int calculateAge(LocalDate birthDate) {
+        if (birthDate == null) {
+            return 0;
+        }
+        return Period.between(
+                birthDate,
+                LocalDate.now()
+        ).getYears();
     }
 
     private String toEmbeddingJobText(Job job) {

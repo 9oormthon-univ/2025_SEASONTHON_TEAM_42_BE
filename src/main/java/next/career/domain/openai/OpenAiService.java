@@ -4,9 +4,12 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import next.career.domain.embedding.service.EmbeddingService;
 import next.career.domain.openai.dto.RecommendDto;
 import next.career.domain.openai.entity.Prompt;
 import next.career.domain.openai.repository.PromptRepository;
+import next.career.domain.pinecone.service.PineconeService;
+import next.career.domain.user.entity.Member;
 import next.career.global.apiPayload.exception.CoreException;
 import next.career.global.apiPayload.exception.GlobalErrorType;
 import org.springframework.stereotype.Service;
@@ -25,8 +28,10 @@ public class OpenAiService {
     private final PromptRepository promptRepository;
     private static final ObjectMapper MAPPER = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    private final EmbeddingService embeddingService;
+    private final PineconeService pineconeService;
 
-    public RecommendDto.OccupationResponse getRecommendOccupation(Long userId) {
+    public RecommendDto.OccupationResponse getRecommendOccupation(Member member) {
 
         // TODO: 유저 정보 가져와서 프롬프트에 넣기
 
@@ -70,7 +75,7 @@ public class OpenAiService {
         }
     }
 
-    public RecommendDto.RoadMapResponse getRecommendRoadMap(Long userId) {
+    public RecommendDto.RoadMapResponse getRecommendRoadMap(Member member) {
         List<Prompt> roadmap = promptRepository.findAllByTag("roadmap");
 
         String system = roadmap.stream()
@@ -160,6 +165,24 @@ public class OpenAiService {
         }
         return t.trim();
     }
+
+
+    public RecommendDto.JobResponse getRecommendJob(Member member) {
+        List<Float> vector = embeddingService.getEmbeddingMember(member).block();
+
+        return pineconeService.getRecommendJob(vector);
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 
 }

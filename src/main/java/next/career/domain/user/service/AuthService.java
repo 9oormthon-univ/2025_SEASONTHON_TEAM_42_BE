@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AuthService {
-    private final UserService userService;
+    private final MemberService memberService;
     private final CredentialService credentialService;
     private final JwtProvider jwtProvider;
     private final RedisClient redisClient;
@@ -35,7 +35,7 @@ public class AuthService {
     @Transactional
     public MemberResponse signUp(AuthRequest authRequest) {
         Credential credential = credentialService.createCredential(authRequest);
-        Member member = userService.createUser(credential, authRequest);
+        Member member = memberService.createUser(credential, authRequest);
 
         return MemberResponse.of(member);
     }
@@ -47,7 +47,7 @@ public class AuthService {
      */
     @Transactional
     public TokenResponse signIn(SignInRequest signInRequest) {
-        Member member = userService.getUserByEmail(signInRequest.email());
+        Member member = memberService.getUserByEmail(signInRequest.email());
         credentialService.checkPassword(member, signInRequest.password());
 
         TokenResponse tokenResponse = jwtProvider.createToken(member);

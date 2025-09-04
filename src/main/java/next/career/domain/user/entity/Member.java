@@ -9,7 +9,6 @@ import next.career.domain.user.enumerate.MemberType;
 import next.career.global.BaseTimeEntity;
 import org.hibernate.annotations.SQLDelete;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 
 @Getter
@@ -27,6 +26,9 @@ public class Member extends BaseTimeEntity {
 
     @Column(columnDefinition = "varchar(20)")
     private String phoneNumber;
+
+    @Column(columnDefinition = "varchar(2000)")
+    private String profileImageUrl;
 
     @Column(columnDefinition = "varchar(20)")
     private String name;
@@ -56,9 +58,11 @@ public class Member extends BaseTimeEntity {
         this.credential = credential;
     }
 
-    public static Member newSocial(String email, String provider, String providerId,
+    public static Member newSocial(String name, String profileImageUrl, String email, String provider, String providerId,
                                    String phoneNumber, MemberType memberType) {
         Member m = new Member(email, phoneNumber, memberType, null); // 소셜은 Credential 없음
+        m.name = name;
+        m.profileImageUrl = profileImageUrl;
         m.provider = provider;
         m.providerId = providerId;
         return m;

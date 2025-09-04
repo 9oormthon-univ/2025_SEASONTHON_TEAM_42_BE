@@ -57,7 +57,12 @@ public class SecurityConfig {
         http.addFilterBefore(exceptionFilter, JwtFilter.class);
 
         http.authorizeHttpRequests((authorize) ->
-                authorize.requestMatchers(
+                authorize
+                        .requestMatchers(
+                                "/",
+                                "/index.html"
+                        ).permitAll()
+                        .requestMatchers(
                                 "/v1/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",

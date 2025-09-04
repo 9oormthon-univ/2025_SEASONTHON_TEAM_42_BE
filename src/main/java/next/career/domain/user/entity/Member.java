@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import next.career.domain.user.dto.request.MemberProfileUpdateRequest;
+import next.career.domain.user.enumerate.Gender;
 import next.career.domain.user.enumerate.MemberType;
 import next.career.global.BaseTimeEntity;
 import org.hibernate.annotations.SQLDelete;
@@ -36,6 +38,13 @@ public class Member extends BaseTimeEntity {
     @Column(columnDefinition = "varchar(20)")
     private LocalDate birthDate;
 
+    @Column(columnDefinition = "varchar(20)")
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+
+    @Embedded
+    private Address address;
+
     @Column(nullable = false, columnDefinition = "varchar(255)")
     @Enumerated(EnumType.STRING)
     private MemberType memberType;
@@ -56,6 +65,15 @@ public class Member extends BaseTimeEntity {
         this.phoneNumber = phoneNumber;
         this.memberType = memberType != null ? memberType : MemberType.GENERAL;
         this.credential = credential;
+    }
+
+    public Member updateProfile(MemberProfileUpdateRequest request) {
+        this.name = request.name();
+        this.birthDate = request.birthDate();
+        this.gender = request.gender();
+        this.address = request.toAddress();
+
+        return this;
     }
 
     public static Member newSocial(String name, String profileImageUrl, String email, String provider, String providerId,

@@ -1,6 +1,7 @@
 package next.career.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
+import next.career.domain.user.dto.request.MemberProfileUpdateRequest;
 import next.career.domain.user.entity.Credential;
 import next.career.domain.user.entity.Member;
 import next.career.domain.user.repository.MemberRepository;
@@ -37,6 +38,10 @@ public class MemberService {
     public Member getUserByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CoreException(GlobalErrorType.MEMBER_NOT_FOUND));
+    }
+
+    public Member updateUser(Member member, MemberProfileUpdateRequest request) {
+        return member.updateProfile(request);
     }
 }
 

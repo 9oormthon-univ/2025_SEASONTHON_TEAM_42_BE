@@ -6,19 +6,22 @@ import next.career.domain.job.entity.Job;
 import next.career.domain.job.repository.JobCustomRepository;
 import next.career.domain.job.repository.JobRepository;
 import next.career.domain.job.service.dto.JobDto;
-import next.career.domain.openai.OpenAiService;
+import next.career.domain.openai.service.OpenAiService;
+import next.career.domain.openai.dto.AiChatDto;
 import next.career.domain.openai.dto.RecommendDto;
+import next.career.domain.openai.repository.PromptRepository;
 import next.career.domain.pinecone.service.PineconeService;
 import next.career.domain.user.entity.Member;
+import next.career.domain.user.entity.MemberDetail;
+import next.career.domain.user.repository.MemberDetailRepository;
+import next.career.domain.user.repository.MemberRepository;
 import next.career.global.apiPayload.exception.CoreException;
 import next.career.global.apiPayload.exception.GlobalErrorType;
+import next.career.global.security.AuthDetails;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +31,9 @@ public class JobService {
     private final PineconeService pineconeService;
     private final OpenAiService openAiService;
     private final JobCustomRepository jobCustomRepository;
+    private final MemberDetailRepository memberDetailRepository;
+    private final PromptRepository promptRepository;
+    private final MemberRepository memberRepository;
 
     public Page<JobDto.AllResponse> getAllJob(GetJobDto.SearchRequest request, Member member, Pageable pageable) {
 
@@ -81,6 +87,36 @@ public class JobService {
 
     }
 
+    @Transactional
+    public void answerAIChat(Integer sequence, String answer, Member member) {
+        MemberDetail memberDetail = member.getMemberDetail();
+
+        if (memberDetail == null) {
+            memberDetail = MemberDetail.createOf(member);
+            member.createMemberDetail(memberDetail);
+            memberDetailRepository.save(memberDetail);
+            memberRepository.save(member);
+        }
+
+        switch (sequence) {
+            case 1 -> memberDetail.updateExperience(answer);
+            case 2 -> memberDetail.updateCertificateOrSkill(answer);
+            case 3 -> memberDetail.updatePersonalityType(answer);
+            case 4 -> memberDetail.updatePersonalityDescription(answer);
+            case 5 -> memberDetail.updateInterests(answer);
+            case 6 -> memberDetail.updatePreferredWorkStyles(answer);
+            case 7 -> memberDetail.updateAvoidConditions(answer);
+            case 8 -> memberDetail.updateAvailableWorkingTime(answer);
+            case 9 -> memberDetail.updatePhysicalCondition(answer);
+            case 10 -> memberDetail.updateEducationAndCareerGoal(answer);
+            default -> throw new CoreException(GlobalErrorType.MEMBER_DETAIL_SEQUENCE_NOT_FOUND);
+        }
+    }
 
 
+
+    public AiChatDto.OptionResponse getAIChat(Integer sequence, Member member) {
+        MemberDetail memberDetail = member.getMemberDetail();
+        return  openAiService.getOptions(sequence, memberDetail);
+    }
 }

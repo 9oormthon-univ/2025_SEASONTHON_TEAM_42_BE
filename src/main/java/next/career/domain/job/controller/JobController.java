@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import next.career.domain.job.controller.dto.GetJobDto;
 import next.career.domain.job.service.JobService;
 import next.career.domain.job.service.dto.JobDto;
+import next.career.domain.openai.dto.AiChatDto;
 import next.career.domain.openai.dto.RecommendDto;
 import next.career.domain.user.entity.Member;
 import next.career.global.apiPayload.response.ApiResponse;
@@ -82,6 +83,24 @@ public class JobController {
         Member member = authDetails.getUser();
         jobService.recommendRoadMap(member);
         return ApiResponse.success();
+    }
+
+    @PostMapping("/chat/{sequence}")
+    public ApiResponse<?> answerAIChat(
+            @PathVariable Integer sequence,
+            @RequestParam String answer,
+            @AuthenticationPrincipal AuthDetails authDetails) {
+        Member member = authDetails.getUser();
+        jobService.answerAIChat(sequence, answer, member);
+        return ApiResponse.success();
+    }
+
+    @GetMapping("/chat/{sequence}")
+    public ApiResponse<AiChatDto.OptionResponse> getAIChat(
+            @PathVariable Integer sequence,
+            @AuthenticationPrincipal AuthDetails authDetails) {
+        Member member = authDetails.getUser();
+        return ApiResponse.success(jobService.getAIChat(sequence, member));
     }
 
 }

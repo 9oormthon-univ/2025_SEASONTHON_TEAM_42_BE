@@ -1,18 +1,21 @@
-package next.career.domain.openai;
+package next.career.domain.openai.service;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import next.career.domain.embedding.service.EmbeddingService;
+import next.career.domain.openai.dto.AiChatDto;
 import next.career.domain.openai.dto.RecommendDto;
 import next.career.domain.openai.entity.Prompt;
 import next.career.domain.openai.repository.PromptRepository;
 import next.career.domain.pinecone.service.PineconeService;
 import next.career.domain.user.entity.Member;
+import next.career.domain.user.entity.MemberDetail;
 import next.career.global.apiPayload.exception.CoreException;
 import next.career.global.apiPayload.exception.GlobalErrorType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -30,6 +33,7 @@ public class OpenAiService {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     private final EmbeddingService embeddingService;
     private final PineconeService pineconeService;
+    private final ConvertService convertService;
 
     public RecommendDto.OccupationResponse getRecommendOccupation(Member member) {
 
@@ -174,7 +178,52 @@ public class OpenAiService {
     }
 
 
+    public AiChatDto.OptionResponse getOptions(int sequence, MemberDetail memberDetail) {
 
+        List<Prompt> aiChat = promptRepository.findAllByTag("ai 채팅 " + sequence);
+
+        String system = aiChat.stream()
+                .map(Prompt::getContent)
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.joining("\n"));
+
+        String memberDetailText = convertService.convertMemberDetailToText(memberDetail);
+
+        String finalSystemPrompt = system + "\n\n[사용자 정보]\n" + memberDetailText;
+
+        Map<String, Object> body = setPrompt(finalSystemPrompt);
+
+        try {
+            Map res = requestOpenAI(body);
+
+            if (res == null) return AiChatDto.OptionResponse.builder().optionList(List.of()).build();
+
+            List<Map<String, Object>> choices = (List<Map<String, Object>>) res.get("choices");
+            if (choices == null || choices.isEmpty())
+                return AiChatDto.OptionResponse.builder().optionList(List.of()).build();
+
+            String content = getContent(choices);
+
+            AiChatDto.OptionResponse dto =
+                    MAPPER.readValue(content, AiChatDto.OptionResponse.class);
+
+            List<String> list = Optional.ofNullable(dto.getOptionList()).orElseGet(List::of)
+                    .stream()
+                    .filter(Objects::nonNull)
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .distinct()
+                    .limit(3)
+                    .toList();
+
+            return AiChatDto.OptionResponse.builder().optionList(list).build();
+        } catch (Exception e) {
+            throw new CoreException(GlobalErrorType.GET_AI_CHAT_OPTION_FAILED);
+        }
+
+    }
 
 
 

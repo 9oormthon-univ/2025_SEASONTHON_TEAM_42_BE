@@ -20,9 +20,6 @@ public class ConvertService {
         if (memberDetail.getPersonalityType() != null && !memberDetail.getPersonalityType().isBlank()) {
             sb.append("성격/강점: ").append(memberDetail.getPersonalityType()).append("\n");
         }
-        if (memberDetail.getPersonalityDescription() != null && !memberDetail.getPersonalityDescription().isBlank()) {
-            sb.append("성격 설명: ").append(memberDetail.getPersonalityDescription()).append("\n");
-        }
         if (memberDetail.getInterests() != null && !memberDetail.getInterests().isBlank()) {
             sb.append("관심 분야: ").append(memberDetail.getInterests()).append("\n");
         }

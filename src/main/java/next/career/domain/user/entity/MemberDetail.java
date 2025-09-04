@@ -29,8 +29,6 @@ public class MemberDetail {
 
     private String personalityType;
 
-    private String personalityDescription;
-
     private String interests;
 
     private String preferredWorkStyles;
@@ -59,10 +57,6 @@ public class MemberDetail {
 
     public void updatePersonalityType(String personalityType) {
         this.personalityType = personalityType;
-    }
-
-    public void updatePersonalityDescription(String personalityDescription) {
-        this.personalityDescription = personalityDescription;
     }
 
     public void updateInterests(String interests) {

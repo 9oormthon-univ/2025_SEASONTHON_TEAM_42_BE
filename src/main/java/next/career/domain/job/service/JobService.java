@@ -102,13 +102,12 @@ public class JobService {
             case 1 -> memberDetail.updateExperience(answer);
             case 2 -> memberDetail.updateCertificateOrSkill(answer);
             case 3 -> memberDetail.updatePersonalityType(answer);
-            case 4 -> memberDetail.updatePersonalityDescription(answer);
-            case 5 -> memberDetail.updateInterests(answer);
-            case 6 -> memberDetail.updatePreferredWorkStyles(answer);
-            case 7 -> memberDetail.updateAvoidConditions(answer);
-            case 8 -> memberDetail.updateAvailableWorkingTime(answer);
-            case 9 -> memberDetail.updatePhysicalCondition(answer);
-            case 10 -> memberDetail.updateEducationAndCareerGoal(answer);
+            case 4 -> memberDetail.updateInterests(answer);
+            case 5 -> memberDetail.updatePreferredWorkStyles(answer);
+            case 6 -> memberDetail.updateAvoidConditions(answer);
+            case 7 -> memberDetail.updateAvailableWorkingTime(answer);
+            case 8 -> memberDetail.updatePhysicalCondition(answer);
+            case 9 -> memberDetail.updateEducationAndCareerGoal(answer);
             default -> throw new CoreException(GlobalErrorType.MEMBER_DETAIL_SEQUENCE_NOT_FOUND);
         }
     }

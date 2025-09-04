@@ -13,7 +13,9 @@ public record MemberDetailResponse (
 
         String email,
 
-        String profileImage
+        String profileImage,
+
+        MemberAdditionalInfo additionalInfo
 ) {
     public static MemberDetailResponse from(Member member) {
         return new MemberDetailResponse(
@@ -22,7 +24,8 @@ public record MemberDetailResponse (
                 member.getProvider(),
                 member.getProviderId(),
                 member.getEmail(),
-                member.getProfileImageUrl()
+                member.getProfileImageUrl(),
+                MemberAdditionalInfo.from(member)
         );
     }
 }

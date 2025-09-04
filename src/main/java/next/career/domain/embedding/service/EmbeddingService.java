@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import next.career.domain.job.entity.Job;
 import next.career.domain.job.repository.JobRepository;
 import next.career.domain.user.entity.Member;
-import next.career.domain.user.repository.UserRepository;
+import next.career.domain.user.repository.MemberRepository;
 import next.career.global.apiPayload.exception.CoreException;
 import next.career.global.apiPayload.exception.GlobalErrorType;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,6 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -26,7 +25,7 @@ public class EmbeddingService {
 
     private final WebClient openAiClient;
     private final JobRepository jobRepository;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
     private static final DateTimeFormatter F = DateTimeFormatter.ISO_LOCAL_DATE;
 

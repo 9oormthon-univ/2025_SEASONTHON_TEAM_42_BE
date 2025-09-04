@@ -2,7 +2,7 @@ package next.career.global.security;
 
 import lombok.RequiredArgsConstructor;
 import next.career.domain.user.entity.Member;
-import next.career.domain.user.repository.UserRepository;
+import next.career.domain.user.repository.MemberRepository;
 import next.career.global.apiPayload.exception.CoreException;
 import next.career.global.apiPayload.exception.GlobalErrorType;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,11 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AuthDetailsService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Member member = userRepository.findByEmail(email).orElseThrow(() -> new CoreException(GlobalErrorType.MEMBER_NOT_FOUND));
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new CoreException(GlobalErrorType.MEMBER_NOT_FOUND));
 
         return new AuthDetails(member);
     }

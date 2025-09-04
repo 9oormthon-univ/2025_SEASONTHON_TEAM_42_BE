@@ -37,15 +37,19 @@ out/
 
 ### VS Code ###
 .vscode/
-/src/main/resources/application.yml
-/src/main/resources/application-oauth2.yml
-/src/main/resources/application-cloud.yml
-/src/main/resources/application-swagger.yml
-/src/main/resources/application-actuator.yml
-/src/main/resources/application-email.yml
-/src/main/resources/application-test.yml
-/src/test/resources/application.yml
-/도메인모델.md
+
+src/main/resources/application.yml
+src/main/resources/application-oauth2.yml
+src/main/resources/application-cloud.yml
+src/main/resources/application-swagger.yml
+src/main/resources/application-actuator.yml
+src/main/resources/application-email.yml
+src/main/resources/application-test.yml
+src/test/resources/application.yml
+도메인모델.md
+
+src/**/resources/application*.yml
+src/**/resources/application*.yaml
 
 /deploy/docker-compose.yaml
 /src/test/resources/application-test.yaml

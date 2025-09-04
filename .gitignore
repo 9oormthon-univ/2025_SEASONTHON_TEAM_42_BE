@@ -48,8 +48,5 @@ src/main/resources/application-test.yml
 src/test/resources/application.yml
 도메인모델.md
 
-src/**/resources/application*.yml
-src/**/resources/application*.yaml
-
 /deploy/docker-compose.yaml
 /src/test/resources/application-test.yaml

@@ -30,6 +30,10 @@ public record AuthDetails(Member member, Map<String, Object> attributes, String 
         return member;
     }
 
+    public Long getMemberId() {
+        return member.getId();
+    }
+
     @Override
     public String getPassword() {
         return "";

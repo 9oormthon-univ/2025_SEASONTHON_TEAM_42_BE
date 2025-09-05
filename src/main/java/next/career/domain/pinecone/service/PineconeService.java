@@ -66,7 +66,7 @@ public class PineconeService {
 
                     Map<String, Object> body = Map.of(
                             "vectors", List.of(Map.of(
-                                    "id", String.valueOf(job.getId()),
+                                    "id", String.valueOf(job.getJobId()),
                                     "values", vector,
                                     "metadata", metadata
                             ))

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import next.career.domain.job.controller.dto.GetJobDto;
 import next.career.domain.job.service.JobService;
 import next.career.domain.job.service.dto.JobDto;
+import next.career.domain.openai.dto.AiChatDto;
 import next.career.domain.openai.dto.RecommendDto;
 import next.career.domain.user.entity.Member;
 import next.career.global.apiPayload.response.ApiResponse;
@@ -83,5 +84,31 @@ public class JobController {
         jobService.recommendRoadMap(member);
         return ApiResponse.success();
     }
+
+    // AI 채팅 답변 저장
+    @PostMapping("/chat/{sequence}")
+    @Operation(summary = "AI 채팅 답변 저장", description = "AI가 제공하는 질문 시퀀스에 대해 사용자의 답변을 저장합니다.")
+    public ApiResponse<?> answerAIChat(
+            @Parameter(description = "질문 시퀀스 번호 (1~9)", example = "1")
+            @PathVariable Integer sequence,
+            @Parameter(description = "사용자가 입력한 답변", example = "꼼꼼함 / 친절함 - 이런식으로 단어를 구분할 수 있도록 하는 게 좋습니다('띄어쓰기', ',', '/'))")
+            @RequestParam String answer,
+            @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
+        Member member = authDetails.getUser();
+        jobService.answerAIChat(sequence, answer, member);
+        return ApiResponse.success();
+    }
+
+    // AI 채팅 옵션 조회
+    @GetMapping("/chat/{sequence}")
+    @Operation(summary = "AI 채팅 옵션 조회", description = "AI 채팅 질문 번호에 대한 보기 조회.")
+    public ApiResponse<AiChatDto.OptionResponse> getAIChat(
+            @Parameter(description = "질문 번호 (1~9)", example = "2")
+            @PathVariable Integer sequence,
+            @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
+        Member member = authDetails.getUser();
+        return ApiResponse.success(jobService.getAIChat(sequence, member));
+    }
+
 
 }

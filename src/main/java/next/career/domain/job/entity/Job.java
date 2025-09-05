@@ -2,10 +2,6 @@ package next.career.domain.job.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import next.career.domain.job.entity.embedded.CloseType;
-import next.career.domain.job.entity.embedded.Company;
-import next.career.domain.job.entity.embedded.Salary;
-import next.career.domain.job.entity.embedded.Position;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,5 +29,6 @@ public class Job {
     private LocalDate postingDate;  // 공고 등록일
     private LocalDate closingDate;  // 공고 마감일
     private String applyLink;       // 지원 링크
+    private String imageUrl;
 
 }

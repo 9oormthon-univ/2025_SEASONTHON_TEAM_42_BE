@@ -13,6 +13,10 @@ import next.career.domain.openai.dto.RecommendDto;
 import next.career.domain.openai.repository.PromptRepository;
 import next.career.domain.openai.service.OpenAiService;
 import next.career.domain.pinecone.service.PineconeService;
+import next.career.domain.roadmap.entity.RoadMap;
+import next.career.domain.roadmap.entity.RoadMapAction;
+import next.career.domain.roadmap.repository.RoadMapRepository;
+import next.career.domain.roadmap.repository.RoadmapActionRepository;
 import next.career.domain.user.entity.Member;
 import next.career.domain.user.entity.MemberDetail;
 import next.career.domain.user.repository.MemberDetailRepository;
@@ -37,6 +41,8 @@ public class JobService {
     private final MemberDetailRepository memberDetailRepository;
     private final MemberRepository memberRepository;
     private final BookMarkFinder bookMarkFinder;
+    private final RoadMapRepository roadMapRepository;
+    private final RoadmapActionRepository roadmapActionRepository;
 
     public Page<JobDto.AllResponse> getAllJob(GetJobDto.SearchRequest request, Member member, Pageable pageable) {
 
@@ -96,11 +102,33 @@ public class JobService {
         return recommendJob;
     }
 
+    @Transactional
     public RecommendDto.RoadMapResponse recommendRoadMap(GetRoadMapDto.Request roadmapRequest, Member member) {
-        return openAiService.getRecommendRoadMap(roadmapRequest, member);
+        RecommendDto.RoadMapResponse response = openAiService.getRecommendRoadMap(roadmapRequest, member);
 
+        for (RecommendDto.RoadMapResponse.RoadMapStep step : response.getSteps()) {
+            RoadMap roadMap = RoadMap.builder()
+                    .member(member)
+                    .period(step.getPeriod())
+                    .category(step.getCategory())
+                    .isCompleted(false)
+                    .build();
 
+            step.getActions().forEach(actionDto -> {
+                RoadMapAction actionEntity = RoadMapAction.builder()
+                        .action(actionDto.getAction())
+                        .isCompleted(false)
+                        .roadMap(roadMap)
+                        .build();
+                roadMap.getActionList().add(actionEntity);
+            });
+
+            roadMapRepository.save(roadMap); // Cascade 때문에 actionList도 함께 저장됨
+        }
+
+        return response;
     }
+
 
     @Transactional
     public void answerAIChat(Integer sequence, String answer, Member member) {
@@ -140,7 +168,18 @@ public class JobService {
 
     }
 
-//    public void getRoadMap(Member member) {
-//        member.getRoadMap();
-//    }
+    public RecommendDto.RoadMapResponse getRoadMap(Member member) {
+
+        List<RoadMap> roadMapList = member.getRoadMapList();
+
+        return RecommendDto.RoadMapResponse.of(roadMapList);
+    }
+
+    @Transactional
+    public void checkRoadMapAction(Long roadMapActionId, Member member) {
+        RoadMapAction roadMapAction = roadmapActionRepository.findById(roadMapActionId)
+                .orElseThrow(() -> new CoreException(GlobalErrorType.ROAD_MAP_ACTION_NOT_FOUND));
+
+        roadMapAction.updateCompleted();
+    }
 }

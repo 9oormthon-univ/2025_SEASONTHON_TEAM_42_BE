@@ -1,13 +1,14 @@
 package next.career.domain.roadmap.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import next.career.domain.user.entity.Member;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -20,19 +21,15 @@ public class RoadMap {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roadMapId;
 
-    //TODO : user랑 다대일 연관관계
-//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-//    @JoinColumn(name = "user_id", nullable = false) // FK
-//    private User user;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
-    private String content;
+    private String period;
+    private String category;
+    private Boolean isCompleted;
 
-    @Builder.Default()
-    private Boolean isCompleted = false;
+    @OneToMany(mappedBy = "roadMap", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RoadMapAction> actionList = new ArrayList<>();
 
-    public RoadMap of(String content) {
-        return RoadMap.builder()
-                .content(content)
-                .build();
-    }
 }

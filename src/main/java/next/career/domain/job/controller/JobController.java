@@ -14,6 +14,7 @@ import next.career.domain.user.entity.Member;
 import next.career.domain.user.entity.MemberDetail;
 import next.career.global.apiPayload.response.ApiResponse;
 import next.career.global.security.AuthDetails;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,7 +35,7 @@ public class JobController {
     @GetMapping("/all")
     @Operation(summary = "전체 채용 조회", description = "검색 조건과 페이징을 통해 전체 채용 공고 목록을 조회합니다.")
     public ApiResponse<GetJobDto.SearchAllResponse> getAllJob(
-            @Parameter(description = "검색 조건 DTO") GetJobDto.SearchRequest searchRequest,
+            @ParameterObject GetJobDto.SearchRequest searchRequest,
             @Parameter(hidden = true) Pageable pageable,
             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
         Member member = authDetails.getUser();
@@ -56,7 +57,7 @@ public class JobController {
     @GetMapping("/bookmarks")
     @Operation(summary = "북마크된 채용 공고 조회", description = "북마크된 채용 공고를 조회합니다.")
     public ApiResponse<GetJobDto.SearchAllResponse> getBookMarkedJobs(
-            @Parameter(description = "검색 조건 DTO") GetJobDto.SearchRequest searchRequest,
+            @ParameterObject GetJobDto.SearchRequest searchRequest,
             @Parameter(hidden = true) Pageable pageable,
             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
         Page<JobDto.AllResponse> jobDtoList = jobService.getAllJob(searchRequest, authDetails.getUser(), pageable);
@@ -103,12 +104,33 @@ public class JobController {
         return ApiResponse.success(jobService.recommendRoadMap(roadmapRequest, member));
     }
 
-//    @GetMapping("/recommend/roadmap")
-//    public ApiResponse<RecommendDto.RoadMapResponse> getRoadMap(
-//            @AuthenticationPrincipal AuthDetails authDetails){
-//
-//        jobService.getRoadMap();
-//    }
+    // 로드맵 조회
+    @GetMapping("/recommend/roadmap")
+    @Operation(
+            summary = "로드맵 조회",
+            description = "로그인한 사용자의 맞춤형 로드맵을 조회합니다."
+    )
+    public ApiResponse<RecommendDto.RoadMapResponse> getRoadMap(
+            @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails
+    ) {
+        Member member = authDetails.getUser();
+        return ApiResponse.success(jobService.getRoadMap(member));
+    }
+
+    // 로드맵 액션 체크
+    @PostMapping("/roadmap/{roadMapActionId}")
+    @Operation(
+            summary = "로드맵 액션 완료/미완료 토글",
+            description = "특정 로드맵 액션을 완료/미완료 상태로 토글합니다."
+    )
+    public ApiResponse<?> checkRoadMapAction(
+            @Parameter(description = "로드맵 액션 ID") @PathVariable Long roadMapActionId,
+            @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails
+    ) {
+        Member member = authDetails.getUser();
+        jobService.checkRoadMapAction(roadMapActionId, member);
+        return ApiResponse.success();
+    }
 
     // AI 채팅 답변 저장
     @PostMapping("/chat/{sequence}")

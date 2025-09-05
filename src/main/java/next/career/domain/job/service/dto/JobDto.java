@@ -30,10 +30,9 @@ public class JobDto {
         private String closingDate;  // 공고 마감일
         private String applyLink;       // 지원 링크
         private String imageUrl;
-        private Integer jobRecommendScore; // 직업 추천도
         private Boolean isScrap; // 스크랩 했는지
 
-        public static AllResponse of(Job job, Integer jobRecommendScore, Boolean isScrap) {
+        public static AllResponse of(Job job, Boolean isScrap) {
             return AllResponse.builder()
                     .jobId(job.getJobId())
                     .companyName(job.getCompanyName())
@@ -51,7 +50,6 @@ public class JobDto {
                     .closingDate(job.getClosingDate() != null ? job.getClosingDate().toString() : null)
                     .applyLink(job.getApplyLink())
                     .imageUrl(job.getImageUrl())
-                    .jobRecommendScore(jobRecommendScore)
                     .isScrap(isScrap)
                     .build();
         }
@@ -78,10 +76,9 @@ public class JobDto {
         private String postingDate;  // 공고 등록일
         private String closingDate;  // 공고 마감일
         private String applyLink;       // 지원 링크
-        private Integer jobRecommendScore; // 직업 추천도
         private Boolean isScrap; // 스크랩 했는지
 
-        public static Response of(Job job, Integer jobRecommendScore, Boolean isScrap) {
+        public static Response of(Job job, Boolean isScrap) {
             return Response.builder()
                     .jobId(job.getJobId())
                     .companyName(job.getCompanyName())
@@ -98,7 +95,6 @@ public class JobDto {
                     .postingDate(job.getPostingDate())
                     .closingDate(job.getClosingDate())
                     .applyLink(job.getApplyLink())
-                    .jobRecommendScore(jobRecommendScore)
                     .isScrap(isScrap)
                     .build();
         }

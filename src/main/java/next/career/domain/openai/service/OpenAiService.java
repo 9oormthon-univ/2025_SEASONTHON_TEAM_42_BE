@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import next.career.domain.embedding.service.EmbeddingService;
 import next.career.domain.job.controller.dto.GetRoadMapDto;
+import next.career.domain.job.entity.Job;
 import next.career.domain.openai.dto.AiChatDto;
 import next.career.domain.openai.dto.RecommendDto;
 import next.career.domain.openai.entity.Prompt;
@@ -242,14 +243,5 @@ public class OpenAiService {
         }
 
     }
-
-
-
-
-
-
-
-
-
 
 }

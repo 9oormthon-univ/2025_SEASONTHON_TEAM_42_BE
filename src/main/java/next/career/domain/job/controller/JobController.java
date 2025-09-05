@@ -80,12 +80,12 @@ public class JobController {
     // 맞춤형 로드맵 추천
     @GetMapping("/recommend/roadmap")
     @Operation(summary = "맞춤형 로드맵 추천", description = "사용자의 이력 및 관심 직무를 기반으로 커리어 로드맵을 추천합니다.")
-    public ApiResponse<?> recommendRoadMap(
+    public ApiResponse<RecommendDto.RoadMapResponse> recommendRoadMap(
             GetRoadMapDto.Request roadmapRequest,
             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
         Member member = authDetails.getUser();
-        jobService.recommendRoadMap(roadmapRequest, member);
-        return ApiResponse.success();
+
+        return ApiResponse.success(jobService.recommendRoadMap(roadmapRequest, member));
     }
 
     // AI 채팅 답변 저장

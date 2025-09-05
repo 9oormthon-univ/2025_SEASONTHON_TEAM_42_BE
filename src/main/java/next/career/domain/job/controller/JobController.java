@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import next.career.domain.job.controller.dto.GetJobDto;
+import next.career.domain.job.controller.dto.GetRoadMapDto;
 import next.career.domain.job.service.JobService;
 import next.career.domain.job.service.dto.JobDto;
 import next.career.domain.openai.dto.AiChatDto;
@@ -19,6 +20,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -56,12 +58,15 @@ public class JobController {
     public ApiResponse<JobDto.RecommendJob> recommendOccupation(
             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
         Member member = authDetails.getUser();
-        List<String> occupationList = jobService.recommendOccupation(member).getOccupationList();
+
+        RecommendDto.OccupationResponse occupationResponse = jobService.recommendOccupation(member);
+        List<RecommendDto.OccupationResponse.Occupation> occupationList =
+                Optional.ofNullable(occupationResponse.getOccupationList()).orElse(List.of());
 
         JobDto.RecommendJob recommendJob = JobDto.RecommendJob.builder()
-                .first(!occupationList.isEmpty() ? occupationList.get(0) : null)
-                .second(occupationList.size() > 1 ? occupationList.get(1) : null)
-                .third(occupationList.size() > 2 ? occupationList.get(2) : null)
+                .first(!occupationList.isEmpty() ? JobDto.RecommendJob.Occupation.of(occupationList.get(0)) : null)
+                .second(occupationList.size() > 1 ? JobDto.RecommendJob.Occupation.of(occupationList.get(1)) : null)
+                .third(occupationList.size() > 2 ? JobDto.RecommendJob.Occupation.of(occupationList.get(2)) : null)
                 .build();
 
         return ApiResponse.success(recommendJob);
@@ -79,11 +84,12 @@ public class JobController {
     // 맞춤형 로드맵 추천
     @GetMapping("/recommend/roadmap")
     @Operation(summary = "맞춤형 로드맵 추천", description = "사용자의 이력 및 관심 직무를 기반으로 커리어 로드맵을 추천합니다.")
-    public ApiResponse<?> recommendRoadMap(
+    public ApiResponse<RecommendDto.RoadMapResponse> recommendRoadMap(
+            GetRoadMapDto.Request roadmapRequest,
             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
         Member member = authDetails.getUser();
-        jobService.recommendRoadMap(member);
-        return ApiResponse.success();
+
+        return ApiResponse.success(jobService.recommendRoadMap(roadmapRequest, member));
     }
 
     // AI 채팅 답변 저장

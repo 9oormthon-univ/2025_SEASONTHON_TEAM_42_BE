@@ -111,8 +111,8 @@ public class EmbeddingService {
                 nz(job.getPreferredSkills()),
                 nz(job.getSalary()),
                 nz(job.getWorkPeriod()),
-                fmt(job.getPostingDate()),
-                fmt(job.getClosingDate())
+                nz(job.getPostingDate()),
+                nz(job.getClosingDate())
         );
     }
 

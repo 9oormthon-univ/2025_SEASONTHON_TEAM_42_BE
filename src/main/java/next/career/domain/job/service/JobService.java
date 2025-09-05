@@ -2,6 +2,7 @@ package next.career.domain.job.service;
 
 import lombok.RequiredArgsConstructor;
 import next.career.domain.job.controller.dto.GetJobDto;
+import next.career.domain.job.controller.dto.GetRoadMapDto;
 import next.career.domain.job.entity.Job;
 import next.career.domain.job.repository.JobCustomRepository;
 import next.career.domain.job.repository.JobRepository;
@@ -82,8 +83,8 @@ public class JobService {
         return recommendJob;
     }
 
-    public RecommendDto.RoadMapResponse recommendRoadMap(Member member) {
-        return openAiService.getRecommendRoadMap(member);
+    public RecommendDto.RoadMapResponse recommendRoadMap(GetRoadMapDto.Request roadmapRequest, Member member) {
+        return openAiService.getRecommendRoadMap(roadmapRequest, member);
 
     }
 

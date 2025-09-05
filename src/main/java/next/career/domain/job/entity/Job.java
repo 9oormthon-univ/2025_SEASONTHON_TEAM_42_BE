@@ -26,8 +26,8 @@ public class Job {
     private String experience;      // 경력 요구사항
     private String requiredSkills;  // 필요 기술
     private String preferredSkills; // 우대 사항
-    private LocalDate postingDate;  // 공고 등록일
-    private LocalDate closingDate;  // 공고 마감일
+    private String postingDate;  // 공고 등록일
+    private String closingDate;  // 공고 마감일
     private String applyLink;       // 지원 링크
     private String imageUrl;
 

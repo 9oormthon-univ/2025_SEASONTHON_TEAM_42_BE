@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import next.career.domain.embedding.service.EmbeddingService;
+import next.career.domain.job.controller.dto.GetRoadMapDto;
 import next.career.domain.openai.dto.AiChatDto;
 import next.career.domain.openai.dto.RecommendDto;
 import next.career.domain.openai.entity.Prompt;
@@ -37,8 +38,6 @@ public class OpenAiService {
 
     public RecommendDto.OccupationResponse getRecommendOccupation(Member member) {
 
-        // TODO: 유저 정보 가져와서 프롬프트에 넣기
-
         List<Prompt> occupation = promptRepository.findAllByTag("occupation");
 
         String system = occupation.stream()
@@ -48,38 +47,55 @@ public class OpenAiService {
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.joining("\n"));
 
-        Map<String, Object> body = setPrompt(system);
+        MemberDetail memberDetail = member.getMemberDetail();
+
+        String memberDetailText = convertService.convertMemberDetailToText(memberDetail);
+
+        String finalSystemPrompt = system + "\n\n[사용자 정보]\n" + memberDetailText;
+
+        Map<String, Object> body = setPrompt(finalSystemPrompt);
 
         try {
             Map res = requestOpenAI(body);
 
-            if (res == null) return RecommendDto.OccupationResponse.builder().occupationList(List.of()).build();
+            if (res == null) {
+                return RecommendDto.OccupationResponse.builder()
+                        .occupationList(List.of())
+                        .build();
+            }
 
             List<Map<String, Object>> choices = (List<Map<String, Object>>) res.get("choices");
-            if (choices == null || choices.isEmpty())
-                return RecommendDto.OccupationResponse.builder().occupationList(List.of()).build();
+            if (choices == null || choices.isEmpty()) {
+                return RecommendDto.OccupationResponse.builder()
+                        .occupationList(List.of())
+                        .build();
+            }
 
             String content = getContent(choices);
 
             RecommendDto.OccupationResponse dto =
                     MAPPER.readValue(content, RecommendDto.OccupationResponse.class);
 
-            List<String> list = Optional.ofNullable(dto.getOccupationList()).orElseGet(List::of)
-                    .stream()
-                    .filter(Objects::nonNull)
-                    .map(String::trim)
-                    .filter(s -> !s.isEmpty())
-                    .distinct()
-                    .limit(3)
-                    .toList();
+            // Occupation 객체 리스트 필터링 (null 제거, 최대 3개 제한)
+            List<RecommendDto.OccupationResponse.Occupation> list =
+                    Optional.ofNullable(dto.getOccupationList()).orElseGet(List::of)
+                            .stream()
+                            .filter(Objects::nonNull)
+                            .distinct()
+                            .limit(3)
+                            .toList();
 
-            return RecommendDto.OccupationResponse.builder().occupationList(list).build();
+            return RecommendDto.OccupationResponse.builder()
+                    .occupationList(list)
+                    .build();
+
         } catch (Exception e) {
             throw new CoreException(GlobalErrorType.GET_RECOMMEND_OCCUPATION_ERROR);
         }
+
     }
 
-    public RecommendDto.RoadMapResponse getRecommendRoadMap(Member member) {
+    public RecommendDto.RoadMapResponse getRecommendRoadMap(GetRoadMapDto.Request roadmapRequest, Member member) {
         List<Prompt> roadmap = promptRepository.findAllByTag("roadmap");
 
         String system = roadmap.stream()
@@ -89,32 +105,34 @@ public class OpenAiService {
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.joining("\n"));
 
-        Map<String, Object> body = setPrompt(system);
+        String roadmapRequestText = convertService.convertRoadmapRequestToText(roadmapRequest);
+
+        String finalSystemPrompt = system + "\n\n[사용자 요구사항]\n" + roadmapRequestText;
+
+        Map<String, Object> body = setPrompt(finalSystemPrompt);
 
         try {
             Map res = requestOpenAI(body);
 
-            if (res == null) return RecommendDto.RoadMapResponse.builder().roadMapList(List.of()).build();
+            if (res == null) return RecommendDto.RoadMapResponse.builder().steps(List.of()).build();
 
             List<Map<String, Object>> choices = (List<Map<String, Object>>) res.get("choices");
             if (choices == null || choices.isEmpty())
-                return RecommendDto.RoadMapResponse.builder().roadMapList(List.of()).build();
+                return RecommendDto.RoadMapResponse.builder().steps(List.of()).build();
 
             String content = getContent(choices);
 
-            RecommendDto.OccupationResponse dto =
-                    MAPPER.readValue(content, RecommendDto.OccupationResponse.class);
+            RecommendDto.RoadMapResponse dto =
+                    MAPPER.readValue(content, RecommendDto.RoadMapResponse.class);
 
-            List<String> list = Optional.ofNullable(dto.getOccupationList()).orElseGet(List::of)
-                    .stream()
-                    .filter(Objects::nonNull)
-                    .map(String::trim)
-                    .filter(s -> !s.isEmpty())
-                    .distinct()
-                    .limit(3)
-                    .toList();
+            List<RecommendDto.RoadMapResponse.RoadMapStep> steps =
+                    Optional.ofNullable(dto.getSteps()).orElseGet(List::of)
+                            .stream()
+                            .filter(Objects::nonNull)
+                            .toList();
 
-            return RecommendDto.RoadMapResponse.builder().roadMapList(list).build();
+            return RecommendDto.RoadMapResponse.builder().steps(steps).build();
+
         } catch (Exception e) {
             throw new CoreException(GlobalErrorType.GEt_RECOMMEND_ROADMAP_ERROR);
         }

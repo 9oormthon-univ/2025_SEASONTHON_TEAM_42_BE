@@ -14,7 +14,20 @@ public class RecommendDto {
     @Getter
     @Builder
     public static class OccupationResponse{
-        private List<String> occupationList;
+
+        private List<Occupation> occupationList;
+
+        @NoArgsConstructor
+        @AllArgsConstructor
+        @Getter
+        @Builder
+        public static class Occupation{
+            private String imageUrl;
+            private String occupationName;
+            private String description;
+            private String score;
+        }
+
     }
 
     @NoArgsConstructor
@@ -22,7 +35,18 @@ public class RecommendDto {
     @Getter
     @Builder
     public static class RoadMapResponse{
-        private List<String> roadMapList;
+
+        private List<RoadMapStep> steps;
+
+        @NoArgsConstructor
+        @AllArgsConstructor
+        @Getter
+        @Builder
+        public static class RoadMapStep {
+            private String period;          // 기간 (예: [1개월 이내])
+            private String category;        // 카테고리 (예: 준비하기, 성장하기, 도전하기)
+            private List<String> actions;   // 세부 활동 리스트
+        }
     }
 
     @NoArgsConstructor

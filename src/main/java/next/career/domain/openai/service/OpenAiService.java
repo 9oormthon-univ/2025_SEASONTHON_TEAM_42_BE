@@ -38,8 +38,6 @@ public class OpenAiService {
 
     public RecommendDto.OccupationResponse getRecommendOccupation(Member member) {
 
-        // TODO: 유저 정보 가져와서 프롬프트에 넣기
-
         List<Prompt> occupation = promptRepository.findAllByTag("occupation");
 
         String system = occupation.stream()
@@ -49,7 +47,13 @@ public class OpenAiService {
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.joining("\n"));
 
-        Map<String, Object> body = setPrompt(system);
+        MemberDetail memberDetail = member.getMemberDetail();
+
+        String memberDetailText = convertService.convertMemberDetailToText(memberDetail);
+
+        String finalSystemPrompt = system + "\n\n[사용자 정보]\n" + memberDetailText;
+
+        Map<String, Object> body = setPrompt(finalSystemPrompt);
 
         try {
             Map res = requestOpenAI(body);

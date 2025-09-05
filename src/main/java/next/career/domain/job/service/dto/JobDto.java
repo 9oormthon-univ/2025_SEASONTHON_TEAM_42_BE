@@ -20,7 +20,7 @@ public class JobDto {
         private String jobCategory;     // 직무 분야 (산업)
         private String workLocation;    // 근무 지역
         private String requiredSkills;  // 필요 기술
-        private LocalDate closingDate;  // 공고 마감일
+        private String closingDate;  // 공고 마감일
         private Integer jobRecommendScore; // 직업 추천도
         private Boolean isScrap; // 스크랩 했는지
 
@@ -59,8 +59,8 @@ public class JobDto {
         private String experience;      // 경력 요구사항
         private String requiredSkills;  // 필요 기술
         private String preferredSkills; // 우대 사항
-        private LocalDate postingDate;  // 공고 등록일
-        private LocalDate closingDate;  // 공고 마감일
+        private String postingDate;  // 공고 등록일
+        private String closingDate;  // 공고 마감일
         private String applyLink;       // 지원 링크
         private Integer jobRecommendScore; // 직업 추천도
         private Boolean isScrap; // 스크랩 했는지

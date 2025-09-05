@@ -118,4 +118,9 @@ public class JobService {
         MemberDetail memberDetail = member.getMemberDetail();
         return  openAiService.getOptions(sequence, memberDetail);
     }
+
+    public MemberDetail getAiChatHistory(Member member) {
+        return member.getMemberDetail();
+
+    }
 }

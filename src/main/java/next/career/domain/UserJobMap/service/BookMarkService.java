@@ -34,7 +34,7 @@ public class BookMarkService {
             throw new MemberJobMapException(MemberJobMapErrorType.BOOKMARK_REGISTER_INTERNAL_ERROR);
         }
 
-        return repository.findByUserId(memberId);
+        return repository.findByMemberId(memberId);
     }
 
     /**
@@ -54,6 +54,6 @@ public class BookMarkService {
                     }
                 });
 
-        return repository.findByUserId(memberId);
+        return repository.findByMemberId(memberId);
     }
 }

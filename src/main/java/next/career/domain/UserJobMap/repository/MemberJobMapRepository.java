@@ -9,10 +9,10 @@ import java.util.Optional;
 
 public interface MemberJobMapRepository extends JpaRepository<MemberJobMap, Long> {
 
-    List<MemberJobMap> findByUserId(Long userId);
+    List<MemberJobMap> findByMemberId(Long memberId);
 
     Optional<MemberJobMap> findByMemberIdAndJobId(Long memberId, Long jobId);
 
-    @Query("select s.jobId from MemberJobMap s where s.memberId = :userId")
+    @Query("select s.jobId from MemberJobMap s where s.memberId = :memberId")
     List<Long> findJobIdsByUserId(Long userId);
 }

@@ -1,5 +1,6 @@
 package next.career.domain.UserJobMap.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import next.career.domain.UserJobMap.entity.MemberJobMap;
@@ -20,12 +21,14 @@ public class BookMarkController {
     private final BookMarkService bookMarkService;
 
     @PostMapping
+    @Operation(summary = "북마크 등록", description = "마음에 드는 공고에 대해서 북마크를 등록합니다.")
     public ApiResponse<List<MemberJobMap>> bookmarkJob(@AuthenticationPrincipal AuthDetails authDetails,
                                                        @RequestParam Long jobId) {
         return ApiResponse.success(bookMarkService.register(authDetails.getMemberId(), jobId));
     }
 
     @DeleteMapping
+    @Operation(summary = "북마크 취소", description = "마음에 들지 않는 공고에 대해서 북마크를 취소합니다.")
     public ApiResponse<List<MemberJobMap>> cancelBookmark(@AuthenticationPrincipal AuthDetails authDetails,
                                                           @RequestParam Long jobId) {
         return ApiResponse.success(bookMarkService.unregister(authDetails.getMemberId(), jobId));

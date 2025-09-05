@@ -5,11 +5,12 @@ import next.career.domain.UserJobMap.repository.MemberJobMapRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class BookMarkFinderImpl implements BookMarkFinder {
+public class BookMarkQueryService implements BookMarkFinder {
 
     private final MemberJobMapRepository memberJobMapRepository;
 

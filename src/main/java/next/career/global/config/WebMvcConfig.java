@@ -23,7 +23,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         devOrigin, prodOrigin,
                         "http://localhost:3000",
                         "http://127.0.0.1:3000",
-                        "https://api.ilhaeng.cloud"
+                        "https://api.ilhaeng.cloud",
+                        "https://www.next-career.co.kr"
                 )
                 .allowedMethods("GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .allowedHeaders("*")

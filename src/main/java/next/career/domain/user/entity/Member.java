@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import next.career.domain.roadmap.entity.RoadMap;
 import next.career.domain.user.dto.request.MemberProfileUpdateRequest;
 import next.career.domain.user.enumerate.Gender;
 import next.career.domain.user.enumerate.MemberType;
@@ -12,6 +13,8 @@ import next.career.global.BaseTimeEntity;
 import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -59,9 +62,12 @@ public class Member extends BaseTimeEntity {
     @Column(length = 64)   // 공급자 고유키
     private String providerId;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "member_detail_id")
     private MemberDetail memberDetail;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RoadMap> roadMapList = new ArrayList<>();
 
     @Builder
     public Member(String email, String phoneNumber, MemberType memberType, Credential credential) {

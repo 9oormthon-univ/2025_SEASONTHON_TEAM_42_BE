@@ -1,5 +1,6 @@
 package next.career.domain.openai.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +23,7 @@ public class AiChatDto {
     @AllArgsConstructor
     @Getter
     @Builder
-    public static class MemberDetailResponse{
+    public static class HistoryResponse{
 
         private String experience;
 
@@ -42,8 +43,8 @@ public class AiChatDto {
 
         private String educationAndCareerGoal;
 
-        public static MemberDetailResponse of(MemberDetail memberDetail) {
-            return MemberDetailResponse.builder()
+        public static HistoryResponse of(MemberDetail memberDetail) {
+            return HistoryResponse.builder()
                     .experience(memberDetail.getExperience())
                     .certificateOrSkill(memberDetail.getCertificateOrSkill())
                     .personalityType(memberDetail.getPersonalityType())

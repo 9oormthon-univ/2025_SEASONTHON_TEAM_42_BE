@@ -112,12 +112,13 @@ public class JobController {
     }
 
     @GetMapping("/chat/history")
-    public ApiResponse<AiChatDto.MemberDetailResponse> getAIChatHistory(
-            @AuthenticationPrincipal AuthDetails authDetails) {
+    @Operation(summary = "AI 채팅 답변 히스토리 조회", description = "사용자가 AI 채팅에서 입력한 답변 히스토리를 조회합니다.")
+    public ApiResponse<AiChatDto.HistoryResponse> getAIChatHistory(
+            @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
         Member member = authDetails.getUser();
 
         MemberDetail memberDetail = jobService.getAiChatHistory(member);
-        AiChatDto.MemberDetailResponse memberDetailResponse = AiChatDto.MemberDetailResponse.of(memberDetail);
+        AiChatDto.HistoryResponse memberDetailResponse = AiChatDto.HistoryResponse.of(memberDetail);
 
         return ApiResponse.success(memberDetailResponse);
     }

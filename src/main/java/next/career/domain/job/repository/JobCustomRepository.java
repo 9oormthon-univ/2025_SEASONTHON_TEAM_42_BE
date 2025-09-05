@@ -41,7 +41,7 @@ public class JobCustomRepository {
                 .fetch();
 
         JPAQuery<Long> countQuery = queryFactory
-                .select(job.id.count())
+                .select(job.jobId.count())
                 .from(job)
                 .where(booleanBuilder);
 

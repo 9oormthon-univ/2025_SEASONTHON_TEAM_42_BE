@@ -12,9 +12,8 @@ public class Job {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // 내부 PK (자동 생성)
+    private Long jobId; // 내부 PK (자동 생성)
 
-    private String jobId;           // 공고 고유 식별자
     private String companyName;     // 기업명
     private String companyLogo;     // 기업 로고 (URL or 이미지 경로)
     private String jobTitle;        // 직무명

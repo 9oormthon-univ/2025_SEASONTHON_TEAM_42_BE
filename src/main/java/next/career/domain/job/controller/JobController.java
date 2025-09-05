@@ -10,6 +10,7 @@ import next.career.domain.job.service.dto.JobDto;
 import next.career.domain.openai.dto.AiChatDto;
 import next.career.domain.openai.dto.RecommendDto;
 import next.career.domain.user.entity.Member;
+import next.career.domain.user.entity.MemberDetail;
 import next.career.global.apiPayload.response.ApiResponse;
 import next.career.global.security.AuthDetails;
 import org.springframework.data.domain.Page;
@@ -108,6 +109,18 @@ public class JobController {
             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
         Member member = authDetails.getUser();
         return ApiResponse.success(jobService.getAIChat(sequence, member));
+    }
+
+    @GetMapping("/chat/history")
+    @Operation(summary = "AI 채팅 답변 히스토리 조회", description = "사용자가 AI 채팅에서 입력한 답변 히스토리를 조회합니다.")
+    public ApiResponse<AiChatDto.HistoryResponse> getAIChatHistory(
+            @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
+        Member member = authDetails.getUser();
+
+        MemberDetail memberDetail = jobService.getAiChatHistory(member);
+        AiChatDto.HistoryResponse memberDetailResponse = AiChatDto.HistoryResponse.of(memberDetail);
+
+        return ApiResponse.success(memberDetailResponse);
     }
 
 

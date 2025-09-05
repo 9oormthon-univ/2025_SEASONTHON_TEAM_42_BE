@@ -14,7 +14,20 @@ public class RecommendDto {
     @Getter
     @Builder
     public static class OccupationResponse{
-        private List<String> occupationList;
+
+        private List<Occupation> occupationList;
+
+        @NoArgsConstructor
+        @AllArgsConstructor
+        @Getter
+        @Builder
+        public static class Occupation{
+            private String imageUrl;
+            private String occupationName;
+            private String description;
+            private String score;
+        }
+
     }
 
     @NoArgsConstructor

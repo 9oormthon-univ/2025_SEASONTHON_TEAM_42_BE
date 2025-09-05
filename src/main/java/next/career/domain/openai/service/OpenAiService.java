@@ -58,30 +58,41 @@ public class OpenAiService {
         try {
             Map res = requestOpenAI(body);
 
-            if (res == null) return RecommendDto.OccupationResponse.builder().occupationList(List.of()).build();
+            if (res == null) {
+                return RecommendDto.OccupationResponse.builder()
+                        .occupationList(List.of())
+                        .build();
+            }
 
             List<Map<String, Object>> choices = (List<Map<String, Object>>) res.get("choices");
-            if (choices == null || choices.isEmpty())
-                return RecommendDto.OccupationResponse.builder().occupationList(List.of()).build();
+            if (choices == null || choices.isEmpty()) {
+                return RecommendDto.OccupationResponse.builder()
+                        .occupationList(List.of())
+                        .build();
+            }
 
             String content = getContent(choices);
 
             RecommendDto.OccupationResponse dto =
                     MAPPER.readValue(content, RecommendDto.OccupationResponse.class);
 
-            List<String> list = Optional.ofNullable(dto.getOccupationList()).orElseGet(List::of)
-                    .stream()
-                    .filter(Objects::nonNull)
-                    .map(String::trim)
-                    .filter(s -> !s.isEmpty())
-                    .distinct()
-                    .limit(3)
-                    .toList();
+            // Occupation 객체 리스트 필터링 (null 제거, 최대 3개 제한)
+            List<RecommendDto.OccupationResponse.Occupation> list =
+                    Optional.ofNullable(dto.getOccupationList()).orElseGet(List::of)
+                            .stream()
+                            .filter(Objects::nonNull)
+                            .distinct()
+                            .limit(3)
+                            .toList();
 
-            return RecommendDto.OccupationResponse.builder().occupationList(list).build();
+            return RecommendDto.OccupationResponse.builder()
+                    .occupationList(list)
+                    .build();
+
         } catch (Exception e) {
             throw new CoreException(GlobalErrorType.GET_RECOMMEND_OCCUPATION_ERROR);
         }
+
     }
 
     public RecommendDto.RoadMapResponse getRecommendRoadMap(GetRoadMapDto.Request roadmapRequest, Member member) {

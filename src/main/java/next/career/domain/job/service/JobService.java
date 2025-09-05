@@ -1,6 +1,7 @@
 package next.career.domain.job.service;
 
 import lombok.RequiredArgsConstructor;
+import next.career.domain.UserJobMap.repository.MemberJobMapRepository;
 import next.career.domain.UserJobMap.service.BookMarkFinder;
 import next.career.domain.job.controller.dto.GetJobDto;
 import next.career.domain.job.controller.dto.GetRoadMapDto;
@@ -43,15 +44,21 @@ public class JobService {
     private final BookMarkFinder bookMarkFinder;
     private final RoadMapRepository roadMapRepository;
     private final RoadmapActionRepository roadmapActionRepository;
+    private final MemberJobMapRepository memberJobMapRepository;
 
     public Page<JobDto.AllResponse> getAllJob(GetJobDto.SearchRequest request, Member member, Pageable pageable) {
 
         return jobCustomRepository.findAll(request, pageable)
                 .map(job -> JobDto.AllResponse.of(
                         job,
-                        getRecommendScore(job, member),
-                        getIsScrap(job, member)
+                        getIsBookmark(job, member)
                 ));
+    }
+
+    public Page<JobDto.AllResponse> getAllJobAnonymous(GetJobDto.SearchRequest request, Pageable pageable) {
+
+        return jobCustomRepository.findAll(request, pageable)
+                .map(JobDto.AllResponse::ofAnonymous);
     }
 
     public Page<JobDto.AllResponse> getBookMarkedJobs(GetJobDto.SearchRequest request, Member member, Pageable pageable) {
@@ -60,8 +67,7 @@ public class JobService {
         return jobCustomRepository.getBookMarkedJobs(request, bookMarkedJobIds, pageable)
                 .map(job -> JobDto.AllResponse.of(
                         job,
-                        getRecommendScore(job, member),
-                        getIsScrap(job, member)
+                        getIsBookmark(job, member)
                 ));
     }
 
@@ -69,20 +75,16 @@ public class JobService {
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new CoreException(GlobalErrorType.JOB_NOT_FOUND_ERROR));
 
-        Integer recommendScore = getRecommendScore(job, member);
-        Boolean isScrap = getIsScrap(job, member);
+        Boolean isScrap = getIsBookmark(job, member);
 
-        return JobDto.Response.of(job, recommendScore, isScrap);
+        return JobDto.Response.of(job, isScrap);
 
     }
 
-    private Boolean getIsScrap(Job job, Member member) {
-        return null;
+    private Boolean getIsBookmark(Job job, Member member) {
+        return memberJobMapRepository.existsByMemberIdAndJobId(member.getId(), job.getJobId());
     }
 
-    private Integer getRecommendScore(Job job, Member member) {
-        return null;
-    }
 
     public RecommendDto.OccupationResponse recommendOccupation(Member member) {
         return openAiService.getRecommendOccupation(member);
@@ -98,7 +100,7 @@ public class JobService {
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new CoreException(GlobalErrorType.JOB_NOT_FOUND_ERROR));
 
-        recommendJob.isScrap(getIsScrap(job, member));
+        recommendJob.isBookmark(getIsBookmark(job, member));
         return recommendJob;
     }
 

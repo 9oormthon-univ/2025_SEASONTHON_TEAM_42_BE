@@ -115,7 +115,7 @@ public class PineconeService {
                 .jobRecommendScore(String.valueOf(bestMatch.get("score")))
                 .closingDate((String) metadata.get("closingDate"))
                 .workLocation((String) metadata.get("workLocation"))
-                .isScrap(false)
+                .isBookmark(false)
                 .build();
     }
 

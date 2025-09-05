@@ -60,7 +60,8 @@ public class SecurityConfig {
                 authorize
                         .requestMatchers(
                                 "/",
-                                "/index.html"
+                                "/index.html",
+                                "/job/all/anonymous"
                         ).permitAll()
                         .requestMatchers(
                                 "/v1/api-docs/**",

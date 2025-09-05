@@ -94,7 +94,7 @@ public class JobService {
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new CoreException(GlobalErrorType.JOB_NOT_FOUND_ERROR));
 
-        recommendJob.isScrap(getIsBookmark(job, member));
+        recommendJob.isBookmark(getIsBookmark(job, member));
         return recommendJob;
     }
 

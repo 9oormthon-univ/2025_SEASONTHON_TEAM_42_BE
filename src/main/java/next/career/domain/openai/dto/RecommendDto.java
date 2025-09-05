@@ -96,10 +96,10 @@ public class RecommendDto {
         private String jobRecommendScore;
         private String closingDate;
         private String workLocation;
-        private Boolean isScrap;
+        private Boolean isBookmark;
 
-        public void isScrap(Boolean isScrap) {
-            this.isScrap = isScrap;
+        public void isBookmark(Boolean isBookmark) {
+            this.isBookmark = isBookmark;
         }
     }
 }

@@ -60,7 +60,7 @@ public class JobController {
             @ParameterObject GetJobDto.SearchRequest searchRequest,
             @Parameter(hidden = true) Pageable pageable,
             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
-        Page<JobDto.AllResponse> jobDtoList = jobService.getAllJob(searchRequest, authDetails.getUser(), pageable);
+        Page<JobDto.AllResponse> jobDtoList = jobService.getBookMarkedJobs(searchRequest, authDetails.getUser(), pageable);
         return ApiResponse.success(GetJobDto.SearchAllResponse.of(jobDtoList));
     }
 

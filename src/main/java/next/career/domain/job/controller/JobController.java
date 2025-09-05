@@ -93,15 +93,22 @@ public class JobController {
     }
 
     // 맞춤형 로드맵 추천
-    @GetMapping("/recommend/roadmap")
+    @PostMapping("/recommend/roadmap")
     @Operation(summary = "맞춤형 로드맵 추천", description = "사용자의 이력 및 관심 직무를 기반으로 커리어 로드맵을 추천합니다.")
     public ApiResponse<RecommendDto.RoadMapResponse> recommendRoadMap(
-            GetRoadMapDto.Request roadmapRequest,
+            @RequestBody GetRoadMapDto.Request roadmapRequest,
             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
         Member member = authDetails.getUser();
 
         return ApiResponse.success(jobService.recommendRoadMap(roadmapRequest, member));
     }
+
+//    @GetMapping("/recommend/roadmap")
+//    public ApiResponse<RecommendDto.RoadMapResponse> getRoadMap(
+//            @AuthenticationPrincipal AuthDetails authDetails){
+//
+//        jobService.getRoadMap();
+//    }
 
     // AI 채팅 답변 저장
     @PostMapping("/chat/{sequence}")
@@ -112,6 +119,7 @@ public class JobController {
             @Parameter(description = "사용자가 입력한 답변", example = "꼼꼼함 / 친절함 - 이런식으로 단어를 구분할 수 있도록 하는 게 좋습니다('띄어쓰기', ',', '/'))")
             @RequestParam String answer,
             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
+
         Member member = authDetails.getUser();
         jobService.answerAIChat(sequence, answer, member);
         return ApiResponse.success();

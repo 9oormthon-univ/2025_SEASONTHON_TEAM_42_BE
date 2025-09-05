@@ -99,6 +99,7 @@ public class JobService {
     public RecommendDto.RoadMapResponse recommendRoadMap(GetRoadMapDto.Request roadmapRequest, Member member) {
         return openAiService.getRecommendRoadMap(roadmapRequest, member);
 
+
     }
 
     @Transactional
@@ -124,6 +125,7 @@ public class JobService {
             case 9 -> memberDetail.updateEducationAndCareerGoal(answer);
             default -> throw new CoreException(GlobalErrorType.MEMBER_DETAIL_SEQUENCE_NOT_FOUND);
         }
+        memberDetailRepository.save(memberDetail);
     }
 
 
@@ -137,4 +139,8 @@ public class JobService {
         return member.getMemberDetail();
 
     }
+
+//    public void getRoadMap(Member member) {
+//        member.getRoadMap();
+//    }
 }

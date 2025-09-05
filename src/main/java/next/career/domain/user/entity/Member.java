@@ -59,7 +59,7 @@ public class Member extends BaseTimeEntity {
     @Column(length = 64)   // 공급자 고유키
     private String providerId;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "member_detail_id")
     private MemberDetail memberDetail;
 

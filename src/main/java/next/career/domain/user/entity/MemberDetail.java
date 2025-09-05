@@ -20,7 +20,7 @@ public class MemberDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userDetailId;
 
-    @OneToOne(mappedBy = "memberDetail", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "memberDetail", fetch = FetchType.EAGER)
     private Member member;
 
     private String experience;

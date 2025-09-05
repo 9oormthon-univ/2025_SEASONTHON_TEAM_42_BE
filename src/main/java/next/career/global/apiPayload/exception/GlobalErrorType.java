@@ -38,7 +38,8 @@ public enum GlobalErrorType implements ErrorType {
     MEMBER_DETAIL_SEQUENCE_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "AI 채팅에 해당 순서의 질문이 없습니다"),
 
     // RoadMap
-    ROAD_MAP_ACTION_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "로드맵 할 일이 존재하지 않습니다")
+    ROAD_MAP_ACTION_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "로드맵 할 일이 존재하지 않습니다"),
+    ROAD_MAP_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "로드이 존재하지 않습니다"),
 
     ;
 

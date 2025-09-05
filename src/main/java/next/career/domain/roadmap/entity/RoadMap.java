@@ -32,4 +32,10 @@ public class RoadMap {
     @OneToMany(mappedBy = "roadMap", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RoadMapAction> actionList = new ArrayList<>();
 
+    public void updateCompleted() {
+        boolean allCompleted = !actionList.isEmpty() &&
+                actionList.stream().allMatch(RoadMapAction::getIsCompleted);
+
+        this.isCompleted = allCompleted;
+    }
 }

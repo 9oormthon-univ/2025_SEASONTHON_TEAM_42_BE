@@ -43,6 +43,15 @@ public class JobController {
         return ApiResponse.success(GetJobDto.SearchAllResponse.of(jobDtoList));
     }
 
+    @GetMapping("/all/anonymous")
+    @Operation(summary = "전체 채용 조회", description = "검색 조건과 페이징을 통해 전체 채용 공고 목록을 조회합니다.")
+    public ApiResponse<GetJobDto.SearchAllResponse> getAllJobAnonymous(
+            @ParameterObject GetJobDto.SearchRequest searchRequest,
+            @Parameter(hidden = true) Pageable pageable) {
+        Page<JobDto.AllResponse> jobDtoList = jobService.getAllJobAnonymous(searchRequest, pageable);
+        return ApiResponse.success(GetJobDto.SearchAllResponse.of(jobDtoList));
+    }
+
     // 단건 채용 조회
     @GetMapping("/{jobId}")
     @Operation(summary = "단건 채용 조회", description = "채용 공고 ID로 단일 채용 공고를 조회합니다.")

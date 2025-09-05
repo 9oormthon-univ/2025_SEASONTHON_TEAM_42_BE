@@ -30,9 +30,9 @@ public class JobDto {
         private String closingDate;  // 공고 마감일
         private String applyLink;       // 지원 링크
         private String imageUrl;
-        private Boolean isScrap; // 스크랩 했는지
+        private Boolean isBookmark; // 북마크
 
-        public static AllResponse of(Job job, Boolean isScrap) {
+        public static AllResponse of(Job job, Boolean isBookmark) {
             return AllResponse.builder()
                     .jobId(job.getJobId())
                     .companyName(job.getCompanyName())
@@ -50,7 +50,28 @@ public class JobDto {
                     .closingDate(job.getClosingDate() != null ? job.getClosingDate().toString() : null)
                     .applyLink(job.getApplyLink())
                     .imageUrl(job.getImageUrl())
-                    .isScrap(isScrap)
+                    .isBookmark(isBookmark)
+                    .build();
+        }
+
+        public static AllResponse ofAnonymous(Job job) {
+            return AllResponse.builder()
+                    .jobId(job.getJobId())
+                    .companyName(job.getCompanyName())
+                    .companyLogo(job.getCompanyLogo())
+                    .jobTitle(job.getJobTitle())
+                    .jobCategory(job.getJobCategory())
+                    .workLocation(job.getWorkLocation())
+                    .employmentType(job.getEmploymentType())
+                    .salary(job.getSalary())
+                    .workPeriod(job.getWorkPeriod())
+                    .experience(job.getExperience())
+                    .requiredSkills(job.getRequiredSkills())
+                    .preferredSkills(job.getPreferredSkills())
+                    .postingDate(job.getPostingDate() != null ? job.getPostingDate().toString() : null)
+                    .closingDate(job.getClosingDate() != null ? job.getClosingDate().toString() : null)
+                    .applyLink(job.getApplyLink())
+                    .imageUrl(job.getImageUrl())
                     .build();
         }
     }

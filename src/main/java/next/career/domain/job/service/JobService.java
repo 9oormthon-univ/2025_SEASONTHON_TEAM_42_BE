@@ -55,6 +55,12 @@ public class JobService {
                 ));
     }
 
+    public Page<JobDto.AllResponse> getAllJobAnonymous(GetJobDto.SearchRequest request, Pageable pageable) {
+
+        return jobCustomRepository.findAll(request, pageable)
+                .map(JobDto.AllResponse::ofAnonymous);
+    }
+
     public Page<JobDto.AllResponse> getBookMarkedJobs(GetJobDto.SearchRequest request, Member member, Pageable pageable) {
         List<Long> bookMarkedJobIds = bookMarkFinder.findBookMarkedJobs(member.getId());
 

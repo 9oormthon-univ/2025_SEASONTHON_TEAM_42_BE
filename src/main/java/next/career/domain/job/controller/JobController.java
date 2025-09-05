@@ -20,6 +20,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -57,12 +58,15 @@ public class JobController {
     public ApiResponse<JobDto.RecommendJob> recommendOccupation(
             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
         Member member = authDetails.getUser();
-        List<String> occupationList = jobService.recommendOccupation(member).getOccupationList();
+
+        RecommendDto.OccupationResponse occupationResponse = jobService.recommendOccupation(member);
+        List<RecommendDto.OccupationResponse.Occupation> occupationList =
+                Optional.ofNullable(occupationResponse.getOccupationList()).orElse(List.of());
 
         JobDto.RecommendJob recommendJob = JobDto.RecommendJob.builder()
-                .first(!occupationList.isEmpty() ? occupationList.get(0) : null)
-                .second(occupationList.size() > 1 ? occupationList.get(1) : null)
-                .third(occupationList.size() > 2 ? occupationList.get(2) : null)
+                .first(!occupationList.isEmpty() ? JobDto.RecommendJob.Occupation.of(occupationList.get(0)) : null)
+                .second(occupationList.size() > 1 ? JobDto.RecommendJob.Occupation.of(occupationList.get(1)) : null)
+                .third(occupationList.size() > 2 ? JobDto.RecommendJob.Occupation.of(occupationList.get(2)) : null)
                 .build();
 
         return ApiResponse.success(recommendJob);

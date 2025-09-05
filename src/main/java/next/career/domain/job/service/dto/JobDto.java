@@ -2,6 +2,7 @@ package next.career.domain.job.service.dto;
 
 import lombok.*;
 import next.career.domain.job.entity.Job;
+import next.career.domain.openai.dto.RecommendDto;
 
 import java.time.LocalDate;
 
@@ -93,9 +94,29 @@ public class JobDto {
     @NoArgsConstructor
     @Getter
     @Builder
-    public static class RecommendJob{
-        private String first;
-        private String second;
-        private String third;
+    public static class RecommendJob {
+        private Occupation first;
+        private Occupation second;
+        private Occupation third;
+
+        @AllArgsConstructor
+        @NoArgsConstructor
+        @Getter
+        @Builder
+        public static class Occupation {
+            private String imageUrl;
+            private String occupationName;
+            private String description;
+            private String score;
+
+            public static Occupation of(RecommendDto.OccupationResponse.Occupation o) {
+                return Occupation.builder()
+                        .imageUrl(o.getImageUrl())
+                        .occupationName(o.getOccupationName())
+                        .description(o.getDescription())
+                        .score(o.getScore())
+                        .build();
+            }
+        }
     }
 }

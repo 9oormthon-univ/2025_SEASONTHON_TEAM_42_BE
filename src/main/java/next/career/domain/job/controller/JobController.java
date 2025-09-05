@@ -121,11 +121,11 @@ public class JobController {
     @PostMapping("/roadmap/{roadMapId}/{roadMapActionId}")
     @Operation(
             summary = "로드맵 액션 완료/미완료 토글",
-            description = "특정 로드맵 액션을 완료/미완료 상태로 토글합니다."
+            description = "특정 로드맵 내의 액션을 완료/미완료 상태로 토글합니다."
     )
     public ApiResponse<?> checkRoadMapAction(
+            @Parameter(description = "로드맵 ID") @PathVariable Long roadMapId,
             @Parameter(description = "로드맵 액션 ID") @PathVariable Long roadMapActionId,
-            @PathVariable Long roadMapId,
             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails
     ) {
         Member member = authDetails.getUser();

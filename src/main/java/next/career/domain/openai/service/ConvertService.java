@@ -1,12 +1,29 @@
 package next.career.domain.openai.service;
 
 import lombok.RequiredArgsConstructor;
+import next.career.domain.job.controller.dto.GetRoadMapDto;
 import next.career.domain.user.entity.MemberDetail;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class ConvertService {
+
+    public String convertRoadmapRequestToText(GetRoadMapDto.Request roadmapRequest) {
+        StringBuilder sb = new StringBuilder();
+
+        if (roadmapRequest.getCareer() != null && !roadmapRequest.getCareer().isBlank()) {
+            sb.append("희망 직업: ").append(roadmapRequest.getCareer()).append("\n");
+        }
+        if (roadmapRequest.getExperience() != null && !roadmapRequest.getExperience().isBlank()) {
+            sb.append("경력/경험/자격증: ").append(roadmapRequest.getExperience()).append("\n");
+        }
+        if (roadmapRequest.getPeriod() != null && !roadmapRequest.getPeriod().isBlank()) {
+            sb.append("취업 목표 기간: ").append(roadmapRequest.getPeriod()).append("\n");
+        }
+
+        return sb.toString().trim();
+    }
 
     public String convertMemberDetailToText(MemberDetail memberDetail) {
         StringBuilder sb = new StringBuilder();

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import next.career.domain.embedding.service.EmbeddingService;
+import next.career.domain.job.controller.dto.GetRoadMapDto;
 import next.career.domain.openai.dto.AiChatDto;
 import next.career.domain.openai.dto.RecommendDto;
 import next.career.domain.openai.entity.Prompt;
@@ -79,7 +80,7 @@ public class OpenAiService {
         }
     }
 
-    public RecommendDto.RoadMapResponse getRecommendRoadMap(Member member) {
+    public RecommendDto.RoadMapResponse getRecommendRoadMap(GetRoadMapDto.Request roadmapRequest, Member member) {
         List<Prompt> roadmap = promptRepository.findAllByTag("roadmap");
 
         String system = roadmap.stream()
@@ -89,32 +90,34 @@ public class OpenAiService {
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.joining("\n"));
 
-        Map<String, Object> body = setPrompt(system);
+        String roadmapRequestText = convertService.convertRoadmapRequestToText(roadmapRequest);
+
+        String finalSystemPrompt = system + "\n\n[사용자 요구사항]\n" + roadmapRequestText;
+
+        Map<String, Object> body = setPrompt(finalSystemPrompt);
 
         try {
             Map res = requestOpenAI(body);
 
-            if (res == null) return RecommendDto.RoadMapResponse.builder().roadMapList(List.of()).build();
+            if (res == null) return RecommendDto.RoadMapResponse.builder().steps(List.of()).build();
 
             List<Map<String, Object>> choices = (List<Map<String, Object>>) res.get("choices");
             if (choices == null || choices.isEmpty())
-                return RecommendDto.RoadMapResponse.builder().roadMapList(List.of()).build();
+                return RecommendDto.RoadMapResponse.builder().steps(List.of()).build();
 
             String content = getContent(choices);
 
-            RecommendDto.OccupationResponse dto =
-                    MAPPER.readValue(content, RecommendDto.OccupationResponse.class);
+            RecommendDto.RoadMapResponse dto =
+                    MAPPER.readValue(content, RecommendDto.RoadMapResponse.class);
 
-            List<String> list = Optional.ofNullable(dto.getOccupationList()).orElseGet(List::of)
-                    .stream()
-                    .filter(Objects::nonNull)
-                    .map(String::trim)
-                    .filter(s -> !s.isEmpty())
-                    .distinct()
-                    .limit(3)
-                    .toList();
+            List<RecommendDto.RoadMapResponse.RoadMapStep> steps =
+                    Optional.ofNullable(dto.getSteps()).orElseGet(List::of)
+                            .stream()
+                            .filter(Objects::nonNull)
+                            .toList();
 
-            return RecommendDto.RoadMapResponse.builder().roadMapList(list).build();
+            return RecommendDto.RoadMapResponse.builder().steps(steps).build();
+
         } catch (Exception e) {
             throw new CoreException(GlobalErrorType.GEt_RECOMMEND_ROADMAP_ERROR);
         }

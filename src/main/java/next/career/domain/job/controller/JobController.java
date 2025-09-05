@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import next.career.domain.job.controller.dto.GetJobDto;
+import next.career.domain.job.controller.dto.GetRoadMapDto;
 import next.career.domain.job.service.JobService;
 import next.career.domain.job.service.dto.JobDto;
 import next.career.domain.openai.dto.AiChatDto;
@@ -80,9 +81,10 @@ public class JobController {
     @GetMapping("/recommend/roadmap")
     @Operation(summary = "맞춤형 로드맵 추천", description = "사용자의 이력 및 관심 직무를 기반으로 커리어 로드맵을 추천합니다.")
     public ApiResponse<?> recommendRoadMap(
+            GetRoadMapDto.Request roadmapRequest,
             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
         Member member = authDetails.getUser();
-        jobService.recommendRoadMap(member);
+        jobService.recommendRoadMap(roadmapRequest, member);
         return ApiResponse.success();
     }
 

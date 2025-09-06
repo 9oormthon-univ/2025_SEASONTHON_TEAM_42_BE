@@ -8,6 +8,7 @@ import next.career.domain.job.controller.dto.GetRoadMapDto;
 import next.career.domain.job.entity.Job;
 import next.career.domain.job.repository.JobCustomRepository;
 import next.career.domain.job.repository.JobRepository;
+import next.career.domain.job.repository.OccupationRepository;
 import next.career.domain.job.service.dto.JobDto;
 import next.career.domain.openai.dto.AiChatDto;
 import next.career.domain.openai.dto.RecommendDto;
@@ -45,6 +46,7 @@ public class JobService {
     private final RoadmapActionRepository roadmapActionRepository;
     private final MemberJobMapRepository memberJobMapRepository;
     private final RoadmapInputRepository roadmapInputRepository;
+    private final OccupationRepository occupationRepository;
 
     public Page<JobDto.AllResponse> getAllJob(GetJobDto.SearchRequest request, Member member, Pageable pageable) {
 
@@ -87,8 +89,29 @@ public class JobService {
 
 
     public RecommendDto.OccupationResponse recommendOccupation(Member member) {
-        return openAiService.getRecommendOccupation(member);
+        RecommendDto.OccupationResponse recommendOccupation = openAiService.getRecommendOccupation(member);
+        List<RecommendDto.OccupationResponse.Occupation> occupationList = recommendOccupation.getOccupationList();
+
+        List<RecommendDto.OccupationResponse.Occupation> updatedList = occupationList.stream()
+                .map(occ -> {
+                    String occupationImageUrl = occupationRepository.findImageUrlByOccupationName(occ.getOccupationName());
+                    return RecommendDto.OccupationResponse.Occupation.builder()
+                            .occupationName(occ.getOccupationName())
+                            .description(occ.getDescription())
+                            .strength(occ.getStrength())
+                            .workCondition(occ.getWorkCondition())
+                            .wish(occ.getWish())
+                            .score(occ.getScore())
+                            .imageUrl(occupationImageUrl)
+                            .build();
+                })
+                .toList();
+
+        return RecommendDto.OccupationResponse.builder()
+                .occupationList(updatedList)
+                .build();
     }
+
 
     @Transactional
     public Page<JobDto.AllResponse> recommendJob(Member member, Pageable pageable) {

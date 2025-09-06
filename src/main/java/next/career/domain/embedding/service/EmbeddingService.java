@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import next.career.domain.job.entity.Job;
 import next.career.domain.job.repository.JobRepository;
 import next.career.domain.user.entity.Member;
+import next.career.domain.user.entity.MemberDetail;
 import next.career.domain.user.repository.MemberRepository;
 import next.career.global.apiPayload.exception.CoreException;
 import next.career.global.apiPayload.exception.GlobalErrorType;
@@ -69,10 +70,35 @@ public class EmbeddingService {
     }
 
     private String toEmbeddingMemberText(Member member) {
+        MemberDetail memberDetail = member.getMemberDetail();
         return """
-            나이: %s
-            """.formatted(
-                calculateAge(member.getBirthDate())
+        이름: %s
+        나이: %s
+        성별: %s
+        주소: %s
+        경력: %s
+        자격증/기술: %s
+        성격 유형: %s
+        관심사: %s
+        선호 근무 스타일: %s
+        피하고 싶은 조건: %s
+        가능 근무 시간: %s
+        신체 조건: %s
+        교육 및 커리어 목표: %s
+        """.formatted(
+                member.getName(),
+                calculateAge(member.getBirthDate()),
+                member.getGender() != null ? member.getGender().name() : "",
+                member.getAddress() != null ? member.getAddress().toString() : "",
+                memberDetail != null ? memberDetail.getExperience() : "",
+                memberDetail != null ? memberDetail.getCertificateOrSkill() : "",
+                memberDetail != null ? memberDetail.getPersonalityType() : "",
+                memberDetail != null ? memberDetail.getInterests() : "",
+                memberDetail != null ? memberDetail.getPreferredWorkStyles() : "",
+                memberDetail != null ? memberDetail.getAvoidConditions() : "",
+                memberDetail != null ? memberDetail.getAvailableWorkingTime() : "",
+                memberDetail != null ? memberDetail.getPhysicalCondition() : "",
+                memberDetail != null ? memberDetail.getEducationAndCareerGoal() : ""
         );
     }
 

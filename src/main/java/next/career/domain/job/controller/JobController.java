@@ -180,5 +180,4 @@ public class JobController {
         return ApiResponse.success(memberDetailResponse);
     }
 
-
 }

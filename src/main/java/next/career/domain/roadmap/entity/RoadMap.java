@@ -30,6 +30,7 @@ public class RoadMap {
     private Boolean isCompleted;
 
     @OneToMany(mappedBy = "roadMap", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<RoadMapAction> actionList = new ArrayList<>();
 
     public void updateCompleted() {

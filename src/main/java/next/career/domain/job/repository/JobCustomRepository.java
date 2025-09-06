@@ -81,4 +81,29 @@ public class JobCustomRepository {
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
+
+    public Page<Job> getRecommendJobs(List<Long> recommendJobIds, Pageable pageable) {
+        QJob job = QJob.job;
+
+        if (recommendJobIds == null || recommendJobIds.isEmpty()) {
+            return Page.empty(pageable);
+        }
+
+        BooleanBuilder where = new BooleanBuilder();
+        where.and(job.jobId.in(recommendJobIds));
+
+        List<Job> content = queryFactory
+                .selectFrom(job)
+                .where(where)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        JPAQuery<Long> countQuery = queryFactory
+                .select(job.jobId.count())
+                .from(job)
+                .where(where);
+
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    }
 }

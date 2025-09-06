@@ -96,10 +96,12 @@ public class JobController {
     // 맞춤형 일자리 추천
     @GetMapping("/recommend/job")
     @Operation(summary = "맞춤형 일자리 추천", description = "사용자의 정보를 기반으로 맞춤형 일자리를 추천합니다.")
-    public ApiResponse<RecommendDto.JobResponse> recommendJob(
-            @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
+    public ApiResponse<GetJobDto.SearchAllResponse> recommendJob(
+            @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails,
+            @Parameter(hidden = true) Pageable pageable) {
         Member member = authDetails.getUser();
-        return ApiResponse.success(jobService.recommendJob(member));
+        Page<JobDto.AllResponse> jobDtoList = jobService.recommendJob(member, pageable);
+        return ApiResponse.success(GetJobDto.SearchAllResponse.of(jobDtoList));
     }
 
     // 맞춤형 로드맵 추천

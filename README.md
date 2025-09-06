@@ -1,49 +1,134 @@
-# 🚀 Next Career Server
+# Next Career Server
+시즌톤 42팀 넥스트-커리어 백엔드 레포지토리
+![1](https://github.com/user-attachments/assets/b8bfca4f-25d5-472b-9615-89f74ef7d35c)
 
-[![Java](https://img.shields.io/badge/Java-21-ED8B00?style=flat-square&logo=openjdk&logoColor=white)](https://openjdk.java.net/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.13-6DB33F?style=flat-square&logo=spring&logoColor=white)](https://spring.io/projects/spring-boot)
+<br></br>
 
-> **Next Career 서비스 백엔드 API 서버**
+## 👬 Member
+|      정성호     |                                        오원택                                         |                                                                                                   
+| :------------------------------------------------------------------------------: |:----------------------------------------------------------------------------------:| 
+|   <img src="https://avatars.githubusercontent.com/SeongHo5356?v=4" width=90px alt="정성호"/>       | <img src="https://avatars.githubusercontent.com/51taek?v=4" width=90px alt="오원택"/> |
+|   [@SeongHo5356](https://github.com/SeongHo5356)   |                        [@51taek](https://github.com/51taek)                        | 
 
-## 🎯 프로젝트 소개
+<br></br>
 
-Spring Boot로 만든 REST API 서버입니다.
+## 📝 Technology Stack
+| Category             | Technology                          |
+|----------------------|-------------------------------------|
+| **Language**         | Java 21                             |
+| **Framework**        | Spring Boot 3.4.9                   |
+| **Databases**        | MySQL, Redis                        |
+| **Authentication**   | JWT, Spring Security, OAuth2.0      |
+| **Development Tools**| Lombok                              |
+| **API Documentation**| Swagger UI (SpringDoc)              |
+| **Storage**          | Naver Object Storage                |
+| **Infrastructure**   | Terraform, NCP Server, ArgoCD, k3s  |
+| **Build Tools**      | Gradle                              |
 
-## 👥 팀 작업 방식
+<br></br>
 
-> **Issue 기반 개발 워크플로우**를 따릅니다. 모든 작업은 Issue에서 시작하여 PR로 완료됩니다.
+## API 명세서
+https://api.ilhaeng.cloud/swagger-ui/index.html
 
-### 🌳 브랜치 사용법
-```bash
-main       # 배포용
-  ├── dev  # 개발 메인 (앱스토어 배포 전까지 사용 X)
-  ├── feat/#이슈번호-기능명  # 새 기능 개발
-  └── fix/#이슈번호-버그명   # 버그 수정
-  └── ...
+<br></br>
+
+## 🔨 Project Architecture
+![KakaoTalk_Photo_2025-09-07-07-37-44.png](../../../../../Downloads/KakaoTalk_Photo_2025-09-07-07-37-44.png)
+<br></br>
+
+## ⭐️ 기술스택/선정이유
+### 1️⃣ Java 21
+
+- Java 21은 최신 언어 기능(예: 패턴 매칭, 레코드, 가상 스레드 등)을 제공하여 코드의 가독성과 유지보수성을 높이며, 개발 생산성을 향상시킵니다.
+- 최신 버전의 자바는 성능 최적화와 효율적인 메모리 관리 기능이 개선되어, 대규모 애플리케이션에서도 안정적이고 빠른 실행이 가능합니다.
+- 장기 지원 버전이므로, 앞으로의 유지보수와 안정성 측면에서 신뢰할 수 있는 기반을 제공합니다.
+
+### 2️⃣ SpringBoot 3.4.9
+
+- 최신 버전의 Spring Boot는 스프링 프레임워크 및 관련 라이브러리와의 호환성이 뛰어나며, 보안 패치와 최신 기능들이 반영되어 있습니다.
+- 자동 설정 기능과 다양한 내장 기능 덕분에 복잡한 설정 없이도 빠르게 애플리케이션을 개발할 수 있으며, 마이크로서비스 아키텍처 구축에 유리합니다.
+- RESTful API, 데이터 액세스, 보안 등의 기능이 통합되어 있어 개발자가 비즈니스 로직에 집중할 수 있는 환경을 제공합니다.
+
+### 3️⃣ SpringData JPA
+
+- Spring Data JPA는 데이터베이스와의 인터랙션을 단순화하고, 불필요한 보일러플레이트 코드를 줄여 개발 효율성을 높여줍니다.
+
+### 4️⃣ MySQL
+
+- 안정적이고 널리 사용되는 관계형 데이터베이스로 운영 경험과 자료가 풍부합니다.
+- 다양한 기능(트랜잭션, 인덱스, JSON 지원 등)으로 웹 서비스 개발에 적합합니다.
+
+### 5️⃣ NCP(CLOVA studio, Server, Object Storage)
+
+- NCP(네이버 클라우드 플랫폼)는 CLOVA Studio 및 서버 인프라 호스팅에 활용되어, 안정적이고 안전한 클라우드 환경을 제공함으로써 프로젝트의 운영 효율성을 높입니다.
+
+### 6️⃣️ Terraform
+
+- 인프라를 코드로 관리할 수 있게 해 주어, 반복 가능하고 일관된 인프라 구축 및 유지보수가 가능합니다.
+
+### 🔟 K3
+
+- 쿠버네티스 기능을 그대로 유지하면서도 가볍게 설치·운영할 수 있습니다.
+- 리소스가 제한된 환경(소규모 서버, 개발용)에 적합합니다.
+- 단일 바이너리와 간단한 설정으로 관리가 쉬워 빠른 실험과 배포에 유리합니다.
+
+### 7️⃣ ArgoCD
+
+- Git에 선언된 설정을 자동으로 반영해 배포 과정이 단순하고 일관됩니다.
+- 애플리케이션 상태를 실시간으로 확인하고 원하는 시점으로 쉽게 되돌릴 수 있습니다.
+- 
+
+### 8️⃣ PineCone
+
+- 벡터 데이터베이스로 유사한 정보를 빠르게 검색할 수 있습니다.
+- API 기반으로 쉽게 데이터를 넣고 검색할 수 있어 개발 생산성이 높습니다.
+- 추천 시스템이나 검색 서비스에 바로 활용할 수 있습니다.
+
+<br></br>
+
+## 💬 Convention
+
+**commit convention** <br>
+`#이슈번호 conventionType: 구현한 내용` <br><br>
+
+
+**convention Type** <br>
+| convention type | description |
+| --- | --- |
+| `feat` | 새로운 기능 구현 |
+| `chore` | 부수적인 코드 수정 및 기타 변경사항 |
+| `docs` | 문서 추가 및 수정, 삭제 |
+| `fix` | 버그 수정 |
+| `test` | 테스트 코드 추가 및 수정, 삭제 |
+| `refactor` | 코드 리팩토링 |
+
+<br></br>
+
+## 🪵 Branch
+### 
+- `컨벤션명/#이슈번호-작업내용`
+- pull request를 통해 develop branch에 merge 후, branch delete
+- 부득이하게 develop branch에 직접 commit 해야 할 경우, `!hotfix:` 사용
+
+<br></br>
+
+## 📁 Directory
+
+```PlainText
+src/
+├── main/
+│   ├── domain/
+│   │   ├── entity/
+│   │   ├── controller/
+│   │   ├── service/
+│   │   ├── repository/
+│   │   └── dto/
+            ├── request/
+            └── response/
+│   ├── global/
+│   │   ├── apiPayload/
+│   │   ├── config/
+│   │   ├── security/
+		 
 ```
 
-### 📝 브랜치 이름 예시 (Issue 번호 포함)
-```bash
-feat/#12-user-login     # Issue #12: 로그인 기능
-feat/#15-file-upload    # Issue #15: 파일 업로드
-fix/#23-login-bug       # Issue #23: 로그인 버그 수정
-```
-
-### 💬 커밋 메시지 (Issue 번호 포함)
-```bash
-#12 Feat: 로그인 기능을 추가한다.
-#23 Fix: 회원가입 오류를 수정한다.
-#25 Docs: README 업데이트 
-#26 Refactor: 코드 패키지 경로를 변경한다. 
-#27 Chore: 초기 개발 환경을 설정한다. 
-```
-
-## 🔄 개발 흐름 (Issue → Branch → PR)
-
-1. **Issue 생성/확인** → GitHub Issues에서 작업할 이슈 생성 또는 할당받기
-2. **브랜치 생성** → `feat/이슈번호-기능명` 으로 Issue 기반 브랜치 만들기
-3. **코딩** → Issue 요구사항에 맞는 기능 개발
-4. **테스트** → 로컬에서 잘 돌아가는지 확인
-5. **PR 생성** → Pull Request 올리기 (Issue 번호 연결)
-6. **코드 리뷰** → 팀원들이 코드 확인
-7. **머지** → dev 브랜치에 합치기 후 Issue 자동 닫힘 (앱스토어 배포 전까지 main에 바로 반영)

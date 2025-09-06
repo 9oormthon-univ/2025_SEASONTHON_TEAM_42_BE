@@ -1,6 +1,6 @@
 # Next Career Server
 시즌톤 42팀 넥스트-커리어 백엔드 레포지토리
-![1](https://github.com/user-attachments/assets/b8bfca4f-25d5-472b-9615-89f74ef7d35c)
+<img width="1920" height="1080" alt="KakaoTalk_Photo_2025-09-07-07-43-22" src="https://github.com/user-attachments/assets/1985385d-edbc-4cfd-a730-66e3630b49a8" />
 
 <br></br>
 
@@ -33,7 +33,7 @@ https://api.ilhaeng.cloud/swagger-ui/index.html
 <br></br>
 
 ## 🔨 Project Architecture
-![KakaoTalk_Photo_2025-09-07-07-37-44.png](../../../../../Downloads/KakaoTalk_Photo_2025-09-07-07-37-44.png)
+<img width="7440" height="5920" alt="KakaoTalk_Photo_2025-09-07-07-37-44" src="https://github.com/user-attachments/assets/7776f546-0965-454d-8d72-b5ed691fe385" />
 <br></br>
 
 ## ⭐️ 기술스택/선정이유

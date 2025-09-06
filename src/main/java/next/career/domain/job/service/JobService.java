@@ -11,13 +11,13 @@ import next.career.domain.job.repository.JobRepository;
 import next.career.domain.job.service.dto.JobDto;
 import next.career.domain.openai.dto.AiChatDto;
 import next.career.domain.openai.dto.RecommendDto;
-import next.career.domain.openai.repository.PromptRepository;
 import next.career.domain.openai.service.OpenAiService;
-import next.career.domain.pinecone.service.PineconeService;
 import next.career.domain.roadmap.entity.RoadMap;
 import next.career.domain.roadmap.entity.RoadMapAction;
+import next.career.domain.roadmap.entity.RoadmapInput;
 import next.career.domain.roadmap.repository.RoadMapRepository;
 import next.career.domain.roadmap.repository.RoadmapActionRepository;
+import next.career.domain.roadmap.repository.RoadmapInputRepository;
 import next.career.domain.user.entity.Member;
 import next.career.domain.user.entity.MemberDetail;
 import next.career.domain.user.repository.MemberDetailRepository;
@@ -29,7 +29,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -45,6 +44,7 @@ public class JobService {
     private final RoadMapRepository roadMapRepository;
     private final RoadmapActionRepository roadmapActionRepository;
     private final MemberJobMapRepository memberJobMapRepository;
+    private final RoadmapInputRepository roadmapInputRepository;
 
     public Page<JobDto.AllResponse> getAllJob(GetJobDto.SearchRequest request, Member member, Pageable pageable) {
 
@@ -105,6 +105,10 @@ public class JobService {
     public RecommendDto.RoadMapResponse recommendRoadMap(GetRoadMapDto.Request roadmapRequest, Member member) {
         RecommendDto.RoadMapResponse response = openAiService.getRecommendRoadMap(roadmapRequest, member);
 
+        RoadmapInput roadmapInputSave = RoadmapInput.of(roadmapRequest);
+        roadmapInputRepository.save(roadmapInputSave);
+        member.updateRoadmapInput(roadmapInputSave);
+
         for (RecommendDto.RoadMapResponse.RoadMapStep step : response.getSteps()) {
             RoadMap roadMap = RoadMap.builder()
                     .member(member)
@@ -122,7 +126,7 @@ public class JobService {
                 roadMap.getActionList().add(actionEntity);
             });
 
-            roadMapRepository.save(roadMap); // Cascade 때문에 actionList도 함께 저장됨
+            roadMapRepository.save(roadMap);
         }
 
         return response;
@@ -171,7 +175,9 @@ public class JobService {
 
         List<RoadMap> roadMapList = member.getRoadMapList();
 
-        return RecommendDto.RoadMapResponse.of(roadMapList);
+        RoadmapInput roadmapInput = member.getRoadmapInput();
+
+        return RecommendDto.RoadMapResponse.of(roadMapList, roadmapInput);
     }
 
     @Transactional

@@ -5,7 +5,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import next.career.domain.roadmap.entity.RoadMap;
+import next.career.domain.roadmap.entity.RoadmapInput;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class RecommendDto {
@@ -26,6 +29,9 @@ public class RecommendDto {
             private String imageUrl;
             private String occupationName;
             private String description;
+            private String strength;
+            private String workCondition;
+            private String wish;
             private String score;
         }
 
@@ -37,7 +43,31 @@ public class RecommendDto {
     @Builder
     public static class RoadMapResponse {
 
+        private RoadmapInputResponse roadmapInputResponse;
         private List<RoadMapStep> steps;
+
+        @NoArgsConstructor
+        @AllArgsConstructor
+        @Getter
+        @Builder
+        public static class RoadmapInputResponse {
+            private Long dDay;
+            private String career;
+            private String period;
+            private String experience;
+
+            public static RoadmapInputResponse from(RoadmapInput input) {
+                LocalDate now = LocalDate.now();
+                long dDay = ChronoUnit.DAYS.between(input.getCreatedAt(), now);
+
+                return RoadmapInputResponse.builder()
+                        .dDay(dDay)
+                        .career(input.getCareer())
+                        .period(input.getPeriod())
+                        .experience(input.getExperience())
+                        .build();
+            }
+        }
 
         @NoArgsConstructor
         @AllArgsConstructor
@@ -46,8 +76,8 @@ public class RecommendDto {
         public static class RoadMapStep {
             private String period;
             private String category;
-            private Boolean isCompleted; // 단계 완료 여부
-            private List<ActionDto> actions; // 문자열 대신 객체 리스트
+            private Boolean isCompleted;
+            private List<ActionDto> actions;
         }
 
         @NoArgsConstructor
@@ -59,8 +89,9 @@ public class RecommendDto {
             private Boolean isCompleted;
         }
 
-        public static RoadMapResponse of(List<RoadMap> roadMaps) {
+        public static RoadMapResponse of(List<RoadMap> roadMaps, RoadmapInput roadmapInput) {
             return RoadMapResponse.builder()
+                    .roadmapInputResponse(RoadmapInputResponse.from(roadmapInput))
                     .steps(
                             roadMaps.stream()
                                     .map(roadMap -> RoadMapStep.builder()
@@ -82,8 +113,8 @@ public class RecommendDto {
                     )
                     .build();
         }
-
     }
+
 
     @NoArgsConstructor
     @AllArgsConstructor

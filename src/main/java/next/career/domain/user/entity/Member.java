@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import next.career.domain.roadmap.entity.RoadMap;
+import next.career.domain.roadmap.entity.RoadmapInput;
 import next.career.domain.user.dto.request.MemberProfileUpdateRequest;
 import next.career.domain.user.enumerate.Gender;
 import next.career.domain.user.enumerate.MemberType;
@@ -62,6 +63,10 @@ public class Member extends BaseTimeEntity {
     @Column(length = 64)   // 공급자 고유키
     private String providerId;
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "roadmap_input_id")
+    private RoadmapInput roadmapInput;
+
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "member_detail_id")
     private MemberDetail memberDetail;
@@ -84,6 +89,10 @@ public class Member extends BaseTimeEntity {
         this.address = request.toAddress();
 
         return this;
+    }
+
+    public void updateRoadmapInput(RoadmapInput roadmapInput) {
+        this.roadmapInput = roadmapInput;
     }
 
     public static Member newSocial(String name, String profileImageUrl, String email, String provider, String providerId,

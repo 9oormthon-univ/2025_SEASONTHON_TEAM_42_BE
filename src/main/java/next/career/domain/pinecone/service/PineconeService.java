@@ -12,10 +12,12 @@ import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,23 +45,23 @@ public class PineconeService {
                     List<Float> vector = tuple.getT1();
                     Job job = tuple.getT2();
 
-                    Map<String, Object> metadata = Map.ofEntries(
-                            Map.entry("jobId", job.getJobId()),
-                            Map.entry("companyName", job.getCompanyName()),
-                            Map.entry("companyLogo", job.getCompanyLogo()),
-                            Map.entry("jobTitle", job.getJobTitle()),
-                            Map.entry("jobCategory", job.getJobCategory()),
-                            Map.entry("workLocation", job.getWorkLocation()),
-                            Map.entry("employmentType", job.getEmploymentType()),
-                            Map.entry("salary", job.getSalary()),
-                            Map.entry("workPeriod", job.getWorkPeriod()),
-                            Map.entry("experience", job.getExperience()),
-                            Map.entry("requiredSkills", job.getRequiredSkills()),
-                            Map.entry("preferredSkills", job.getPreferredSkills()),
-                            Map.entry("postingDate", job.getPostingDate() != null ? job.getPostingDate().toString() : null),
-                            Map.entry("closingDate", job.getClosingDate() != null ? job.getClosingDate().toString() : null),
-                            Map.entry("applyLink", job.getApplyLink())
-                    );
+                    Map<String, Object> metadata = new HashMap<>();
+                    metadata.put("jobId", job.getJobId());
+                    metadata.put("companyName", job.getCompanyName());
+                    metadata.put("companyLogo", job.getCompanyLogo());
+                    metadata.put("jobTitle", job.getJobTitle());
+                    metadata.put("jobCategory", job.getJobCategory());
+                    metadata.put("workLocation", job.getWorkLocation());
+                    metadata.put("employmentType", job.getEmploymentType());
+                    metadata.put("salary", job.getSalary());
+                    metadata.put("workPeriod", job.getWorkPeriod());
+                    metadata.put("experience", job.getExperience());
+                    metadata.put("requiredSkills", job.getRequiredSkills());
+                    metadata.put("preferredSkills", job.getPreferredSkills());
+                    if (job.getPostingDate() != null) metadata.put("postingDate", job.getPostingDate().toString());
+                    if (job.getClosingDate() != null) metadata.put("closingDate", job.getClosingDate().toString());
+                    metadata.put("applyLink", job.getApplyLink());
+
 
                     Map<String, Object> body = Map.of(
                             "vectors", List.of(Map.of(
@@ -117,4 +119,17 @@ public class PineconeService {
                 .toList();
     }
 
+    @Transactional
+    public void saveAllJobVector() {
+        List<Job> jobList = jobRepository.findAll();
+
+        for (Job job : jobList) {
+            saveJobVector(job.getJobId())
+                    .doOnSubscribe(s -> log.info("▶️ Start embedding for jobId={}", job.getJobId()))
+                    .doOnSuccess(v -> log.info("✅ Saved embedding for jobId={}", job.getJobId()))
+                    .doOnError(e -> log.error("❌ Failed embedding for jobId={}", job.getJobId(), e))
+                    .block(); // 호출을 실제로 실행 (동기)
+        }
+
+    }
 }

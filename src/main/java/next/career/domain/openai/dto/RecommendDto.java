@@ -74,6 +74,7 @@ public class RecommendDto {
         @Getter
         @Builder
         public static class RoadMapStep {
+            private Long roadMapId;
             private String period;
             private String category;
             private Boolean isCompleted;
@@ -85,6 +86,7 @@ public class RecommendDto {
         @Getter
         @Builder
         public static class ActionDto {
+            private Long roadMapActionId;
             private String action;
             private Boolean isCompleted;
         }
@@ -95,12 +97,14 @@ public class RecommendDto {
                     .steps(
                             roadMaps.stream()
                                     .map(roadMap -> RoadMapStep.builder()
+                                            .roadMapId(roadMap.getRoadMapId())
                                             .period(roadMap.getPeriod())
                                             .category(roadMap.getCategory())
                                             .isCompleted(roadMap.getIsCompleted())
                                             .actions(
                                                     roadMap.getActionList().stream()
                                                             .map(action -> ActionDto.builder()
+                                                                    .roadMapActionId(action.getId())
                                                                     .action(action.getAction())
                                                                     .isCompleted(action.getIsCompleted())
                                                                     .build()

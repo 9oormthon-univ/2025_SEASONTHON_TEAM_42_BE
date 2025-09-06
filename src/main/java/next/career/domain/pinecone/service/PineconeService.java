@@ -10,10 +10,7 @@ import next.career.global.apiPayload.exception.CoreException;
 import next.career.global.apiPayload.exception.GlobalErrorType;
 import org.springframework.beans.factory.annotation.Value;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -84,39 +81,40 @@ public class PineconeService {
                 .doOnError(e -> log.warn("upsert failed id={}", jobId, e));
     }
 
-    public RecommendDto.JobResponse getRecommendJob(List<Float> vector) {
+    public List<Long> getRecommendJob(List<Float> vector) {
 
         Map<String, Object> body = Map.of(
                 "vector", vector,
-                "topK", 1,
+                "topK", 3,
                 "includeMetadata", true
         );
 
         Map response = pineconeClient.post()
                 .uri("/query")
                 .header("Api-Key", apiKey)
+                .header("X-Pinecone-Api-Version", "2025-04")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
                 .bodyValue(body)
                 .retrieve()
+                .onStatus(HttpStatusCode::isError, r ->
+                        r.bodyToMono(String.class).flatMap(msg ->
+                                Mono.error(new RuntimeException("Pinecone query failed: " + msg))
+                        )
+                )
                 .bodyToMono(Map.class)
                 .block();
+
+        log.info("get recommend job response = {}", response);
 
         List<Map<String, Object>> matches = (List<Map<String, Object>>) response.get("matches");
         if (matches == null || matches.isEmpty()) {
             throw new CoreException(GlobalErrorType.JOB_NOT_FOUND_ERROR);
         }
 
-        Map<String, Object> bestMatch = matches.get(0);
-        Map<String, Object> metadata = (Map<String, Object>) bestMatch.get("metadata");
-
-        return RecommendDto.JobResponse.builder()
-                .jobId((String) metadata.get("jobId"))
-                .companyName((String) metadata.get("companyName"))
-                .keyword((String) metadata.get("jobTitle"))
-                .jobRecommendScore(String.valueOf(bestMatch.get("score")))
-                .closingDate((String) metadata.get("closingDate"))
-                .workLocation((String) metadata.get("workLocation"))
-                .isBookmark(false)
-                .build();
+        return matches.stream()
+                .map(m -> Long.valueOf(String.valueOf(m.get("id"))))
+                .toList();
     }
 
 }

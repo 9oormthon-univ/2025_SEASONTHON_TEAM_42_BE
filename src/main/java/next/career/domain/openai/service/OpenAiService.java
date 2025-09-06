@@ -190,7 +190,7 @@ public class OpenAiService {
     }
 
 
-    public RecommendDto.JobResponse getRecommendJob(Member member) {
+    public List<Long> getRecommendJob(Member member) {
         List<Float> vector = embeddingService.getEmbeddingMember(member).block();
 
         return pineconeService.getRecommendJob(vector);

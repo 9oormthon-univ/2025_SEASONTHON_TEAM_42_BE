@@ -91,17 +91,14 @@ public class JobService {
     }
 
     @Transactional
-    public RecommendDto.JobResponse recommendJob(Member member) {
-        RecommendDto.JobResponse recommendJob = openAiService.getRecommendJob(member);
+    public Page<JobDto.AllResponse> recommendJob(Member member, Pageable pageable) {
+        List<Long> recommendJobIds = openAiService.getRecommendJob(member);
 
-        String jobIdStr = recommendJob.getJobId();
-        Long jobId = Long.valueOf(jobIdStr);
-
-        Job job = jobRepository.findById(jobId)
-                .orElseThrow(() -> new CoreException(GlobalErrorType.JOB_NOT_FOUND_ERROR));
-
-        recommendJob.isBookmark(getIsBookmark(job, member));
-        return recommendJob;
+        return jobCustomRepository.getRecommendJobs(recommendJobIds, pageable)
+                .map(job -> JobDto.AllResponse.of(
+                        job,
+                        getIsBookmark(job, member)
+                ));
     }
 
     @Transactional

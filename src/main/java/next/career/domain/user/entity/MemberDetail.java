@@ -27,6 +27,8 @@ public class MemberDetail {
 
     private String certificateOrSkill;
 
+    private String workingStyle;
+
     private String personalityType;
 
     private String interests;
@@ -83,4 +85,7 @@ public class MemberDetail {
         this.educationAndCareerGoal = educationAndCareerGoal;
     }
 
+    public void updateWorkingStyle(String workingStyle) {
+        this.workingStyle = workingStyle;
+    }
 }

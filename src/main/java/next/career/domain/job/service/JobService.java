@@ -1,6 +1,7 @@
 package next.career.domain.job.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import next.career.domain.UserJobMap.repository.MemberJobMapRepository;
 import next.career.domain.UserJobMap.service.BookMarkFinder;
 import next.career.domain.job.controller.dto.GetJobDto;
@@ -32,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class JobService {
@@ -116,7 +118,7 @@ public class JobService {
     @Transactional
     public Page<JobDto.AllResponse> recommendJob(Member member, Pageable pageable) {
         List<Long> recommendJobIds = openAiService.getRecommendJob(member);
-
+        log.info("recommendJobIds = {}", recommendJobIds);
         return jobCustomRepository.getRecommendJobs(recommendJobIds, pageable)
                 .map(job -> JobDto.AllResponse.of(
                         job,

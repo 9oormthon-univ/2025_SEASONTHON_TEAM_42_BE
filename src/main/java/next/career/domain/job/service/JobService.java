@@ -103,12 +103,15 @@ public class JobService {
 
     @Transactional
     public RecommendDto.RoadMapResponse recommendRoadMap(GetRoadMapDto.Request roadmapRequest, Member member) {
-        RecommendDto.RoadMapResponse response = openAiService.getRecommendRoadMap(roadmapRequest, member);
+        member.getRoadMapList().clear();
+        member.updateRoadmapInput(null);
+        memberRepository.save(member);
 
         RoadmapInput roadmapInputSave = RoadmapInput.of(roadmapRequest, member);
-        roadmapInputRepository.save(roadmapInputSave);
         member.updateRoadmapInput(roadmapInputSave);
         memberRepository.save(member);
+
+        RecommendDto.RoadMapResponse response = openAiService.getRecommendRoadMap(roadmapRequest, member);
 
         for (RecommendDto.RoadMapResponse.RoadMapStep step : response.getSteps()) {
             RoadMap roadMap = RoadMap.builder()
@@ -127,11 +130,14 @@ public class JobService {
                 roadMap.getActionList().add(actionEntity);
             });
 
-            roadMapRepository.save(roadMap);
+            member.getRoadMapList().add(roadMap);
         }
+
+        memberRepository.save(member);
 
         return response;
     }
+
 
 
     @Transactional

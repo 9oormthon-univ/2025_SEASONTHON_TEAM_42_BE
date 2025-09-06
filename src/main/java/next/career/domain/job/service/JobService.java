@@ -108,6 +108,7 @@ public class JobService {
         RoadmapInput roadmapInputSave = RoadmapInput.of(roadmapRequest, member);
         roadmapInputRepository.save(roadmapInputSave);
         member.updateRoadmapInput(roadmapInputSave);
+        memberRepository.save(member);
 
         for (RecommendDto.RoadMapResponse.RoadMapStep step : response.getSteps()) {
             RoadMap roadMap = RoadMap.builder()
@@ -170,13 +171,14 @@ public class JobService {
 
     }
 
+    @Transactional
     public RecommendDto.RoadMapResponse getRoadMap(Member member) {
 
-        List<RoadMap> roadMapList = member.getRoadMapList();
+        List<RoadMap> roadmapList = roadMapRepository.findAllByMember(member);
 
         RoadmapInput roadmapInput = member.getRoadmapInput();
 
-        return RecommendDto.RoadMapResponse.of(roadMapList, roadmapInput);
+        return RecommendDto.RoadMapResponse.of(roadmapList, roadmapInput);
     }
 
     @Transactional

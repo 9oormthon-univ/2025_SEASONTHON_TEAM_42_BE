@@ -21,7 +21,7 @@ public class RoadMap {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roadMapId;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 

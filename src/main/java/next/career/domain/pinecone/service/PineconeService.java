@@ -92,7 +92,7 @@ public class PineconeService {
 
         Map<String, Object> body = Map.of(
                 "vector", vector,
-                "topK", 3,
+                "topK", 8,
                 "includeMetadata", true
         );
 

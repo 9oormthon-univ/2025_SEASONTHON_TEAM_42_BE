@@ -36,13 +36,13 @@ public class EmbeddingService {
                                 .orElseThrow(() -> new CoreException(GlobalErrorType.JOB_NOT_FOUND_ERROR))
                 )
                 .subscribeOn(Schedulers.boundedElastic())
-                .map(this::toEmbeddingJobText)
+                .map(this::toEmbeddingJobTextV2)
                 .flatMap(this::getEmbeddingMono);
     }
 
     public Mono<List<Float>> getEmbeddingMember(Member member) {
         return Mono.just(member)
-                .map(this::toEmbeddingMemberText)
+                .map(this::toEmbeddingMemberTextV2)
                 .flatMap(this::getEmbeddingMono);
     }
 
@@ -139,6 +139,56 @@ public class EmbeddingService {
                 nz(job.getWorkPeriod()),
                 nz(job.getPostingDate()),
                 nz(job.getClosingDate())
+        );
+    }
+
+    private String toEmbeddingJobTextV2(Job job) {
+        return """
+        이 채용 공고는 %s 분야의 %s 직무입니다.
+        기업명은 %s이며, 근무 지역은 %s입니다.
+        고용 형태는 %s이고 요구 경력은 %s입니다.
+        필수 기술은 %s이며, 우대 사항으로 %s가 있습니다.
+        급여는 %s이고, 근무 기간은 %s입니다.
+        공고는 %s에 등록되었고, %s에 마감됩니다.
+        """.formatted(
+                nz(job.getJobCategory()),
+                nz(job.getJobTitle()),
+                nz(job.getCompanyName()),
+                nz(job.getWorkLocation()),
+                nz(job.getEmploymentType()),
+                nz(job.getExperience()),
+                nz(job.getRequiredSkills()),
+                nz(job.getPreferredSkills()),
+                nz(job.getSalary()),
+                nz(job.getWorkPeriod()),
+                nz(job.getPostingDate()),
+                nz(job.getClosingDate())
+        );
+    }
+
+    private String toEmbeddingMemberTextV2(Member member) {
+        MemberDetail d = member.getMemberDetail();
+        return """
+        %s은(는) %d세 %s입니다. 
+        현재 거주지는 %s이며, 경력은 %s이고 보유 기술/자격증은 %s입니다. 
+        성격 유형은 %s이며 관심사는 %s입니다. 
+        선호하는 근무 스타일은 %s이고, 피하고 싶은 조건은 %s입니다. 
+        가능 근무 시간은 %s이고, 신체 조건은 %s입니다. 
+        교육 및 커리어 목표는 %s입니다.
+        """.formatted(
+                member.getName(),
+                calculateAge(member.getBirthDate()),
+                member.getGender() != null ? member.getGender().name() : "",
+                member.getAddress() != null ? member.getAddress().toString() : "미입력",
+                nz(d != null ? d.getExperience() : ""),
+                nz(d != null ? d.getCertificateOrSkill() : ""),
+                nz(d != null ? d.getPersonalityType() : ""),
+                nz(d != null ? d.getInterests() : ""),
+                nz(d != null ? d.getPreferredWorkStyles() : ""),
+                nz(d != null ? d.getAvoidConditions() : ""),
+                nz(d != null ? d.getAvailableWorkingTime() : ""),
+                nz(d != null ? d.getPhysicalCondition() : ""),
+                nz(d != null ? d.getEducationAndCareerGoal() : "")
         );
     }
 

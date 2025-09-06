@@ -1,9 +1,6 @@
 package next.career.domain.openai.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 
 @Entity
@@ -14,6 +11,7 @@ public class Prompt {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long promptId;
 
+    @Column(columnDefinition = "LONGTEXT")
     private String content;
 
     private String tag;

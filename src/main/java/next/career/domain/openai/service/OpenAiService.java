@@ -40,6 +40,7 @@ public class OpenAiService {
     public RecommendDto.OccupationResponse getRecommendOccupation(Member member) {
 
         List<Prompt> occupation = promptRepository.findAllByTag("occupation");
+        log.info("occupationList = {}", occupation.size());
 
         String system = occupation.stream()
                 .map(Prompt::getContent)
@@ -234,7 +235,7 @@ public class OpenAiService {
                     .map(String::trim)
                     .filter(s -> !s.isEmpty())
                     .distinct()
-                    .limit(3)
+                    .limit(6)
                     .toList();
 
             return AiChatDto.OptionResponse.builder().optionList(list).build();

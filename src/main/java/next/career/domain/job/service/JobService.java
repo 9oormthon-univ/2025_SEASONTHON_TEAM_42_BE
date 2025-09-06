@@ -105,7 +105,7 @@ public class JobService {
     public RecommendDto.RoadMapResponse recommendRoadMap(GetRoadMapDto.Request roadmapRequest, Member member) {
         RecommendDto.RoadMapResponse response = openAiService.getRecommendRoadMap(roadmapRequest, member);
 
-        RoadmapInput roadmapInputSave = RoadmapInput.of(roadmapRequest);
+        RoadmapInput roadmapInputSave = RoadmapInput.of(roadmapRequest, member);
         roadmapInputRepository.save(roadmapInputSave);
         member.updateRoadmapInput(roadmapInputSave);
 

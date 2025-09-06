@@ -32,12 +32,13 @@ public class RoadmapInput {
 
     private LocalDate createdAt;
 
-    public static RoadmapInput of(GetRoadMapDto.Request request) {
+    public static RoadmapInput of(GetRoadMapDto.Request request, Member member) {
         return RoadmapInput.builder()
                 .career(request.getCareer())
                 .period(request.getPeriod())
                 .experience(request.getExperience())
                 .createdAt(LocalDate.now())
+                .member(member)
                 .build();
     }
 

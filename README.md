@@ -33,7 +33,8 @@ https://api.ilhaeng.cloud/swagger-ui/index.html
 <br></br>
 
 ## 🔨 Project Architecture
-<img width="7440" height="5920" alt="KakaoTalk_Photo_2025-09-07-07-37-44" src="https://github.com/user-attachments/assets/7776f546-0965-454d-8d72-b5ed691fe385" />
+<img width="7440" height="5920" alt="image" src="https://github.com/user-attachments/assets/682a6bec-51d5-4251-a266-c33c02826d2a" />
+
 <br></br>
 
 ## ⭐️ 기술스택/선정이유

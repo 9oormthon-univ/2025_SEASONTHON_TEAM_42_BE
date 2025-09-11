@@ -34,6 +34,7 @@ jobs:
           echo "${{ secrets.APPLICATION_YAML }}" > ./src/main/resources/application.yaml
           echo "${{ secrets.APPLICATION_OAUTH2_YAML }}" > ./src/main/resources/application-oauth2.yaml
           echo "${{ secrets.APPLICATION_SWAGGER_YAML }}" > ./src/main/resources/application-swagger.yaml
+          echo "${{ secrets.APPLICATION_INFRA_YAML }}" > ./src/test/resources/application-infra.yaml
           echo "${{ secrets.APPLICATION_TEST_YAML }}" > ./src/test/resources/application-test.yaml
 
       - name: Build with Gradle Wrapper

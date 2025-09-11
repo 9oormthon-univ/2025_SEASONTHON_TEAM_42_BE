@@ -186,7 +186,7 @@ public class JobController {
     }
 
     @GetMapping("/hrd-course")
-    public ApiResponse<Work24.CardCoursePage> raw(@RequestParam(defaultValue = "스프링") String keyword,
+    public ApiResponse<Work24.CardCoursePage> raw(@RequestParam(defaultValue = "") String keyword,
                                                   @RequestParam(defaultValue = "1") int pageNo,
                                                   @RequestParam(defaultValue = "10") int pageSize,
                                                   @RequestParam(defaultValue = "20250101") String startYmd,

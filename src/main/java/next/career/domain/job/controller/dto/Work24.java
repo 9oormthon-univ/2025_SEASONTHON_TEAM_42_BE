@@ -1,10 +1,18 @@
-package next.career.global.client.restClient;
-
-import com.fasterxml.jackson.annotation.JsonAlias;
+package next.career.domain.job.controller.dto;
 
 import java.util.List;
 
 public record Work24() {
+
+    public record CardCoursePage(
+            int pageNum,
+
+            int pageSize,
+
+            int scn_cnt,
+
+            List<CardCourseItem> srchList
+    ){}
 
     public record CardCourseItem(
             String eiEmplCnt3Gt10,
@@ -36,16 +44,5 @@ public record Work24() {
             String subTitleLink,
             String titleLink,
             String titleIcon
-    ){}
-
-    // 컨트롤러 응답용 (도메인 페이지)
-    public record CardCoursePage(
-            int pageNum,
-
-            int pageSize,
-
-            int scn_cnt,
-
-            List<CardCourseItem> srchList
     ){}
 }

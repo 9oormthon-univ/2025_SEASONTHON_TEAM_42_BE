@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
 
 @Configuration
-public class Work24RestClientConfig {
+public class RestClientConfig {
 
     @Bean
     public RestClient work24RestClient(RestClient.Builder builder) {

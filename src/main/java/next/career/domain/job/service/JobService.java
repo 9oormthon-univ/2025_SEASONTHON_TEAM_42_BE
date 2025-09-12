@@ -11,6 +11,7 @@ import next.career.domain.job.repository.JobCustomRepository;
 import next.career.domain.job.repository.JobRepository;
 import next.career.domain.job.repository.OccupationRepository;
 import next.career.domain.job.service.dto.JobDto;
+import next.career.domain.job.service.dto.PineconeRecommendDto;
 import next.career.domain.openai.dto.AiChatDto;
 import next.career.domain.openai.dto.RecommendDto;
 import next.career.domain.openai.service.OpenAiService;
@@ -32,6 +33,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -117,14 +120,28 @@ public class JobService {
 
     @Transactional
     public Page<JobDto.AllResponse> recommendJob(Member member, Pageable pageable) {
-        List<Long> recommendJobIds = openAiService.getRecommendJob(member);
-        log.info("recommendJobIds = {}", recommendJobIds);
-        return jobCustomRepository.getRecommendJobs(recommendJobIds, pageable)
-                .map(job -> JobDto.AllResponse.of(
-                        job,
-                        getIsBookmark(job, member)
-                ));
+        List<PineconeRecommendDto> recommendJobs = openAiService.getRecommendJob(member);
+
+        if (recommendJobs == null || recommendJobs.isEmpty()) {
+            return Page.empty(pageable);
+        }
+
+        List<Long> recommendJobIds = recommendJobs.stream()
+                .map(PineconeRecommendDto::getJobId)
+                .toList();
+
+        Page<Job> jobs = jobCustomRepository.getRecommendJobs(recommendJobIds, pageable);
+
+        Map<Long, Long> scoreMap = recommendJobs.stream()
+                .collect(Collectors.toMap(PineconeRecommendDto::getJobId, PineconeRecommendDto::getScore));
+
+        return jobs.map(job -> JobDto.AllResponse.ofRecommend(
+                job,
+                getIsBookmark(job, member),
+                scoreMap.getOrDefault(job.getJobId(), 0L)
+        ));
     }
+
 
     @Transactional
     public RecommendDto.RoadMapResponse recommendRoadMap(GetRoadMapDto.Request roadmapRequest, Member member) {

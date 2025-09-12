@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import next.career.domain.embedding.service.EmbeddingService;
 import next.career.domain.job.entity.Job;
 import next.career.domain.job.repository.JobRepository;
-import next.career.domain.openai.dto.RecommendDto;
+import next.career.domain.job.service.dto.PineconeRecommendDto;
 import next.career.global.apiPayload.exception.CoreException;
 import next.career.global.apiPayload.exception.GlobalErrorType;
 import org.springframework.beans.factory.annotation.Value;
@@ -88,7 +88,7 @@ public class PineconeService {
                 .doOnError(e -> log.warn("upsert failed id={}", jobId, e));
     }
 
-    public List<Long> getRecommendJob(List<Float> vector) {
+    public List<PineconeRecommendDto> getRecommendJob(List<Float> vector) {
 
         Map<String, Object> body = Map.of(
                 "vector", vector,
@@ -120,9 +120,13 @@ public class PineconeService {
         }
 
         return matches.stream()
-                .map(m -> Long.valueOf(String.valueOf(m.get("id"))))
+                .map(m -> new PineconeRecommendDto(
+                        Long.valueOf(String.valueOf(m.get("id"))),
+                        (long) (Double.parseDouble(String.valueOf(m.get("score"))) * 100)
+                ))
                 .toList();
     }
+
 
     @Transactional
     public void saveAllJobVector() {

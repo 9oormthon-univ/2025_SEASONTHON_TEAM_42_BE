@@ -1,6 +1,8 @@
 package next.career.domain.job.repository;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -58,13 +60,11 @@ public class JobCustomRepository {
 
         BooleanBuilder where = new BooleanBuilder();
 
-        // 기존 검색 조건 (keyword는 제목/근무지 OR 매칭)
         Optional.ofNullable(request.getKeyword()).ifPresent(k -> where.and(job.jobTitle.contains(k).or(job.workLocation.contains(k))));
         Optional.ofNullable(request.getJobCategory()).ifPresent(c -> where.and(job.jobCategory.contains(c)));
         Optional.ofNullable(request.getEmploymentType()).ifPresent(e -> where.and(job.employmentType.contains(e)));
         Optional.ofNullable(request.getWorkLocation()).ifPresent(w -> where.and(job.workLocation.contains(w)));
 
-        // 북마크 ID 필터 (Long PK)
         where.and(job.jobId.in(bookmarkedIds));
 
         List<Job> content = queryFactory
@@ -89,12 +89,19 @@ public class JobCustomRepository {
             return Page.empty(pageable);
         }
 
-        BooleanBuilder where = new BooleanBuilder();
-        where.and(job.jobId.in(recommendJobIds));
+        CaseBuilder.Cases<Integer, NumberExpression<Integer>> orderCases =
+                new CaseBuilder().when(job.jobId.eq(recommendJobIds.get(0))).then(0);
+
+        for (int i = 1; i < recommendJobIds.size(); i++) {
+            orderCases = orderCases.when(job.jobId.eq(recommendJobIds.get(i))).then(i);
+        }
+
+        NumberExpression<Integer> orderByCase = orderCases.otherwise(recommendJobIds.size());
 
         List<Job> content = queryFactory
                 .selectFrom(job)
-                .where(where)
+                .where(job.jobId.in(recommendJobIds))
+                .orderBy(orderByCase.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -102,8 +109,9 @@ public class JobCustomRepository {
         JPAQuery<Long> countQuery = queryFactory
                 .select(job.jobId.count())
                 .from(job)
-                .where(where);
+                .where(job.jobId.in(recommendJobIds));
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
+
 }

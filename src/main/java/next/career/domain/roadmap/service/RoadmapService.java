@@ -106,9 +106,12 @@ public class RoadmapService {
         List<String> recommendRoadmapAction = new ArrayList<>();
 
         for (RoadMap roadMap : roadMapList) {
-            List<RoadMapAction> actionList = roadMap.getActionList();
-            for (RoadMapAction roadMapAction : actionList) {
+            for (RoadMapAction roadMapAction : roadMap.getActionList()) {
                 recommendRoadmapAction.add(roadMapAction.getAction());
+
+                if (recommendRoadmapAction.size() >= 4) {
+                    return recommendRoadmapAction; // 4개 채워지면 바로 반환
+                }
             }
         }
 

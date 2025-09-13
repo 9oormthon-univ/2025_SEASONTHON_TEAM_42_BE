@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import next.career.domain.job.controller.dto.GetRoadMapDto;
 import next.career.domain.job.service.JobService;
 import next.career.domain.openai.dto.RecommendDto;
+import next.career.domain.roadmap.controller.dto.RoadmapDto;
 import next.career.domain.roadmap.service.RoadmapService;
 import next.career.domain.user.entity.Member;
 import next.career.global.apiPayload.response.ApiResponse;
@@ -58,6 +59,14 @@ public class RoadmapController {
     ) {
         Member member = authDetails.getUser();
         roadmapService.checkRoadMapAction(roadMapId, roadMapActionId, member);
+        return ApiResponse.success();
+    }
+
+    @PutMapping("/{roadmapActionId}")
+    public ApiResponse<?> updateRoadmapAction(
+            @Parameter(description = "로드맵 액션 ID") @PathVariable Long roadMapActionId,
+            @RequestBody RoadmapDto.actionUpdateRequest request) {
+        roadmapService.updateRoadmapAction(roadMapActionId, request);
         return ApiResponse.success();
     }
 }

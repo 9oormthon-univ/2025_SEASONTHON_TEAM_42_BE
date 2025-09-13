@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import next.career.domain.job.controller.dto.GetRoadMapDto;
 import next.career.domain.openai.dto.RecommendDto;
 import next.career.domain.openai.service.OpenAiService;
+import next.career.domain.roadmap.controller.dto.RoadmapDto;
 import next.career.domain.roadmap.entity.RoadMap;
 import next.career.domain.roadmap.entity.RoadMapAction;
 import next.career.domain.roadmap.entity.RoadmapInput;
@@ -84,5 +85,16 @@ public class RoadmapService {
 
         roadMap.updateCompleted();
         roadMapAction.updateCompleted();
+    }
+
+    @Transactional
+    public void updateRoadmapAction(Long roadMapActionId, RoadmapDto.actionUpdateRequest request) {
+
+        RoadMapAction roadMapAction = roadmapActionRepository.findById(roadMapActionId)
+                .orElseThrow(() -> new CoreException(GlobalErrorType.ROAD_MAP_ACTION_NOT_FOUND));
+
+        roadMapAction.updateAction(request.getAction());
+        roadMapAction.updateNotCompleted();
+
     }
 }

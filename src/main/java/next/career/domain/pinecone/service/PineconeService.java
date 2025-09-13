@@ -47,21 +47,6 @@ public class PineconeService {
 
                     Map<String, Object> metadata = new HashMap<>();
                     metadata.put("jobId", job.getJobId());
-//                    metadata.put("companyName", job.getCompanyName());
-//                    metadata.put("companyLogo", job.getCompanyLogo());
-//                    metadata.put("jobTitle", job.getJobTitle());
-//                    metadata.put("jobCategory", job.getJobCategory());
-//                    metadata.put("workLocation", job.getWorkLocation());
-//                    metadata.put("employmentType", job.getEmploymentType());
-//                    metadata.put("salary", job.getSalary());
-//                    metadata.put("workPeriod", job.getWorkPeriod());
-//                    metadata.put("experience", job.getExperience());
-//                    metadata.put("requiredSkills", job.getRequiredSkills());
-//                    metadata.put("preferredSkills", job.getPreferredSkills());
-//                    if (job.getPostingDate() != null) metadata.put("postingDate", job.getPostingDate().toString());
-//                    if (job.getClosingDate() != null) metadata.put("closingDate", job.getClosingDate().toString());
-//                    metadata.put("applyLink", job.getApplyLink());
-
 
                     Map<String, Object> body = Map.of(
                             "vectors", List.of(Map.of(
@@ -70,6 +55,7 @@ public class PineconeService {
                                     "metadata", metadata
                             ))
                     );
+                    log.info("body = {}", body);
 
                     return pineconeClient.post()
                             .uri("/vectors/upsert")

@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import next.career.domain.job.controller.dto.GetJobDto;
 import next.career.domain.job.controller.dto.GetRoadMapDto;
 import next.career.domain.job.controller.dto.Work24;
+import next.career.domain.job.entity.Job;
+import next.career.domain.job.facade.JobFacadeService;
 import next.career.domain.job.service.JobBatchService;
 import next.career.domain.job.service.JobService;
 import next.career.domain.job.service.dto.JobDto;
@@ -35,6 +37,7 @@ public class JobController {
     private final JobService jobService;
     private final HrdCourseService rawClient;
     private final JobBatchService jobBatchService;
+    private final JobFacadeService jobFacadeService;
 
     // 전체 채용 조회
     @GetMapping("/all")
@@ -162,7 +165,7 @@ public class JobController {
     public ApiResponse<?> getJobDataFromSeoulJob(
             @Parameter(hidden = true) Pageable pageable
     ){
-        jobBatchService.fetchAndSaveJobs(pageable.getPageNumber(), pageable.getPageSize());
+        jobFacadeService.getJobDataFromSeoulJob(pageable.getPageNumber(), pageable.getPageSize());
         return ApiResponse.success();
     }
 

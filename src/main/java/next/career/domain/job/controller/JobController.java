@@ -2,11 +2,17 @@ package next.career.domain.job.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import next.career.domain.job.controller.dto.GetJobDto;
 import next.career.domain.job.controller.dto.GetRoadMapDto;
 import next.career.domain.job.controller.dto.Work24;
+import next.career.domain.job.entity.Job;
+import next.career.domain.job.facade.JobFacadeService;
+import next.career.domain.job.service.JobBatchService;
 import next.career.domain.job.service.JobService;
 import next.career.domain.job.service.dto.JobDto;
 import next.career.domain.openai.dto.AiChatDto;
@@ -33,6 +39,8 @@ public class JobController {
 
     private final JobService jobService;
     private final HrdCourseService rawClient;
+    private final JobBatchService jobBatchService;
+    private final JobFacadeService jobFacadeService;
 
     // 전체 채용 조회
     @GetMapping("/all")
@@ -155,5 +163,22 @@ public class JobController {
                                                   @RequestParam(defaultValue = "20251231") String endYmd) {
         return ApiResponse.success(rawClient.callRaw(keyword, pageNo, pageSize, startYmd, endYmd));
     }
+
+    @GetMapping("/job-data")
+    @Operation(
+            summary = "서울시 채용 데이터 조회 및 저장",
+            description = "서울시 채용 데이터를 가져와 DB에 저장하고, Pinecone 벡터 DB에 업서트합니다."
+    )
+    public ApiResponse<?> getJobDataFromSeoulJob(
+            @Parameter(
+                    description = "페이징 정보 (page, size)",
+                    example = "page=0&size=10"
+            )
+            Pageable pageable
+    ) {
+        jobFacadeService.getJobDataFromSeoulJob(pageable.getPageNumber(), pageable.getPageSize());
+        return ApiResponse.success();
+    }
+
 
 }

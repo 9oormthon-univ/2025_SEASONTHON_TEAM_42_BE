@@ -62,17 +62,35 @@ public class RoadmapController {
     }
 
     @PutMapping("/{roadMapActionId}")
+    @Operation(
+            summary = "로드맵 액션 수정",
+            description = "특정 로드맵 내의 액션 내용을 수정합니다."
+    )
     public ApiResponse<?> updateRoadmapAction(
-            @Parameter(description = "로드맵 액션 ID") @PathVariable Long roadMapActionId,
-            @RequestBody RoadmapDto.actionUpdateRequest request) {
+            @Parameter(description = "로드맵 액션 ID", required = true)
+            @PathVariable Long roadMapActionId,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "로드맵 액션 수정 요청 DTO",
+                    required = true
+            )
+            @RequestBody RoadmapDto.actionUpdateRequest request
+    ) {
         roadmapService.updateRoadmapAction(roadMapActionId, request);
         return ApiResponse.success();
     }
 
-    @DeleteMapping("/{roadmapActionId}")
-    public ApiResponse<?> deleteRoadmapAction(@Parameter(description = "로드맵 액션 ID") @PathVariable Long roadMapActionId) {
+    @DeleteMapping("/{roadMapActionId}")
+    @Operation(
+            summary = "로드맵 액션 삭제",
+            description = "특정 로드맵 내의 액션을 삭제합니다."
+    )
+    public ApiResponse<?> deleteRoadmapAction(
+            @Parameter(description = "로드맵 액션 ID", required = true)
+            @PathVariable Long roadMapActionId
+    ) {
         roadmapService.deleteRoadmapAction(roadMapActionId);
         return ApiResponse.success();
     }
+
 
 }

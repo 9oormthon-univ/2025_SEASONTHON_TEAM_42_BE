@@ -14,6 +14,8 @@ import next.career.global.security.AuthDetails;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/roadmap")
@@ -90,6 +92,13 @@ public class RoadmapController {
     ) {
         roadmapService.deleteRoadmapAction(roadMapActionId);
         return ApiResponse.success();
+    }
+
+    @GetMapping("/roadmapAction/recommend")
+    public ApiResponse<RoadmapDto.RoadmapActionRecommendResponse> recommendRoadmapAction(@RequestParam String category){
+        List<String> recommendRoadmapActionList = roadmapService.recommendRoadmapAction(category);
+        RoadmapDto.RoadmapActionRecommendResponse response = RoadmapDto.RoadmapActionRecommendResponse.of(recommendRoadmapActionList);
+        return ApiResponse.success(response);
     }
 
 

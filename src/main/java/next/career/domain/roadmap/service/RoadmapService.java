@@ -17,6 +17,7 @@ import next.career.global.apiPayload.exception.GlobalErrorType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -98,4 +99,20 @@ public class RoadmapService {
     public void deleteRoadmapAction(Long roadMapActionId) {
         roadmapActionRepository.deleteById(roadMapActionId);
     }
+
+    public List<String> recommendRoadmapAction(String category) {
+        List<RoadMap> roadMapList = roadMapRepository.findAllByCategory(category);
+
+        List<String> recommendRoadmapAction = new ArrayList<>();
+
+        for (RoadMap roadMap : roadMapList) {
+            List<RoadMapAction> actionList = roadMap.getActionList();
+            for (RoadMapAction roadMapAction : actionList) {
+                recommendRoadmapAction.add(roadMapAction.getAction());
+            }
+        }
+
+        return recommendRoadmapAction;
+    }
+
 }

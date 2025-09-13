@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface RoadMapRepository extends JpaRepository<RoadMap, Long> {
     List<RoadMap> findAllByMember(Member member);
+
+    List<RoadMap> findAllByCategory(String category);
 }

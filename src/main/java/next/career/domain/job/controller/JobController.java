@@ -2,6 +2,9 @@ package next.career.domain.job.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import next.career.domain.job.controller.dto.GetJobDto;
@@ -162,11 +165,20 @@ public class JobController {
     }
 
     @GetMapping("/job-data")
+    @Operation(
+            summary = "서울시 채용 데이터 조회 및 저장",
+            description = "서울시 채용 데이터를 가져와 DB에 저장하고, Pinecone 벡터 DB에 업서트합니다."
+    )
     public ApiResponse<?> getJobDataFromSeoulJob(
-            @Parameter(hidden = true) Pageable pageable
-    ){
+            @Parameter(
+                    description = "페이징 정보 (page, size)",
+                    example = "page=0&size=10"
+            )
+            Pageable pageable
+    ) {
         jobFacadeService.getJobDataFromSeoulJob(pageable.getPageNumber(), pageable.getPageSize());
         return ApiResponse.success();
     }
+
 
 }

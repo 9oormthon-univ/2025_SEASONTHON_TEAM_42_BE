@@ -68,9 +68,7 @@ public class WebClientConfig {
     @Bean
     public WebClient seoulJobClient(WebClient.Builder builder) {
         return builder
-                .baseUrl(seoulJobHost)
-                .defaultHeader("Api-Key", seoulJobApiKey)
-                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                .baseUrl(String.format("%s/%s", seoulJobHost, seoulJobApiKey))
                 .clientConnector(new ReactorClientHttpConnector(httpClient()))
                 .build();
     }

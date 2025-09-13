@@ -12,7 +12,7 @@ public class RoadmapDto {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class actionUpdateRequest{
+    public static class ActionUpdateRequest{
         private String action;
     }
 

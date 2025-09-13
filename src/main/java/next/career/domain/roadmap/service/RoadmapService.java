@@ -85,7 +85,7 @@ public class RoadmapService {
     }
 
     @Transactional
-    public void updateRoadmapAction(Long roadMapActionId, RoadmapDto.actionUpdateRequest request) {
+    public void updateRoadmapAction(Long roadMapActionId, RoadmapDto.ActionUpdateRequest request) {
 
         RoadMapAction roadMapAction = roadmapActionRepository.findById(roadMapActionId)
                 .orElseThrow(() -> new CoreException(GlobalErrorType.ROAD_MAP_ACTION_NOT_FOUND));

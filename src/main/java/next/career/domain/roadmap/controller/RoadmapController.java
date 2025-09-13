@@ -75,7 +75,7 @@ public class RoadmapController {
                     description = "로드맵 액션 수정 요청 DTO",
                     required = true
             )
-            @RequestBody RoadmapDto.actionUpdateRequest request
+            @RequestBody RoadmapDto.ActionUpdateRequest request
     ) {
         roadmapService.updateRoadmapAction(roadMapActionId, request);
         return ApiResponse.success();

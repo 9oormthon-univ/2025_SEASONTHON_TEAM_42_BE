@@ -75,6 +75,10 @@ dependencies {
 	// webClient
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
+	// xml mapper
+	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
+
+
 	// feignClients
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 

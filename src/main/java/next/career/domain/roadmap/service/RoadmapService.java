@@ -17,6 +17,7 @@ import next.career.global.apiPayload.exception.GlobalErrorType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -84,7 +85,7 @@ public class RoadmapService {
     }
 
     @Transactional
-    public void updateRoadmapAction(Long roadMapActionId, RoadmapDto.actionUpdateRequest request) {
+    public void updateRoadmapAction(Long roadMapActionId, RoadmapDto.ActionUpdateRequest request) {
 
         RoadMapAction roadMapAction = roadmapActionRepository.findById(roadMapActionId)
                 .orElseThrow(() -> new CoreException(GlobalErrorType.ROAD_MAP_ACTION_NOT_FOUND));
@@ -98,4 +99,23 @@ public class RoadmapService {
     public void deleteRoadmapAction(Long roadMapActionId) {
         roadmapActionRepository.deleteById(roadMapActionId);
     }
+
+    public List<String> recommendRoadmapAction(String category) {
+        List<RoadMap> roadMapList = roadMapRepository.findAllByCategory(category);
+
+        List<String> recommendRoadmapAction = new ArrayList<>();
+
+        for (RoadMap roadMap : roadMapList) {
+            for (RoadMapAction roadMapAction : roadMap.getActionList()) {
+                recommendRoadmapAction.add(roadMapAction.getAction());
+
+                if (recommendRoadmapAction.size() >= 4) {
+                    return recommendRoadmapAction; // 4개 채워지면 바로 반환
+                }
+            }
+        }
+
+        return recommendRoadmapAction;
+    }
+
 }

@@ -47,7 +47,7 @@ public class JobController {
     }
 
     @GetMapping("/all/anonymous")
-    @Operation(summary = "전체 채용 조회", description = "검색 조건과 페이징을 통해 전체 채용 공고 목록을 조회합니다.")
+    @Operation(summary = "전체 채용 조회 비로그인 사용자", description = "검색 조건과 페이징을 통해 전체 채용 공고 목록을 조회합니다.")
     public ApiResponse<GetJobDto.SearchAllResponse> getAllJobAnonymous(
             @ParameterObject GetJobDto.SearchRequest searchRequest,
             @Parameter(hidden = true) Pageable pageable) {

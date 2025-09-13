@@ -11,6 +11,7 @@ import next.career.domain.job.repository.JobCustomRepository;
 import next.career.domain.job.repository.JobRepository;
 import next.career.domain.job.repository.OccupationRepository;
 import next.career.domain.job.service.dto.JobDto;
+import next.career.domain.job.service.dto.PineconeRecommendDto;
 import next.career.domain.openai.dto.AiChatDto;
 import next.career.domain.openai.dto.RecommendDto;
 import next.career.domain.openai.service.OpenAiService;
@@ -32,6 +33,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -117,51 +120,29 @@ public class JobService {
 
     @Transactional
     public Page<JobDto.AllResponse> recommendJob(Member member, Pageable pageable) {
-        List<Long> recommendJobIds = openAiService.getRecommendJob(member);
-        log.info("recommendJobIds = {}", recommendJobIds);
-        return jobCustomRepository.getRecommendJobs(recommendJobIds, pageable)
-                .map(job -> JobDto.AllResponse.of(
-                        job,
-                        getIsBookmark(job, member)
-                ));
-    }
+        List<PineconeRecommendDto> recommendJobs = openAiService.getRecommendJob(member);
 
-    @Transactional
-    public RecommendDto.RoadMapResponse recommendRoadMap(GetRoadMapDto.Request roadmapRequest, Member member) {
-        member.getRoadMapList().clear();
-        member.updateRoadmapInput(null);
-        memberRepository.save(member);
-
-        RoadmapInput roadmapInputSave = RoadmapInput.of(roadmapRequest, member);
-        member.updateRoadmapInput(roadmapInputSave);
-        memberRepository.save(member);
-
-        RecommendDto.RoadMapResponse response = openAiService.getRecommendRoadMap(roadmapRequest, member);
-
-        for (RecommendDto.RoadMapResponse.RoadMapStep step : response.getSteps()) {
-            RoadMap roadMap = RoadMap.builder()
-                    .member(member)
-                    .period(step.getPeriod())
-                    .category(step.getCategory())
-                    .isCompleted(false)
-                    .build();
-
-            step.getActions().forEach(actionDto -> {
-                RoadMapAction actionEntity = RoadMapAction.builder()
-                        .action(actionDto.getAction())
-                        .isCompleted(false)
-                        .roadMap(roadMap)
-                        .build();
-                roadMap.getActionList().add(actionEntity);
-            });
-
-            member.getRoadMapList().add(roadMap);
+        if (recommendJobs == null || recommendJobs.isEmpty()) {
+            return Page.empty(pageable);
         }
 
-        memberRepository.save(member);
+        List<Long> recommendJobIds = recommendJobs.stream()
+                .map(PineconeRecommendDto::getJobId)
+                .toList();
 
-        return response;
+        Page<Job> jobs = jobCustomRepository.getRecommendJobs(recommendJobIds, pageable);
+
+        Map<Long, Long> scoreMap = recommendJobs.stream()
+                .collect(Collectors.toMap(PineconeRecommendDto::getJobId, PineconeRecommendDto::getScore));
+
+        return jobs.map(job -> JobDto.AllResponse.ofRecommend(
+                job,
+                getIsBookmark(job, member),
+                scoreMap.getOrDefault(job.getJobId(), 0L)
+        ));
     }
+
+
 
 
 
@@ -202,25 +183,4 @@ public class JobService {
 
     }
 
-    @Transactional
-    public RecommendDto.RoadMapResponse getRoadMap(Member member) {
-
-        List<RoadMap> roadmapList = roadMapRepository.findAllByMember(member);
-
-        RoadmapInput roadmapInput = member.getRoadmapInput();
-
-        return RecommendDto.RoadMapResponse.of(roadmapList, roadmapInput);
-    }
-
-    @Transactional
-    public void checkRoadMapAction(Long roadMapId, Long roadMapActionId, Member member) {
-        RoadMapAction roadMapAction = roadmapActionRepository.findById(roadMapActionId)
-                .orElseThrow(() -> new CoreException(GlobalErrorType.ROAD_MAP_ACTION_NOT_FOUND));
-
-        RoadMap roadMap = roadMapRepository.findById(roadMapId)
-                .orElseThrow(() -> new CoreException(GlobalErrorType.ROAD_MAP_NOT_FOUND));
-
-        roadMap.updateCompleted();
-        roadMapAction.updateCompleted();
-    }
 }

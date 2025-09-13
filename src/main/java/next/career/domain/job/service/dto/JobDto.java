@@ -31,6 +31,7 @@ public class JobDto {
         private String applyLink;       // 지원 링크
         private String imageUrl;
         private Boolean isBookmark; // 북마크
+        private Long score;
 
         public static AllResponse of(Job job, Boolean isBookmark) {
             return AllResponse.builder()
@@ -72,6 +73,29 @@ public class JobDto {
                     .closingDate(job.getClosingDate() != null ? job.getClosingDate().toString() : null)
                     .applyLink(job.getApplyLink())
                     .imageUrl(job.getImageUrl())
+                    .build();
+        }
+
+        public static AllResponse ofRecommend(Job job, Boolean isBookmark, Long score) {
+            return AllResponse.builder()
+                    .jobId(job.getJobId())
+                    .companyName(job.getCompanyName())
+                    .companyLogo(job.getCompanyLogo())
+                    .jobTitle(job.getJobTitle())
+                    .jobCategory(job.getJobCategory())
+                    .workLocation(job.getWorkLocation())
+                    .employmentType(job.getEmploymentType())
+                    .salary(job.getSalary())
+                    .workPeriod(job.getWorkPeriod())
+                    .experience(job.getExperience())
+                    .requiredSkills(job.getRequiredSkills())
+                    .preferredSkills(job.getPreferredSkills())
+                    .postingDate(job.getPostingDate() != null ? job.getPostingDate().toString() : null)
+                    .closingDate(job.getClosingDate() != null ? job.getClosingDate().toString() : null)
+                    .applyLink(job.getApplyLink())
+                    .imageUrl(job.getImageUrl())
+                    .isBookmark(isBookmark)
+                    .score(score)
                     .build();
         }
     }

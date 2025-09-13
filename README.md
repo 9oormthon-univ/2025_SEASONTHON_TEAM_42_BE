@@ -27,9 +27,6 @@
 
 <br></br>
 
-## API 명세서
-https://api.ilhaeng.cloud/swagger-ui/index.html
-
 <br></br>
 
 ## 🔨 Project Architecture
@@ -84,6 +81,8 @@ https://api.ilhaeng.cloud/swagger-ui/index.html
 - 벡터 데이터베이스로 유사한 정보를 빠르게 검색할 수 있습니다.
 - API 기반으로 쉽게 데이터를 넣고 검색할 수 있어 개발 생산성이 높습니다.
 - 추천 시스템이나 검색 서비스에 바로 활용할 수 있습니다.
+
+
 
 <br></br>
 

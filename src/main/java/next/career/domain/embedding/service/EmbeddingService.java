@@ -132,16 +132,12 @@ public class EmbeddingService {
                 nz(job.getCompanyName()),
                 nz(job.getWorkLocation()),
                 nz(job.getEmploymentType()),
-                nz(job.getExperience()),
-                nz(job.getRequiredSkills()),
-                nz(job.getPreferredSkills()),
-                nz(job.getSalary()),
-                nz(job.getWorkPeriod()),
                 nz(job.getPostingDate()),
                 nz(job.getClosingDate())
         );
     }
 
+    //TODO: 추후에 수정
     private String toEmbeddingJobTextV2(Job job) {
         return """
         이 채용 공고는 %s 분야의 %s 직무입니다.
@@ -156,16 +152,12 @@ public class EmbeddingService {
                 nz(job.getCompanyName()),
                 nz(job.getWorkLocation()),
                 nz(job.getEmploymentType()),
-                nz(job.getExperience()),
-                nz(job.getRequiredSkills()),
-                nz(job.getPreferredSkills()),
-                nz(job.getSalary()),
-                nz(job.getWorkPeriod()),
                 nz(job.getPostingDate()),
                 nz(job.getClosingDate())
         );
     }
 
+    //TODO: 추후에 수정
     private String toEmbeddingMemberTextV2(Member member) {
         MemberDetail d = member.getMemberDetail();
         return """

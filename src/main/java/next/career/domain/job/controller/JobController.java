@@ -107,45 +107,7 @@ public class JobController {
         return ApiResponse.success(GetJobDto.SearchAllResponse.of(jobDtoList));
     }
 
-    // 맞춤형 로드맵 추천
-    @PostMapping("/recommend/roadmap")
-    @Operation(summary = "맞춤형 로드맵 추천", description = "사용자의 이력 및 관심 직무를 기반으로 커리어 로드맵을 추천합니다.")
-    public ApiResponse<RecommendDto.RoadMapResponse> recommendRoadMap(
-            @RequestBody GetRoadMapDto.Request roadmapRequest,
-            @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
-        Member member = authDetails.getUser();
 
-        return ApiResponse.success(jobService.recommendRoadMap(roadmapRequest, member));
-    }
-
-    // 로드맵 조회
-    @GetMapping("/recommend/roadmap")
-    @Operation(
-            summary = "로드맵 조회",
-            description = "로그인한 사용자의 맞춤형 로드맵을 조회합니다."
-    )
-    public ApiResponse<RecommendDto.RoadMapResponse> getRoadMap(
-            @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails
-    ) {
-        Member member = authDetails.getUser();
-        return ApiResponse.success(jobService.getRoadMap(member));
-    }
-
-    // 로드맵 액션 체크
-    @PostMapping("/roadmap/{roadMapId}/{roadMapActionId}")
-    @Operation(
-            summary = "로드맵 액션 완료/미완료 토글",
-            description = "특정 로드맵 내의 액션을 완료/미완료 상태로 토글합니다."
-    )
-    public ApiResponse<?> checkRoadMapAction(
-            @Parameter(description = "로드맵 ID") @PathVariable Long roadMapId,
-            @Parameter(description = "로드맵 액션 ID") @PathVariable Long roadMapActionId,
-            @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails
-    ) {
-        Member member = authDetails.getUser();
-        jobService.checkRoadMapAction(roadMapId, roadMapActionId, member);
-        return ApiResponse.success();
-    }
 
     // AI 채팅 답변 저장
     @PostMapping("/chat/{sequence}")

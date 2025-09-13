@@ -27,4 +27,12 @@ public class RoadMapAction {
     public void updateCompleted() {
         this.isCompleted = (this.isCompleted == null) ? Boolean.TRUE : !this.isCompleted;
     }
+
+    public void updateAction(String action){
+        this.action = action;
+    }
+
+    public void updateNotCompleted() {
+        this.isCompleted = false;
+    }
 }

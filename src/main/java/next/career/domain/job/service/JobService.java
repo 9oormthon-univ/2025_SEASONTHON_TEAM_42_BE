@@ -143,42 +143,6 @@ public class JobService {
     }
 
 
-    @Transactional
-    public RecommendDto.RoadMapResponse recommendRoadMap(GetRoadMapDto.Request roadmapRequest, Member member) {
-        member.getRoadMapList().clear();
-        member.updateRoadmapInput(null);
-        memberRepository.save(member);
-
-        RoadmapInput roadmapInputSave = RoadmapInput.of(roadmapRequest, member);
-        member.updateRoadmapInput(roadmapInputSave);
-        memberRepository.save(member);
-
-        RecommendDto.RoadMapResponse response = openAiService.getRecommendRoadMap(roadmapRequest, member);
-
-        for (RecommendDto.RoadMapResponse.RoadMapStep step : response.getSteps()) {
-            RoadMap roadMap = RoadMap.builder()
-                    .member(member)
-                    .period(step.getPeriod())
-                    .category(step.getCategory())
-                    .isCompleted(false)
-                    .build();
-
-            step.getActions().forEach(actionDto -> {
-                RoadMapAction actionEntity = RoadMapAction.builder()
-                        .action(actionDto.getAction())
-                        .isCompleted(false)
-                        .roadMap(roadMap)
-                        .build();
-                roadMap.getActionList().add(actionEntity);
-            });
-
-            member.getRoadMapList().add(roadMap);
-        }
-
-        memberRepository.save(member);
-
-        return response;
-    }
 
 
 
@@ -219,25 +183,4 @@ public class JobService {
 
     }
 
-    @Transactional
-    public RecommendDto.RoadMapResponse getRoadMap(Member member) {
-
-        List<RoadMap> roadmapList = roadMapRepository.findAllByMember(member);
-
-        RoadmapInput roadmapInput = member.getRoadmapInput();
-
-        return RecommendDto.RoadMapResponse.of(roadmapList, roadmapInput);
-    }
-
-    @Transactional
-    public void checkRoadMapAction(Long roadMapId, Long roadMapActionId, Member member) {
-        RoadMapAction roadMapAction = roadmapActionRepository.findById(roadMapActionId)
-                .orElseThrow(() -> new CoreException(GlobalErrorType.ROAD_MAP_ACTION_NOT_FOUND));
-
-        RoadMap roadMap = roadMapRepository.findById(roadMapId)
-                .orElseThrow(() -> new CoreException(GlobalErrorType.ROAD_MAP_NOT_FOUND));
-
-        roadMap.updateCompleted();
-        roadMapAction.updateCompleted();
-    }
 }

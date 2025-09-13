@@ -69,4 +69,10 @@ public class RoadmapController {
         roadmapService.updateRoadmapAction(roadMapActionId, request);
         return ApiResponse.success();
     }
+
+    @DeleteMapping("/{roadmapActionId}")
+    public ApiResponse<?> deleteRoadmapAction(@Parameter(description = "로드맵 액션 ID") @PathVariable Long roadMapActionId) {
+        roadmapService.deleteRoadmapAction(roadMapActionId);
+        return ApiResponse.success();
+    }
 }

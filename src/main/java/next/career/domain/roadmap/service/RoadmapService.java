@@ -97,4 +97,9 @@ public class RoadmapService {
         roadMapAction.updateNotCompleted();
 
     }
+
+    @Transactional
+    public void deleteRoadmapAction(Long roadMapActionId) {
+        roadmapActionRepository.deleteById(roadMapActionId);
+    }
 }

@@ -95,11 +95,23 @@ public class RoadmapController {
     }
 
     @GetMapping("/roadmapAction/recommend")
-    public ApiResponse<RoadmapDto.RoadmapActionRecommendResponse> recommendRoadmapAction(@RequestParam String category){
+    @Operation(
+            summary = "로드맵 액션 추천",
+            description = "카테고리를 기반으로 로드맵 내에서 수행할 수 있는 액션을 추천합니다."
+    )
+    public ApiResponse<RoadmapDto.RoadmapActionRecommendResponse> recommendRoadmapAction(
+            @Parameter(
+                    description = "추천을 받고 싶은 카테고리 (예: 교육, 현장경험 등)",
+                    required = true,
+                    example = "교육"
+            )
+            @RequestParam String category
+    ) {
         List<String> recommendRoadmapActionList = roadmapService.recommendRoadmapAction(category);
         RoadmapDto.RoadmapActionRecommendResponse response = RoadmapDto.RoadmapActionRecommendResponse.of(recommendRoadmapActionList);
         return ApiResponse.success(response);
     }
+
 
 
 }

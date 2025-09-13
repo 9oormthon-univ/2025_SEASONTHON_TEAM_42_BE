@@ -61,7 +61,7 @@ public class RoadmapController {
         return ApiResponse.success();
     }
 
-    @PutMapping("/{roadmapActionId}")
+    @PutMapping("/{roadMapActionId}")
     public ApiResponse<?> updateRoadmapAction(
             @Parameter(description = "로드맵 액션 ID") @PathVariable Long roadMapActionId,
             @RequestBody RoadmapDto.actionUpdateRequest request) {

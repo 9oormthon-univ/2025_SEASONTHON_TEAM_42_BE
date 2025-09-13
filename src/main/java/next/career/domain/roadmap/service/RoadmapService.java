@@ -76,14 +76,10 @@ public class RoadmapService {
     }
 
     @Transactional
-    public void checkRoadMapAction(Long roadMapId, Long roadMapActionId, Member member) {
+    public void checkRoadMapAction(Long roadMapActionId, Member member) {
         RoadMapAction roadMapAction = roadmapActionRepository.findById(roadMapActionId)
                 .orElseThrow(() -> new CoreException(GlobalErrorType.ROAD_MAP_ACTION_NOT_FOUND));
 
-        RoadMap roadMap = roadMapRepository.findById(roadMapId)
-                .orElseThrow(() -> new CoreException(GlobalErrorType.ROAD_MAP_NOT_FOUND));
-
-        roadMap.updateCompleted();
         roadMapAction.updateCompleted();
     }
 

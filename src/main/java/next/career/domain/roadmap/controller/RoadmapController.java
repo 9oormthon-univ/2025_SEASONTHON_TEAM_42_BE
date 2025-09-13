@@ -47,18 +47,17 @@ public class RoadmapController {
     }
 
     // 로드맵 액션 체크
-    @PostMapping("/{roadMapId}/{roadMapActionId}")
+    @PostMapping("/{roadMapActionId}")
     @Operation(
             summary = "로드맵 액션 완료/미완료 토글",
             description = "특정 로드맵 내의 액션을 완료/미완료 상태로 토글합니다."
     )
     public ApiResponse<?> checkRoadMapAction(
-            @Parameter(description = "로드맵 ID") @PathVariable Long roadMapId,
             @Parameter(description = "로드맵 액션 ID") @PathVariable Long roadMapActionId,
             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails
     ) {
         Member member = authDetails.getUser();
-        roadmapService.checkRoadMapAction(roadMapId, roadMapActionId, member);
+        roadmapService.checkRoadMapAction(roadMapActionId, member);
         return ApiResponse.success();
     }
 
@@ -75,4 +74,5 @@ public class RoadmapController {
         roadmapService.deleteRoadmapAction(roadMapActionId);
         return ApiResponse.success();
     }
+
 }

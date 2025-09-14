@@ -26,7 +26,6 @@
 | **Build Tools**      | Gradle                              |
 
 <br></br>
-
 <br></br>
 
 ## 🔨 Project Architecture

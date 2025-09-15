@@ -9,6 +9,7 @@ import next.career.global.apiPayload.exception.CoreException;
 import next.career.global.apiPayload.exception.GlobalErrorType;
 import next.career.domain.user.dto.request.AuthRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -40,8 +41,15 @@ public class MemberService {
                 .orElseThrow(() -> new CoreException(GlobalErrorType.MEMBER_NOT_FOUND));
     }
 
+    /**
+     * 사용자 프로필을 업데이트하는 메서드
+     * @param member
+     * @param request
+     * @return
+     */
     public Member updateUser(Member member, MemberProfileUpdateRequest request) {
-        return member.updateProfile(request);
+        Member updatedMember = member.updateProfile(request);
+        return memberRepository.save(updatedMember);
     }
 }
 

@@ -150,6 +150,11 @@ public class OpenAiService {
     }
 
     private Map requestOpenAI(Map<String, Object> body) {
+
+        Map<String, Object> responseFormat = getAIChatOptionResponseForm();
+
+        body.put("response_format", responseFormat);
+
         Map res = openAiClient.post()
                 .uri("/chat/completions")
                 .bodyValue(body)
@@ -162,6 +167,26 @@ public class OpenAiService {
 
         log.info("request open ai response = {}", res);
         return res;
+    }
+
+    private static Map<String, Object> getAIChatOptionResponseForm() {
+        Map<String, Object> responseFormat = Map.of(
+                "type", "json_schema",
+                "json_schema", Map.of(
+                        "name", "option_list_response",
+                        "schema", Map.of(
+                                "type", "object",
+                                "properties", Map.of(
+                                        "optionList", Map.of(
+                                                "type", "array",
+                                                "items", Map.of("type", "string")
+                                        )
+                                ),
+                                "required", List.of("optionList")
+                        )
+                )
+        );
+        return responseFormat;
     }
 
     private static Map<String, Object> setPrompt(String system) {

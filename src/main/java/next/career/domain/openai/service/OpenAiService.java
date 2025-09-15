@@ -58,7 +58,8 @@ public class OpenAiService {
         Map<String, Object> body = setPrompt(finalSystemPrompt);
 
         try {
-            Map res = requestOpenAI(body);
+            Map<String, Object> recommendOccupationForm = getRecommendOccupation();
+            Map res = requestOpenAI(body, recommendOccupationForm);
 
             if (res == null) {
                 return RecommendDto.OccupationResponse.builder()
@@ -97,6 +98,67 @@ public class OpenAiService {
 
     }
 
+    private Map<String, Object> getRecommendOccupation() {
+        return Map.of(
+                "type", "json_schema",
+                "json_schema", Map.of(
+                        "name", "occupation_list_response",
+                        "schema", Map.of(
+                                "type", "object",
+                                "properties", Map.of(
+                                        "occupationList", Map.of(
+                                                "type", "array",
+                                                "items", Map.of(
+                                                        "type", "object",
+                                                        "properties", Map.of(
+                                                                "imageUrl", Map.of("type", "string"),
+                                                                "occupationName", Map.of("type", "string"),
+                                                                "description", Map.of("type", "string"),
+                                                                "strength", Map.of("type", "string"),
+                                                                "workCondition", Map.of("type", "string"),
+                                                                "wish", Map.of("type", "string"),
+                                                                "score", Map.of("type", "string",
+                                                                        "pattern", "^(100|[0-9]{1,2})$" // 0~100 문자열
+                                                                )
+                                                        ),
+                                                        "required", List.of(
+                                                                "imageUrl",
+                                                                "occupationName",
+                                                                "description",
+                                                                "strength",
+                                                                "workCondition",
+                                                                "wish",
+                                                                "score"
+                                                        )
+                                                )
+                                        )
+                                ),
+                                "required", List.of("occupationList")
+                        )
+                )
+        );
+    }
+
+    private Map<String, Object> getAIChatOptionForm() {
+        return Map.of(
+                "type", "json_schema",
+                "json_schema", Map.of(
+                        "name", "option_list_response",
+                        "schema", Map.of(
+                                "type", "object",
+                                "properties", Map.of(
+                                        "optionList", Map.of(
+                                                "type", "array",
+                                                "items", Map.of("type", "string")
+                                        )
+                                ),
+                                "required", List.of("optionList")
+                        )
+                )
+        );
+
+    }
+
     public RecommendDto.RoadMapResponse getRecommendRoadMap(GetRoadMapDto.Request roadmapRequest, Member member) {
         List<Prompt> roadmap = promptRepository.findAllByTag("roadmap");
 
@@ -114,7 +176,8 @@ public class OpenAiService {
         Map<String, Object> body = setPrompt(finalSystemPrompt);
 
         try {
-            Map res = requestOpenAI(body);
+            Map<String, Object> recommendRoadmapForm = getRecommendRoadmapForm();
+            Map res = requestOpenAI(body, recommendRoadmapForm);
 
             if (res == null) return RecommendDto.RoadMapResponse.builder().steps(List.of()).build();
 
@@ -140,6 +203,46 @@ public class OpenAiService {
         }
     }
 
+    private Map<String, Object> getRecommendRoadmapForm() {
+
+        return Map.of(
+                "type", "json_schema",
+                "json_schema", Map.of(
+                        "name", "steps_response",
+                        "schema", Map.of(
+                                "type", "object",
+                                "properties", Map.of(
+                                        "steps", Map.of(
+                                                "type", "array",
+                                                "items", Map.of(
+                                                        "type", "object",
+                                                        "properties", Map.of(
+                                                                "period", Map.of("type", "string"),
+                                                                "category", Map.of("type", "string"),
+                                                                "isCompleted", Map.of("type", "boolean"),
+                                                                "actions", Map.of(
+                                                                        "type", "array",
+                                                                        "items", Map.of(
+                                                                                "type", "object",
+                                                                                "properties", Map.of(
+                                                                                        "action", Map.of("type", "string"),
+                                                                                        "isCompleted", Map.of("type", "boolean")
+                                                                                ),
+                                                                                "required", List.of("action", "isCompleted")
+                                                                        )
+                                                                )
+                                                        ),
+                                                        "required", List.of("period", "category", "isCompleted", "actions")
+                                                )
+                                        )
+                                ),
+                                "required", List.of("steps")
+                        )
+                )
+        );
+
+    }
+
     private static String getContent(List<Map<String, Object>> choices) {
         Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
         String content = (String) message.get("content");
@@ -149,7 +252,10 @@ public class OpenAiService {
         return content;
     }
 
-    private Map requestOpenAI(Map<String, Object> body) {
+    private Map requestOpenAI(Map<String, Object> body, Map<String, Object> responseFormat) {
+
+        body.put("response_format", responseFormat);
+
         Map res = openAiClient.post()
                 .uri("/chat/completions")
                 .bodyValue(body)
@@ -198,7 +304,7 @@ public class OpenAiService {
     }
 
 
-    public AiChatDto.OptionResponse getOptions(int sequence, MemberDetail memberDetail) {
+    public AiChatDto.OptionResponse getAIChatOptions(int sequence, MemberDetail memberDetail) {
 
         List<Prompt> aiChat = promptRepository.findAllByTag("ai 채팅 " + sequence);
 
@@ -216,7 +322,9 @@ public class OpenAiService {
         Map<String, Object> body = setPrompt(finalSystemPrompt);
 
         try {
-            Map res = requestOpenAI(body);
+            Map<String, Object> aiChatOptionForm = getAIChatOptionForm();
+
+            Map res = requestOpenAI(body, aiChatOptionForm);
 
             if (res == null) return AiChatDto.OptionResponse.builder().optionList(List.of()).build();
 

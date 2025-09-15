@@ -176,7 +176,7 @@ public class JobService {
 
     public AiChatDto.OptionResponse getAIChat(Integer sequence, Member member) {
         MemberDetail memberDetail = member.getMemberDetail();
-        return  openAiService.getOptions(sequence, memberDetail);
+        return  openAiService.getAIChatOptions(sequence, memberDetail);
     }
 
     public MemberDetail getAiChatHistory(Member member) {

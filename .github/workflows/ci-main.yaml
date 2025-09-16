@@ -66,9 +66,9 @@ jobs:
       - name: Checkout manifest repository
         uses: actions/checkout@v4
         with:
-          repository: 'X-Kusitms-1/MANIFEST' # 매니페스트 리포지토리 이름으로 변경
-          token: ${{ secrets.PAT }}       # 또는 개인 액세스 토큰 사용
-          path: 'manifest'                # clone할 경로 지정
+          repository: '9oormthon-univ/2025_SEASONTHON_TEAM_42_MANIFEST'
+          token: ${{ secrets.PAT }}
+          path: 'manifest'
 
       - name: Update deployment.yml
         env:

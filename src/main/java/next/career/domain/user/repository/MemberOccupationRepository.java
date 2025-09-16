@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface MemberOccupationRepository extends JpaRepository<MemberOccupation, Long> {
     List<MemberOccupation> findByMember(Member member);
+
+    List<MemberOccupation> findByMemberAndIsBookmarkTrue(Member member);
 }

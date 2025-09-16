@@ -136,6 +136,14 @@ public class JobController {
         return ApiResponse.success();
     }
 
+    @GetMapping("/occupation/bookmarks")
+    public ApiResponse<List<JobDto.RecommendOccupationResponse>> getBookmarkedOccupations(
+            @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
+        Member member = authDetails.getUser();
+        List<JobDto.RecommendOccupationResponse> bookmarkedOccupations = jobService.getBookmarkedOccupations(member);
+        return ApiResponse.success(bookmarkedOccupations);
+    }
+
 
     // 맞춤형 일자리 추천
     @GetMapping("/recommend/job")

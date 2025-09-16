@@ -168,11 +168,10 @@ public class OpenAiService {
 
         String finalSystemPrompt = system + "\n\n[사용자 요구사항]\n" + roadmapRequestText;
 
-        Map<String, Object> body = setPrompt(finalSystemPrompt);
+        Map<String, Object> body = setRecommendRoadmapPrompt(finalSystemPrompt);
 
         try {
-            Map<String, Object> recommendRoadmapForm = getRecommendRoadmapForm();
-            Map res = requestOpenAI(body, recommendRoadmapForm);
+            Map res = requestOpenAI(body);
 
             if (res == null) return RecommendDto.RoadMapResponse.builder().steps(List.of()).build();
 
@@ -198,9 +197,14 @@ public class OpenAiService {
         }
     }
 
-    private Map<String, Object> getRecommendRoadmapForm() {
+    private static Map<String, Object> setRecommendRoadmapPrompt(String system) {
+        List<Map<String, Object>> messages = new ArrayList<>();
 
-        return Map.of(
+        if (!system.isBlank()) {
+            messages.add(Map.of("role", "system", "content", system));
+        }
+
+        Map<String, Object> responseFormat = Map.of(
                 "type", "json_schema",
                 "json_schema", Map.of(
                         "name", "steps_response",
@@ -236,7 +240,15 @@ public class OpenAiService {
                 )
         );
 
+        return Map.of(
+                "model", "gpt-4o",
+                "messages", messages,
+                "temperature", 0.2,
+                "max_tokens", 800,
+                "response_format", responseFormat
+        );
     }
+
 
     private static String getContent(List<Map<String, Object>> choices) {
         Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");

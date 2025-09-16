@@ -184,6 +184,7 @@ public class JobDto {
             private String strength;
             private String score;
             private Long memberOccupationId;
+            private Boolean isBookmark;
 
             public static Occupation of(RecommendDto.OccupationResponse.Occupation o) {
                 return Occupation.builder()
@@ -193,6 +194,7 @@ public class JobDto {
                         .strength(o.getStrength())
                         .score(o.getScore())
                         .memberOccupationId(o.getMemberOccupationId())
+                        .isBookmark(o.getIsBookmark())
                         .build();
             }
         }

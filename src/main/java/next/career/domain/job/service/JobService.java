@@ -238,4 +238,13 @@ public class JobService {
             throw new RuntimeException("XML 파싱 실패", e);
         }
     }
+
+    @Transactional
+    public void toggleBookmark(Long occupationId) {
+
+        MemberOccupation memberOccupation = memberOccupationRepository.findById(occupationId)
+                .orElseThrow(() -> new CoreException(GlobalErrorType.MEMBER_OCCUPATION_NOT_FOUND));
+
+        memberOccupation.toggleBookmark();
+    }
 }

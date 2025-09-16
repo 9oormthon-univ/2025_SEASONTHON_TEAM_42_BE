@@ -127,6 +127,15 @@ public class JobController {
         return ApiResponse.success(recommendJob);
     }
 
+    @PostMapping("/{occupationId}/bookmark")
+    public ApiResponse<?> toggleBookmark(
+            @Parameter(description = "직업 ID", example = "1") @PathVariable Long occupationId,
+            @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
+        Member member = authDetails.getUser();
+        jobService.toggleBookmark(occupationId);
+        return ApiResponse.success();
+    }
+
 
     // 맞춤형 일자리 추천
     @GetMapping("/recommend/job")
@@ -134,6 +143,7 @@ public class JobController {
     public ApiResponse<GetJobDto.SearchAllResponse> recommendJob(
             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails,
             @Parameter(hidden = true) Pageable pageable) {
+
         Member member = authDetails.getUser();
         Page<JobDto.AllResponse> jobDtoList = jobService.recommendJob(member, pageable);
         return ApiResponse.success(GetJobDto.SearchAllResponse.of(jobDtoList));

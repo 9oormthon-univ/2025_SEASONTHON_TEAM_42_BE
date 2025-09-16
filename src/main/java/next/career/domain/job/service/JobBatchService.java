@@ -46,6 +46,7 @@ public class JobBatchService {
             log.info("saveseoul job dto response = {}", response);
 
             List<Job> jobs = response.getSeoulJobDtoList().stream()
+                    .filter(dto -> !jobRepository.findAlreadyExists(dto.getJobTitle(), dto.getCompanyName()))
                     .map(this::toEntity)
                     .toList();
 

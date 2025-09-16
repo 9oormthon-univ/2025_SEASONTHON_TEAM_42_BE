@@ -104,6 +104,24 @@ public class JobController {
         return ApiResponse.success(recommendJob);
     }
 
+    @GetMapping("/recommend/occupation")
+    public ApiResponse<JobDto.RecommendJob> recommendOccupationGet(
+            @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
+        Member member = authDetails.getUser();
+
+        RecommendDto.OccupationResponse occupationResponse = jobService.getRecommendOccupation(member);
+        List<RecommendDto.OccupationResponse.Occupation> occupationList =
+                Optional.ofNullable(occupationResponse.getOccupationList()).orElse(List.of());
+
+        JobDto.RecommendJob recommendJob = JobDto.RecommendJob.builder()
+                .first(!occupationList.isEmpty() ? JobDto.RecommendJob.Occupation.of(occupationList.get(0)) : null)
+                .second(occupationList.size() > 1 ? JobDto.RecommendJob.Occupation.of(occupationList.get(1)) : null)
+                .third(occupationList.size() > 2 ? JobDto.RecommendJob.Occupation.of(occupationList.get(2)) : null)
+                .build();
+
+        return ApiResponse.success(recommendJob);
+    }
+
     // 맞춤형 일자리 추천
     @GetMapping("/recommend/job")
     @Operation(summary = "맞춤형 일자리 추천", description = "사용자의 정보를 기반으로 맞춤형 일자리를 추천합니다.")

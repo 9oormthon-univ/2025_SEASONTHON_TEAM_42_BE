@@ -97,6 +97,7 @@ public class JobService {
     }
 
 
+    @Transactional
     public RecommendDto.OccupationResponse recommendOccupation(Member member) {
 
         member.getMemberOccupationList().clear();
@@ -121,12 +122,37 @@ public class JobService {
             MemberOccupation memberOccupation = MemberOccupation.of(occupation.getOccupationName(),
                     occupation.getDescription(),
                     occupation.getStrength(),
-                    occupation.getScore());
+                    occupation.getScore(),
+                    member);
+
             memberOccupationRepository.save(memberOccupation);
         }
 
         return RecommendDto.OccupationResponse.builder()
                 .occupationList(updatedList)
+                .build();
+    }
+
+    public RecommendDto.OccupationResponse getRecommendOccupation(Member member) {
+
+        List<MemberOccupation> memberOccupations = memberOccupationRepository.findByMember(member);
+        log.info("memberOccupations = {}", memberOccupations);
+
+        List<RecommendDto.OccupationResponse.Occupation> occupationList = memberOccupations.stream()
+                .map(occ -> {
+                    String occupationImageUrl = occupationRepository.findImageUrlByOccupationName(occ.getOccupationName());
+                    return RecommendDto.OccupationResponse.Occupation.builder()
+                            .occupationName(occ.getOccupationName())
+                            .description(occ.getOccupationDescription())
+                            .strength(occ.getStrength())
+                            .score(occ.getScore())
+                            .imageUrl(occupationImageUrl)
+                            .build();
+                })
+                .toList();
+
+        return RecommendDto.OccupationResponse.builder()
+                .occupationList(occupationList)
                 .build();
     }
 

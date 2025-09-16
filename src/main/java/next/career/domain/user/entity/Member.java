@@ -122,4 +122,8 @@ public class Member extends BaseTimeEntity {
     public void createMemberDetail(MemberDetail memberDetail1) {
         this.memberDetail = memberDetail1;
     }
+
+    public void updateMemberOccupation(MemberOccupation memberOccupation) {
+        this.memberOccupationList.add(memberOccupation);
+    }
 }

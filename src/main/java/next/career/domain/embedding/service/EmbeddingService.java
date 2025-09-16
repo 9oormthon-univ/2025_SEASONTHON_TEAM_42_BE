@@ -23,7 +23,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class EmbeddingService {
 
-
     private final WebClient openAiClient;
     private final JobRepository jobRepository;
     private final MemberRepository memberRepository;

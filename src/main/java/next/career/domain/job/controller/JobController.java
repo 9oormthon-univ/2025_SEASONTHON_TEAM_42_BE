@@ -179,6 +179,4 @@ public class JobController {
         jobFacadeService.getJobDataFromSeoulJob(pageable.getPageNumber(), pageable.getPageSize());
         return ApiResponse.success();
     }
-
-
 }

@@ -13,8 +13,8 @@ public interface MemberJobMapRepository extends JpaRepository<MemberJobMap, Long
 
     Optional<MemberJobMap> findByMemberIdAndJobId(Long memberId, Long jobId);
 
-    @Query("select s.jobId from MemberJobMap s where s.memberId = :memberId")
-    List<Long> findJobIdsByUserId(Long userId);
+    @Query("select s.jobId from MemberJobMap s where s.memberId = :meberId")
+    List<Long> findJobIdsByUserId(Long meberId);
 
     Boolean existsByMemberIdAndJobId(Long id, Long jobId);
 }

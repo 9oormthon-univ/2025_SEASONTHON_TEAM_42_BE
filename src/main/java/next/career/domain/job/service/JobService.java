@@ -147,6 +147,7 @@ public class JobService {
                             .strength(occ.getStrength())
                             .score(occ.getScore())
                             .imageUrl(occupationImageUrl)
+                            .memberOccupationId(occ.getMemberOccupationId())
                             .build();
                 })
                 .toList();

@@ -87,7 +87,7 @@ public class JobController {
     // 맞춤형 직업 추천
     @PostMapping("/recommend/occupation")
     @Operation(summary = "맞춤형 직업 추천", description = "사용자의 정보를 기반으로 맞춤형 직업을 추천합니다.")
-    public ApiResponse<JobDto.RecommendJob> recommendOccupation(
+    public ApiResponse<JobDto.RecommendOccupationResponse> recommendOccupation(
             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
         Member member = authDetails.getUser();
 
@@ -95,10 +95,10 @@ public class JobController {
         List<RecommendDto.OccupationResponse.Occupation> occupationList =
                 Optional.ofNullable(occupationResponse.getOccupationList()).orElse(List.of());
 
-        JobDto.RecommendJob recommendJob = JobDto.RecommendJob.builder()
-                .first(!occupationList.isEmpty() ? JobDto.RecommendJob.Occupation.of(occupationList.get(0)) : null)
-                .second(occupationList.size() > 1 ? JobDto.RecommendJob.Occupation.of(occupationList.get(1)) : null)
-                .third(occupationList.size() > 2 ? JobDto.RecommendJob.Occupation.of(occupationList.get(2)) : null)
+        JobDto.RecommendOccupationResponse recommendJob = JobDto.RecommendOccupationResponse.builder()
+                .first(!occupationList.isEmpty() ? JobDto.RecommendOccupationResponse.Occupation.of(occupationList.get(0)) : null)
+                .second(occupationList.size() > 1 ? JobDto.RecommendOccupationResponse.Occupation.of(occupationList.get(1)) : null)
+                .third(occupationList.size() > 2 ? JobDto.RecommendOccupationResponse.Occupation.of(occupationList.get(2)) : null)
                 .build();
 
         return ApiResponse.success(recommendJob);
@@ -110,7 +110,7 @@ public class JobController {
             summary = "추천 직업 조회",
             description = "AI 추천 결과를 기반으로 회원에게 맞는 직업 최대 3개를 반환합니다."
     )
-    public ApiResponse<JobDto.RecommendJob> recommendOccupationGet(
+    public ApiResponse<JobDto.RecommendOccupationResponse> recommendOccupationGet(
             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
         Member member = authDetails.getUser();
 
@@ -118,10 +118,10 @@ public class JobController {
         List<RecommendDto.OccupationResponse.Occupation> occupationList =
                 Optional.ofNullable(occupationResponse.getOccupationList()).orElse(List.of());
 
-        JobDto.RecommendJob recommendJob = JobDto.RecommendJob.builder()
-                .first(!occupationList.isEmpty() ? JobDto.RecommendJob.Occupation.of(occupationList.get(0)) : null)
-                .second(occupationList.size() > 1 ? JobDto.RecommendJob.Occupation.of(occupationList.get(1)) : null)
-                .third(occupationList.size() > 2 ? JobDto.RecommendJob.Occupation.of(occupationList.get(2)) : null)
+        JobDto.RecommendOccupationResponse recommendJob = JobDto.RecommendOccupationResponse.builder()
+                .first(!occupationList.isEmpty() ? JobDto.RecommendOccupationResponse.Occupation.of(occupationList.get(0)) : null)
+                .second(occupationList.size() > 1 ? JobDto.RecommendOccupationResponse.Occupation.of(occupationList.get(1)) : null)
+                .third(occupationList.size() > 2 ? JobDto.RecommendOccupationResponse.Occupation.of(occupationList.get(2)) : null)
                 .build();
 
         return ApiResponse.success(recommendJob);

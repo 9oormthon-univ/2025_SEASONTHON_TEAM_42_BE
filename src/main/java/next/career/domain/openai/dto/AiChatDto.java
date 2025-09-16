@@ -25,6 +25,8 @@ public class AiChatDto {
     @Builder
     public static class HistoryResponse{
 
+        private String job;
+
         private String experience;
 
         private String certificateOrSkill;
@@ -37,21 +39,19 @@ public class AiChatDto {
 
         private String avoidConditions;
 
-        private String availableWorkingTime;
-
         private String physicalCondition;
 
         private String educationAndCareerGoal;
 
         public static HistoryResponse of(MemberDetail memberDetail) {
             return HistoryResponse.builder()
+                    .job(memberDetail.getJob())
                     .experience(memberDetail.getExperience())
                     .certificateOrSkill(memberDetail.getCertificateOrSkill())
                     .personalityType(memberDetail.getPersonalityType())
                     .interests(memberDetail.getInterests())
                     .preferredWorkStyles(memberDetail.getPreferredWorkStyles())
                     .avoidConditions(memberDetail.getAvoidConditions())
-                    .availableWorkingTime(memberDetail.getAvailableWorkingTime())
                     .physicalCondition(memberDetail.getPhysicalCondition())
                     .educationAndCareerGoal(memberDetail.getEducationAndCareerGoal())
                     .build();

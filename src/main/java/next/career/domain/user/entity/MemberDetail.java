@@ -23,21 +23,21 @@ public class MemberDetail {
     @OneToOne(mappedBy = "memberDetail", fetch = FetchType.EAGER)
     private Member member;
 
+    private String job;
+
     private String experience;
 
     private String certificateOrSkill;
 
     private String workingStyle;
 
+    private String avoidConditions;
+
     private String personalityType;
 
     private String interests;
 
     private String preferredWorkStyles;
-
-    private String avoidConditions;
-
-    private String availableWorkingTime;
 
     private String physicalCondition;
 
@@ -47,6 +47,10 @@ public class MemberDetail {
         return MemberDetail.builder()
                 .member(member)
                 .build();
+    }
+
+    public void updateJob(String job) {
+        this.job = job;
     }
 
     public void updateExperience(String experience) {
@@ -73,9 +77,6 @@ public class MemberDetail {
         this.avoidConditions = avoidConditions;
     }
 
-    public void updateAvailableWorkingTime(String availableWorkingTime) {
-        this.availableWorkingTime = availableWorkingTime;
-    }
 
     public void updatePhysicalCondition(String physicalCondition) {
         this.physicalCondition = physicalCondition;

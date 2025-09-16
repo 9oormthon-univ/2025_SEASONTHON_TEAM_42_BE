@@ -55,11 +55,10 @@ public class OpenAiService {
 
         String finalSystemPrompt = system + "\n\n[사용자 정보]\n" + memberDetailText;
 
-        Map<String, Object> body = setPrompt(finalSystemPrompt);
+        Map<String, Object> body = setRecommendOccupationPrompt(finalSystemPrompt);
 
         try {
-            Map<String, Object> recommendOccupationForm = getRecommendOccupation();
-            Map res = requestOpenAI(body, recommendOccupationForm);
+            Map res = requestOpenAI(body);
 
             if (res == null) {
                 return RecommendDto.OccupationResponse.builder()
@@ -98,8 +97,14 @@ public class OpenAiService {
 
     }
 
-    private Map<String, Object> getRecommendOccupation() {
-        return Map.of(
+    private static Map<String, Object> setRecommendOccupationPrompt(String system) {
+        List<Map<String, Object>> messages = new ArrayList<>();
+
+        if (!system.isBlank()) {
+            messages.add(Map.of("role", "system", "content", system));
+        }
+
+        Map<String, Object> responseFormat = Map.of(
                 "type", "json_schema",
                 "json_schema", Map.of(
                         "name", "occupation_list_response",
@@ -117,7 +122,8 @@ public class OpenAiService {
                                                                 "strength", Map.of("type", "string"),
                                                                 "workCondition", Map.of("type", "string"),
                                                                 "wish", Map.of("type", "string"),
-                                                                "score", Map.of("type", "string",
+                                                                "score", Map.of(
+                                                                        "type", "string",
                                                                         "pattern", "^(100|[0-9]{1,2})$" // 0~100 문자열
                                                                 )
                                                         ),
@@ -136,6 +142,14 @@ public class OpenAiService {
                                 "required", List.of("occupationList")
                         )
                 )
+        );
+
+        return Map.of(
+                "model", "gpt-4o",
+                "messages", messages,
+                "temperature", 0.2,
+                "max_tokens", 800,
+                "response_format", responseFormat
         );
     }
 

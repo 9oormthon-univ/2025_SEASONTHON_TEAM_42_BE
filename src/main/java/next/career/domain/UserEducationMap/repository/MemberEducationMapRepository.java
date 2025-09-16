@@ -14,7 +14,7 @@ public interface MemberEducationMapRepository extends JpaRepository<MemberEducat
     Optional<MemberEducationMap> findByMemberIdAndEducationId(Long memberId, Long educationId);
 
     @Query("select s.educationId from MemberEducationMap s where s.memberId = :memberId")
-    List<Long> findJobIdsByUserId(Long memberId);
+    List<Long> findEducationIdsByUserId(Long memberId);
 
-    Boolean existsByMemberIdAndJobId(Long memberId, Long jobId);
+    Boolean existsByMemberIdAndEducationId(Long memberId, Long educationId);
 }

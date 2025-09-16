@@ -9,7 +9,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class BookMarkQueryService implements BookMarkFinder {
+public class JobBookMarkQueryService implements JobBookMarkFinder {
 
     private final MemberJobMapRepository memberJobMapRepository;
 

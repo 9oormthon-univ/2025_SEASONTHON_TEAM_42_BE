@@ -29,8 +29,13 @@ public class PineconeService {
     @Value("${pinecone.api-key}")
     private String apiKey;
 
-    private final WebClient pineconeClient;
+    @Value("${pinecone.host}")
+    private String jobHost;
 
+    @Value("${pinecone.edu.host}")
+    private String eduHost;
+
+    private final WebClient pineconeClient;
     private final EmbeddingService embeddingService;
     private final JobRepository jobRepository;
 
@@ -83,7 +88,7 @@ public class PineconeService {
         );
 
         Map response = pineconeClient.post()
-                .uri("/query")
+                .uri(jobHost)
                 .header("Api-Key", apiKey)
                 .header("X-Pinecone-Api-Version", "2025-04")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -99,6 +104,45 @@ public class PineconeService {
                 .block();
 
         log.info("get recommend job response = {}", response);
+
+        List<Map<String, Object>> matches = (List<Map<String, Object>>) response.get("matches");
+        if (matches == null || matches.isEmpty()) {
+            throw new CoreException(GlobalErrorType.JOB_NOT_FOUND_ERROR);
+        }
+
+        return matches.stream()
+                .map(m -> new PineconeRecommendDto(
+                        Long.valueOf(String.valueOf(m.get("id"))),
+                        (long) (Double.parseDouble(String.valueOf(m.get("score"))) * 100)
+                ))
+                .toList();
+    }
+
+    public List<PineconeRecommendDto> getRecommendEducation(List<Float> vector) {
+
+        Map<String, Object> body = Map.of(
+                "vector", vector,
+                "topK", 4,
+                "includeMetadata", true
+        );
+
+        Map response = pineconeClient.post()
+                .uri(eduHost)
+                .header("Api-Key", apiKey)
+                .header("X-Pinecone-Api-Version", "2025-04")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(body)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, r ->
+                        r.bodyToMono(String.class).flatMap(msg ->
+                                Mono.error(new RuntimeException("Pinecone query failed: " + msg))
+                        )
+                )
+                .bodyToMono(Map.class)
+                .block();
+
+        log.info("get recommend education response = {}", response);
 
         List<Map<String, Object>> matches = (List<Map<String, Object>>) response.get("matches");
         if (matches == null || matches.isEmpty()) {

@@ -4,12 +4,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import next.career.domain.education.controller.dto.GetEducationDto;
 import next.career.domain.education.service.EducationService;
+import next.career.domain.education.service.dto.EducationDto;
 import next.career.domain.job.controller.dto.GetJobDto;
 import next.career.domain.job.service.dto.JobDto;
 import next.career.domain.user.entity.Member;
 import next.career.global.apiPayload.response.ApiResponse;
 import next.career.global.security.AuthDetails;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,13 +28,23 @@ public class EducationController {
 
     private final EducationService educationService;
 
-    @GetMapping("/recommend/education")
-    @Operation(summary = "맞춤형 일자리 추천", description = "사용자의 정보를 기반으로 맞춤형 일자리를 추천합니다.")
-    public ApiResponse<GetJobDto.SearchAllResponse> recommendJob(
+    @GetMapping("/recommend")
+    @Operation(summary = "맞춤형 교육 추천", description = "사용자의 정보를 기반으로 맞춤형 일자리를 추천합니다.")
+    public ApiResponse<GetEducationDto.SearchAllResponse> recommendJob(
             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails,
             @Parameter(hidden = true) Pageable pageable) {
         Member member = authDetails.getUser();
-        Page<JobDto.AllResponse> jobDtoList = educationService.recommendEducation(member, pageable);
-        return ApiResponse.success(GetJobDto.SearchAllResponse.of(jobDtoList));
+        Page<EducationDto.AllResponse> EducationDtoList = educationService.recommendEducation(member, pageable);
+        return ApiResponse.success(GetEducationDto.SearchAllResponse.of(EducationDtoList));
+    }
+
+    @GetMapping("/bookmarks")
+    @Operation(summary = "북마크된 교육 조회", description = "북마크된 교육을 조회합니다.")
+    public ApiResponse<GetEducationDto.SearchAllResponse> getBookMarkedJobs(
+            @ParameterObject GetEducationDto.SearchRequest searchRequest,
+            @Parameter(hidden = true) Pageable pageable,
+            @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
+        Page<EducationDto.AllResponse> EducationDtoList = educationService.getBookMarkedEducations(searchRequest, authDetails.getUser(), pageable);
+        return ApiResponse.success(GetEducationDto.SearchAllResponse.of(EducationDtoList));
     }
 }

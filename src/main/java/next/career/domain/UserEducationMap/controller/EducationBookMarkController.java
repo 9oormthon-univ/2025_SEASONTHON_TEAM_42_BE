@@ -16,7 +16,7 @@ import java.util.List;
 @Tag(name = "BookMark API")
 @RequestMapping("/v1/bookmark/edu")
 @RequiredArgsConstructor
-public class BookMarkController {
+public class EducationBookMarkController {
 
     private final EducationBookMarkService bookMarkService;
 

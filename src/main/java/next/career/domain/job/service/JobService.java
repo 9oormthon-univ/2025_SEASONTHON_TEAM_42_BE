@@ -3,7 +3,7 @@ package next.career.domain.job.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import next.career.domain.UserJobMap.repository.MemberJobMapRepository;
-import next.career.domain.UserJobMap.service.BookMarkFinder;
+import next.career.domain.UserJobMap.service.JobBookMarkFinder;
 import next.career.domain.job.controller.dto.GetJobDto;
 import next.career.domain.job.service.dto.SaveSeoulJobDto;
 import next.career.domain.job.entity.Job;
@@ -45,7 +45,7 @@ public class JobService {
     private final JobCustomRepository jobCustomRepository;
     private final MemberDetailRepository memberDetailRepository;
     private final MemberRepository memberRepository;
-    private final BookMarkFinder bookMarkFinder;
+    private final JobBookMarkFinder jobBookMarkFinder;
     private final RoadMapRepository roadMapRepository;
     private final RoadmapActionRepository roadmapActionRepository;
     private final MemberJobMapRepository memberJobMapRepository;
@@ -70,7 +70,7 @@ public class JobService {
     }
 
     public Page<JobDto.AllResponse> getBookMarkedJobs(GetJobDto.SearchRequest request, Member member, Pageable pageable) {
-        List<Long> bookMarkedJobIds = bookMarkFinder.findBookMarkedJobs(member.getId());
+        List<Long> bookMarkedJobIds = jobBookMarkFinder.findBookMarkedJobs(member.getId());
 
         return jobCustomRepository.getBookMarkedJobs(request, bookMarkedJobIds, pageable)
                 .map(job -> JobDto.AllResponse.of(

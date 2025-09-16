@@ -303,6 +303,12 @@ public class OpenAiService {
         return pineconeService.getRecommendJob(vector);
     }
 
+    public List<PineconeRecommendDto> getRecommendEducation(Member member) {
+        List<Float> vector = embeddingService.getEmbeddingMember(member).block();
+
+        return pineconeService.getRecommendEducation(vector);
+    }
+
 
     public AiChatDto.OptionResponse getAIChatOptions(int sequence, MemberDetail memberDetail) {
 

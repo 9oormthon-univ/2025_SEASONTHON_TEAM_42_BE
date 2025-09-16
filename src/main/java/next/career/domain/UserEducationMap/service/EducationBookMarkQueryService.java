@@ -15,7 +15,7 @@ public class EducationBookMarkQueryService implements EducationBookMarkFinder {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Long> findBookMarkedJobs(Long userId) {
-        return memberJobMapRepository.findJobIdsByUserId(userId);
+    public List<Long> findBookMarkedEducations(Long userId) {
+        return memberJobMapRepository.findEducationIdsByUserId(userId);
     }
 }

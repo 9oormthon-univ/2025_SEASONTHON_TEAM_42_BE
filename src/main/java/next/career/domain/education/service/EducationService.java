@@ -2,10 +2,12 @@ package next.career.domain.education.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import next.career.domain.UserJobMap.repository.MemberJobMapRepository;
-import next.career.domain.job.entity.Job;
-import next.career.domain.job.repository.JobCustomRepository;
-import next.career.domain.job.service.dto.JobDto;
+import next.career.domain.UserEducationMap.repository.MemberEducationMapRepository;
+import next.career.domain.UserEducationMap.service.EducationBookMarkFinder;
+import next.career.domain.education.controller.dto.GetEducationDto;
+import next.career.domain.education.entity.Education;
+import next.career.domain.education.repository.EducationCustomRepository;
+import next.career.domain.education.service.dto.EducationDto;
 import next.career.domain.job.service.dto.PineconeRecommendDto;
 import next.career.domain.openai.service.OpenAiService;
 import next.career.domain.user.entity.Member;
@@ -24,35 +26,46 @@ import java.util.stream.Collectors;
 public class EducationService {
 
     private final OpenAiService openAiService;
-    private final JobCustomRepository jobCustomRepository;
-    private final MemberJobMapRepository memberJobMapRepository;
+    private final EducationCustomRepository educationCustomRepository;
+    private final MemberEducationMapRepository memberEducationMapRepository;
+    private final EducationBookMarkFinder educationBookMarkFinder;
 
-    private Boolean getIsBookmark(Job job, Member member) {
-        return memberJobMapRepository.existsByMemberIdAndJobId(member.getId(), job.getJobId());
+    private Boolean getIsBookmark(Education education, Member member) {
+        return memberEducationMapRepository.existsByMemberIdAndEducationId(member.getId(), education.getEducationId());
     }
 
     @Transactional
-    public Page<JobDto.AllResponse> recommendEducation(Member member, Pageable pageable) {
-        List<PineconeRecommendDto> recommendJobs = openAiService.getRecommendJob(member);
+    public Page<EducationDto.AllResponse> recommendEducation(Member member, Pageable pageable) {
+        List<PineconeRecommendDto> recommendEducations = openAiService.getRecommendEducation(member);
 
-        if (recommendJobs == null || recommendJobs.isEmpty()) {
+        if (recommendEducations == null || recommendEducations.isEmpty()) {
             return Page.empty(pageable);
         }
 
-        List<Long> recommendJobIds = recommendJobs.stream()
+        List<Long> recommendEducationIds = recommendEducations.stream()
                 .map(PineconeRecommendDto::getJobId)
                 .toList();
 
-        Page<Job> jobs = jobCustomRepository.getRecommendJobs(recommendJobIds, pageable);
+        Page<Education> educations = educationCustomRepository.getRecommendEducations(recommendEducationIds, pageable);
 
-        Map<Long, Long> scoreMap = recommendJobs.stream()
+        Map<Long, Long> scoreMap = recommendEducations.stream()
                 .collect(Collectors.toMap(PineconeRecommendDto::getJobId, PineconeRecommendDto::getScore));
 
-        return jobs.map(job -> JobDto.AllResponse.ofRecommend(
-                job,
-                getIsBookmark(job, member),
-                scoreMap.getOrDefault(job.getJobId(), 0L)
+        return educations.map(education -> EducationDto.AllResponse.ofRecommend(
+                education,
+                getIsBookmark(education, member),
+                scoreMap.getOrDefault(education.getEducationId(), 0L)
         ));
+    }
+
+    public Page<EducationDto.AllResponse> getBookMarkedEducations(GetEducationDto.SearchRequest request, Member member, Pageable pageable) {
+        List<Long> bookMarkedJobIds = educationBookMarkFinder.findBookMarkedEducations(member.getId());
+
+        return educationCustomRepository.getBookMarkedEducations(request, bookMarkedJobIds, pageable)
+                .map(education -> EducationDto.AllResponse.of(
+                        education,
+                        getIsBookmark(education, member)
+                ));
     }
 
     public String getRandomImageUrl() {

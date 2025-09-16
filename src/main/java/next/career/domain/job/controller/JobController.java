@@ -39,7 +39,6 @@ public class JobController {
 
     private final JobService jobService;
     private final HrdCourseService rawClient;
-    private final JobBatchService jobBatchService;
     private final JobFacadeService jobFacadeService;
 
     // 전체 채용 조회

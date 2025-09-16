@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface EducationBookMarkFinder {
 
-    List<Long> findBookMarkedJobs(Long userId);
+    List<Long> findBookMarkedEducations(Long userId);
 }

@@ -49,6 +49,10 @@ public class MemberDetail {
                 .build();
     }
 
+    public void updateJob(String job) {
+        this.job = job;
+    }
+
     public void updateExperience(String experience) {
         this.experience = experience;
     }
@@ -73,9 +77,6 @@ public class MemberDetail {
         this.avoidConditions = avoidConditions;
     }
 
-    public void updateAvailableWorkingTime(String availableWorkingTime) {
-        this.availableWorkingTime = availableWorkingTime;
-    }
 
     public void updatePhysicalCondition(String physicalCondition) {
         this.physicalCondition = physicalCondition;

@@ -159,14 +159,14 @@ public class JobService {
         }
 
         switch (sequence) {
-            case 1 -> memberDetail.updateExperience(answer);
-            case 2 -> memberDetail.updateCertificateOrSkill(answer);
-            case 3 -> memberDetail.updateWorkingStyle(answer);
-            case 4 -> memberDetail.updateAvoidConditions(answer);
-            case 5 -> memberDetail.updatePersonalityType(answer);
-            case 6 -> memberDetail.updateInterests(answer);
-            case 7 -> memberDetail.updatePreferredWorkStyles(answer);
-            case 8 -> memberDetail.updateAvailableWorkingTime(answer);
+            case 1 -> memberDetail.updateJob(answer);
+            case 2 -> memberDetail.updateExperience(answer);
+            case 3 -> memberDetail.updateCertificateOrSkill(answer);
+            case 4 -> memberDetail.updateWorkingStyle(answer);
+            case 5 -> memberDetail.updateAvoidConditions(answer);
+            case 6 -> memberDetail.updatePersonalityType(answer);
+            case 7 -> memberDetail.updateInterests(answer);
+            case 8 -> memberDetail.updatePreferredWorkStyles(answer);
             case 9 -> memberDetail.updatePhysicalCondition(answer);
             case 10 -> memberDetail.updateEducationAndCareerGoal(answer);
             default -> throw new CoreException(GlobalErrorType.MEMBER_DETAIL_SEQUENCE_NOT_FOUND);

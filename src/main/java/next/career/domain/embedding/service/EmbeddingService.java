@@ -96,7 +96,7 @@ public class EmbeddingService {
                 memberDetail != null ? memberDetail.getInterests() : "",
                 memberDetail != null ? memberDetail.getPreferredWorkStyles() : "",
                 memberDetail != null ? memberDetail.getAvoidConditions() : "",
-                memberDetail != null ? memberDetail.getAvailableWorkingTime() : "",
+                memberDetail != null ? memberDetail.getJob() : "",
                 memberDetail != null ? memberDetail.getPhysicalCondition() : "",
                 memberDetail != null ? memberDetail.getEducationAndCareerGoal() : ""
         );
@@ -178,7 +178,7 @@ public class EmbeddingService {
                 nz(d != null ? d.getInterests() : ""),
                 nz(d != null ? d.getPreferredWorkStyles() : ""),
                 nz(d != null ? d.getAvoidConditions() : ""),
-                nz(d != null ? d.getAvailableWorkingTime() : ""),
+                nz(d != null ? d.getJob() : ""),
                 nz(d != null ? d.getPhysicalCondition() : ""),
                 nz(d != null ? d.getEducationAndCareerGoal() : "")
         );

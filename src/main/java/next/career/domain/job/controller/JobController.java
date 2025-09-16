@@ -137,11 +137,10 @@ public class JobController {
     }
 
     @GetMapping("/occupation/bookmarks")
-    public ApiResponse<List<JobDto.RecommendOccupationResponse>> getBookmarkedOccupations(
+    public ApiResponse<RecommendDto.OccupationResponse> getBookmarkedOccupations(
             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
         Member member = authDetails.getUser();
-        List<JobDto.RecommendOccupationResponse> bookmarkedOccupations = jobService.getBookmarkedOccupations(member);
-        return ApiResponse.success(bookmarkedOccupations);
+        return ApiResponse.success(jobService.getBookmarkedOccupations(member));
     }
 
 

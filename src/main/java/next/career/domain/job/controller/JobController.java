@@ -104,7 +104,12 @@ public class JobController {
         return ApiResponse.success(recommendJob);
     }
 
+    // 추천 직업 조회
     @GetMapping("/recommend/occupation")
+    @Operation(
+            summary = "추천 직업 조회",
+            description = "AI 추천 결과를 기반으로 회원에게 맞는 직업 최대 3개를 반환합니다."
+    )
     public ApiResponse<JobDto.RecommendJob> recommendOccupationGet(
             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
         Member member = authDetails.getUser();
@@ -121,6 +126,7 @@ public class JobController {
 
         return ApiResponse.success(recommendJob);
     }
+
 
     // 맞춤형 일자리 추천
     @GetMapping("/recommend/job")

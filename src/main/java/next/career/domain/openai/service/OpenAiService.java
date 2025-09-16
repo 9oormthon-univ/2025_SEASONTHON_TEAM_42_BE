@@ -55,11 +55,10 @@ public class OpenAiService {
 
         String finalSystemPrompt = system + "\n\n[사용자 정보]\n" + memberDetailText;
 
-        Map<String, Object> body = setPrompt(finalSystemPrompt);
+        Map<String, Object> body = setRecommendOccupationPrompt(finalSystemPrompt);
 
         try {
-            Map<String, Object> recommendOccupationForm = getRecommendOccupation();
-            Map res = requestOpenAI(body, recommendOccupationForm);
+            Map res = requestOpenAI(body);
 
             if (res == null) {
                 return RecommendDto.OccupationResponse.builder()
@@ -98,8 +97,14 @@ public class OpenAiService {
 
     }
 
-    private Map<String, Object> getRecommendOccupation() {
-        return Map.of(
+    private static Map<String, Object> setRecommendOccupationPrompt(String system) {
+        List<Map<String, Object>> messages = new ArrayList<>();
+
+        if (!system.isBlank()) {
+            messages.add(Map.of("role", "system", "content", system));
+        }
+
+        Map<String, Object> responseFormat = Map.of(
                 "type", "json_schema",
                 "json_schema", Map.of(
                         "name", "occupation_list_response",
@@ -117,7 +122,8 @@ public class OpenAiService {
                                                                 "strength", Map.of("type", "string"),
                                                                 "workCondition", Map.of("type", "string"),
                                                                 "wish", Map.of("type", "string"),
-                                                                "score", Map.of("type", "string",
+                                                                "score", Map.of(
+                                                                        "type", "string",
                                                                         "pattern", "^(100|[0-9]{1,2})$" // 0~100 문자열
                                                                 )
                                                         ),
@@ -137,27 +143,16 @@ public class OpenAiService {
                         )
                 )
         );
-    }
 
-    private Map<String, Object> getAIChatOptionForm() {
         return Map.of(
-                "type", "json_schema",
-                "json_schema", Map.of(
-                        "name", "option_list_response",
-                        "schema", Map.of(
-                                "type", "object",
-                                "properties", Map.of(
-                                        "optionList", Map.of(
-                                                "type", "array",
-                                                "items", Map.of("type", "string")
-                                        )
-                                ),
-                                "required", List.of("optionList")
-                        )
-                )
+                "model", "gpt-4o",
+                "messages", messages,
+                "temperature", 0.2,
+                "max_tokens", 800,
+                "response_format", responseFormat
         );
-
     }
+
 
     public RecommendDto.RoadMapResponse getRecommendRoadMap(GetRoadMapDto.Request roadmapRequest, Member member) {
         List<Prompt> roadmap = promptRepository.findAllByTag("roadmap");
@@ -173,11 +168,10 @@ public class OpenAiService {
 
         String finalSystemPrompt = system + "\n\n[사용자 요구사항]\n" + roadmapRequestText;
 
-        Map<String, Object> body = setPrompt(finalSystemPrompt);
+        Map<String, Object> body = setRecommendRoadmapPrompt(finalSystemPrompt);
 
         try {
-            Map<String, Object> recommendRoadmapForm = getRecommendRoadmapForm();
-            Map res = requestOpenAI(body, recommendRoadmapForm);
+            Map res = requestOpenAI(body);
 
             if (res == null) return RecommendDto.RoadMapResponse.builder().steps(List.of()).build();
 
@@ -203,9 +197,14 @@ public class OpenAiService {
         }
     }
 
-    private Map<String, Object> getRecommendRoadmapForm() {
+    private static Map<String, Object> setRecommendRoadmapPrompt(String system) {
+        List<Map<String, Object>> messages = new ArrayList<>();
 
-        return Map.of(
+        if (!system.isBlank()) {
+            messages.add(Map.of("role", "system", "content", system));
+        }
+
+        Map<String, Object> responseFormat = Map.of(
                 "type", "json_schema",
                 "json_schema", Map.of(
                         "name", "steps_response",
@@ -241,7 +240,15 @@ public class OpenAiService {
                 )
         );
 
+        return Map.of(
+                "model", "gpt-4o",
+                "messages", messages,
+                "temperature", 0.2,
+                "max_tokens", 800,
+                "response_format", responseFormat
+        );
     }
+
 
     private static String getContent(List<Map<String, Object>> choices) {
         Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
@@ -252,9 +259,7 @@ public class OpenAiService {
         return content;
     }
 
-    private Map requestOpenAI(Map<String, Object> body, Map<String, Object> responseFormat) {
-
-        body.put("response_format", responseFormat);
+    private Map requestOpenAI(Map<String, Object> body) {
 
         Map res = openAiClient.post()
                 .uri("/chat/completions")
@@ -270,21 +275,41 @@ public class OpenAiService {
         return res;
     }
 
-    private static Map<String, Object> setPrompt(String system) {
+    private static Map<String, Object> setAIChatOptionPrompt(String system) {
         List<Map<String, Object>> messages = new ArrayList<>();
 
         if (!system.isBlank()) {
             messages.add(Map.of("role", "system", "content", system));
         }
 
-        Map<String, Object> body = Map.of(
+        // response_format 정의
+        Map<String, Object> responseFormat = Map.of(
+                "type", "json_schema",
+                "json_schema", Map.of(
+                        "name", "option_list_response",
+                        "schema", Map.of(
+                                "type", "object",
+                                "properties", Map.of(
+                                        "optionList", Map.of(
+                                                "type", "array",
+                                                "items", Map.of("type", "string")
+                                        )
+                                ),
+                                "required", List.of("optionList")
+                        )
+                )
+        );
+
+        // 최종 body
+        return Map.of(
                 "model", "gpt-4o",
                 "messages", messages,
                 "temperature", 0.2,
-                "max_tokens", 800
+                "max_tokens", 800,
+                "response_format", responseFormat
         );
-        return body;
     }
+
 
     private static String stripCodeFence(String s) {
         String t = s.trim();
@@ -319,12 +344,11 @@ public class OpenAiService {
 
         String finalSystemPrompt = system + "\n\n[사용자 정보]\n" + memberDetailText;
 
-        Map<String, Object> body = setPrompt(finalSystemPrompt);
+        Map<String, Object> body = setAIChatOptionPrompt(finalSystemPrompt);
 
         try {
-            Map<String, Object> aiChatOptionForm = getAIChatOptionForm();
 
-            Map res = requestOpenAI(body, aiChatOptionForm);
+            Map res = requestOpenAI(body);
 
             if (res == null) return AiChatDto.OptionResponse.builder().optionList(List.of()).build();
 

@@ -147,6 +147,8 @@ public class JobService {
                             .strength(occ.getStrength())
                             .score(occ.getScore())
                             .imageUrl(occupationImageUrl)
+                            .memberOccupationId(occ.getMemberOccupationId())
+                            .isBookmark(occ.getIsBookmark())
                             .build();
                 })
                 .toList();
@@ -236,5 +238,38 @@ public class JobService {
         } catch (Exception e) {
             throw new RuntimeException("XML 파싱 실패", e);
         }
+    }
+
+    @Transactional
+    public void toggleBookmark(Long occupationId) {
+
+        MemberOccupation memberOccupation = memberOccupationRepository.findById(occupationId)
+                .orElseThrow(() -> new CoreException(GlobalErrorType.MEMBER_OCCUPATION_NOT_FOUND));
+
+        memberOccupation.toggleBookmark();
+    }
+
+    public RecommendDto.OccupationResponse getBookmarkedOccupations(Member member) {
+
+        List<MemberOccupation> memberOccupations = memberOccupationRepository.findByMemberAndIsBookmarkTrue(member);
+
+        List<RecommendDto.OccupationResponse.Occupation> occupationList = memberOccupations.stream()
+                .map(occ -> {
+                    String occupationImageUrl = occupationRepository.findImageUrlByOccupationName(occ.getOccupationName());
+                    return RecommendDto.OccupationResponse.Occupation.builder()
+                            .occupationName(occ.getOccupationName())
+                            .description(occ.getOccupationDescription())
+                            .strength(occ.getStrength())
+                            .score(occ.getScore())
+                            .imageUrl(occupationImageUrl)
+                            .memberOccupationId(occ.getMemberOccupationId())
+                            .isBookmark(occ.getIsBookmark())
+                            .build();
+                })
+                .toList();
+
+        return RecommendDto.OccupationResponse.builder()
+                .occupationList(occupationList)
+                .build();
     }
 }

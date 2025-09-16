@@ -25,6 +25,8 @@ public class MemberOccupation {
 
     private String score;
 
+    private Boolean isBookmark;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
@@ -36,6 +38,11 @@ public class MemberOccupation {
                 .strength(strength)
                 .score(score)
                 .member(member)
+                .isBookmark(false)
                 .build();
+    }
+
+    public void toggleBookmark() {
+        this.isBookmark = !this.isBookmark;
     }
 }

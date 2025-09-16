@@ -168,7 +168,7 @@ public class JobDto {
     @NoArgsConstructor
     @Getter
     @Builder
-    public static class RecommendJob {
+    public static class RecommendOccupationResponse {
         private Occupation first;
         private Occupation second;
         private Occupation third;
@@ -183,6 +183,8 @@ public class JobDto {
             private String description;
             private String strength;
             private String score;
+            private Long memberOccupationId;
+            private Boolean isBookmark;
 
             public static Occupation of(RecommendDto.OccupationResponse.Occupation o) {
                 return Occupation.builder()
@@ -191,6 +193,8 @@ public class JobDto {
                         .description(o.getDescription())
                         .strength(o.getStrength())
                         .score(o.getScore())
+                        .memberOccupationId(o.getMemberOccupationId())
+                        .isBookmark(o.getIsBookmark())
                         .build();
             }
         }

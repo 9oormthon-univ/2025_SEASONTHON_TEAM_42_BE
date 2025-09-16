@@ -31,6 +31,8 @@ public class RecommendDto {
             private String description;
             private String strength;
             private String score;
+            private Long memberOccupationId;
+            private Boolean isBookmark;
         }
 
     }

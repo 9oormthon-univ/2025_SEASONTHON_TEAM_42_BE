@@ -41,6 +41,8 @@ public enum GlobalErrorType implements ErrorType {
     ROAD_MAP_ACTION_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "로드맵 할 일이 존재하지 않습니다"),
     ROAD_MAP_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "로드이 존재하지 않습니다"),
 
+    MEMBER_OCCUPATION_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "추천 직업이 존재하지 않습니다"),
+
     ;
 
     private final HttpStatus status;

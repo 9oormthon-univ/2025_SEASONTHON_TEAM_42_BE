@@ -98,6 +98,9 @@ public class JobService {
 
 
     public RecommendDto.OccupationResponse recommendOccupation(Member member) {
+
+        member.getMemberOccupationList().clear();
+
         RecommendDto.OccupationResponse recommendOccupation = openAiService.getRecommendOccupation(member);
         List<RecommendDto.OccupationResponse.Occupation> occupationList = recommendOccupation.getOccupationList();
 

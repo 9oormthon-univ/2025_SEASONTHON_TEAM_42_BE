@@ -137,27 +137,36 @@ public class EmbeddingService {
         );
     }
 
-    //TODO: 추후에 수정
     private String toEmbeddingJobTextV2(Job job) {
         return """
         이 채용 공고는 %s 분야의 %s 직무입니다.
-        기업명은 %s이며, 근무 지역은 %s입니다.
-        고용 형태는 %s이고 요구 경력은 %s입니다.
-        필수 기술은 %s이며, 우대 사항으로 %s가 있습니다.
-        급여는 %s이고, 근무 기간은 %s입니다.
+        직종명은 %s이며, 기업명은 %s입니다.
+        고용 형태는 %s이고, 근무 지역은 %s입니다.
+        근무 시간은 %s입니다.
+        직무 내용은 다음과 같습니다: %s
+        임금은 %s이고, 제공되는 4대 보험은 %s입니다.
+        제출 서류는 %s이며, 전형 방법은 %s이고, 접수 방법은 %s입니다.
         공고는 %s에 등록되었고, %s에 마감됩니다.
         """.formatted(
-                nz(job.getJobCategory()),
-                nz(job.getJobTitle()),
-                nz(job.getCompanyName()),
-                nz(job.getWorkLocation()),
-                nz(job.getEmploymentType()),
-                nz(job.getPostingDate()),
-                nz(job.getClosingDate())
+                nz(job.getJobCategory()),       // 직무 분야
+                nz(job.getJobTitle()),          // 직무명
+                nz(job.getJobCodeName()),       // 직종명
+                nz(job.getCompanyName()),       // 기업명
+                nz(job.getEmploymentType()),    // 고용 형태
+                nz(job.getWorkLocation()),      // 근무 지역
+                nz(job.getWorkTime()),          // 근무 시간
+                nz(job.getDescription()),       // 직무 내용
+                nz(job.getWage()),              // 임금
+                nz(job.getInsurance()),         // 4대 보험
+                nz(job.getRequiredDocuments()), // 제출 서류
+                nz(job.getScreeningMethod()),   // 전형 방법
+                nz(job.getReceptionMethod()),   // 접수 방법
+                nz(job.getPostingDate()),       // 등록일
+                nz(job.getClosingDate())        // 마감일
         );
     }
 
-    //TODO: 추후에 수정
+
     private String toEmbeddingMemberTextV2(Member member) {
         MemberDetail d = member.getMemberDetail();
         return """

@@ -20,7 +20,9 @@ import next.career.domain.roadmap.repository.RoadmapActionRepository;
 import next.career.domain.roadmap.repository.RoadmapInputRepository;
 import next.career.domain.user.entity.Member;
 import next.career.domain.user.entity.MemberDetail;
+import next.career.domain.user.entity.MemberOccupation;
 import next.career.domain.user.repository.MemberDetailRepository;
+import next.career.domain.user.repository.MemberOccupationRepository;
 import next.career.domain.user.repository.MemberRepository;
 import next.career.global.apiPayload.exception.CoreException;
 import next.career.global.apiPayload.exception.GlobalErrorType;
@@ -53,6 +55,7 @@ public class JobService {
     private final OccupationRepository occupationRepository;
     private final WebClient seoulJobClient;
     private final XmlMapper xmlMapper = new XmlMapper();
+    private final MemberOccupationRepository memberOccupationRepository;
 
     public Page<JobDto.AllResponse> getAllJob(GetJobDto.SearchRequest request, Member member, Pageable pageable) {
 
@@ -94,7 +97,11 @@ public class JobService {
     }
 
 
+    @Transactional
     public RecommendDto.OccupationResponse recommendOccupation(Member member) {
+
+        member.getMemberOccupationList().clear();
+
         RecommendDto.OccupationResponse recommendOccupation = openAiService.getRecommendOccupation(member);
         List<RecommendDto.OccupationResponse.Occupation> occupationList = recommendOccupation.getOccupationList();
 
@@ -105,8 +112,39 @@ public class JobService {
                             .occupationName(occ.getOccupationName())
                             .description(occ.getDescription())
                             .strength(occ.getStrength())
-                            .workCondition(occ.getWorkCondition())
-                            .wish(occ.getWish())
+                            .score(occ.getScore())
+                            .imageUrl(occupationImageUrl)
+                            .build();
+                })
+                .toList();
+
+        for (RecommendDto.OccupationResponse.Occupation occupation : occupationList) {
+            MemberOccupation memberOccupation = MemberOccupation.of(occupation.getOccupationName(),
+                    occupation.getDescription(),
+                    occupation.getStrength(),
+                    occupation.getScore(),
+                    member);
+
+            memberOccupationRepository.save(memberOccupation);
+        }
+
+        return RecommendDto.OccupationResponse.builder()
+                .occupationList(updatedList)
+                .build();
+    }
+
+    public RecommendDto.OccupationResponse getRecommendOccupation(Member member) {
+
+        List<MemberOccupation> memberOccupations = memberOccupationRepository.findByMember(member);
+        log.info("memberOccupations = {}", memberOccupations);
+
+        List<RecommendDto.OccupationResponse.Occupation> occupationList = memberOccupations.stream()
+                .map(occ -> {
+                    String occupationImageUrl = occupationRepository.findImageUrlByOccupationName(occ.getOccupationName());
+                    return RecommendDto.OccupationResponse.Occupation.builder()
+                            .occupationName(occ.getOccupationName())
+                            .description(occ.getOccupationDescription())
+                            .strength(occ.getStrength())
                             .score(occ.getScore())
                             .imageUrl(occupationImageUrl)
                             .build();
@@ -114,7 +152,7 @@ public class JobService {
                 .toList();
 
         return RecommendDto.OccupationResponse.builder()
-                .occupationList(updatedList)
+                .occupationList(occupationList)
                 .build();
     }
 

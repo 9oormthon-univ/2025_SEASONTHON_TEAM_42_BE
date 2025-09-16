@@ -85,7 +85,7 @@ public class JobController {
     }
 
     // 맞춤형 직업 추천
-    @GetMapping("/recommend/occupation")
+    @PostMapping("/recommend/occupation")
     @Operation(summary = "맞춤형 직업 추천", description = "사용자의 정보를 기반으로 맞춤형 직업을 추천합니다.")
     public ApiResponse<JobDto.RecommendJob> recommendOccupation(
             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
@@ -103,6 +103,30 @@ public class JobController {
 
         return ApiResponse.success(recommendJob);
     }
+
+    // 추천 직업 조회
+    @GetMapping("/recommend/occupation")
+    @Operation(
+            summary = "추천 직업 조회",
+            description = "AI 추천 결과를 기반으로 회원에게 맞는 직업 최대 3개를 반환합니다."
+    )
+    public ApiResponse<JobDto.RecommendJob> recommendOccupationGet(
+            @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
+        Member member = authDetails.getUser();
+
+        RecommendDto.OccupationResponse occupationResponse = jobService.getRecommendOccupation(member);
+        List<RecommendDto.OccupationResponse.Occupation> occupationList =
+                Optional.ofNullable(occupationResponse.getOccupationList()).orElse(List.of());
+
+        JobDto.RecommendJob recommendJob = JobDto.RecommendJob.builder()
+                .first(!occupationList.isEmpty() ? JobDto.RecommendJob.Occupation.of(occupationList.get(0)) : null)
+                .second(occupationList.size() > 1 ? JobDto.RecommendJob.Occupation.of(occupationList.get(1)) : null)
+                .third(occupationList.size() > 2 ? JobDto.RecommendJob.Occupation.of(occupationList.get(2)) : null)
+                .build();
+
+        return ApiResponse.success(recommendJob);
+    }
+
 
     // 맞춤형 일자리 추천
     @GetMapping("/recommend/job")

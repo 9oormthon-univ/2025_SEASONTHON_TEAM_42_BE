@@ -182,8 +182,6 @@ public class JobDto {
             private String occupationName;
             private String description;
             private String strength;
-            private String workCondition;
-            private String wish;
             private String score;
 
             public static Occupation of(RecommendDto.OccupationResponse.Occupation o) {
@@ -192,8 +190,6 @@ public class JobDto {
                         .occupationName(o.getOccupationName())
                         .description(o.getDescription())
                         .strength(o.getStrength())
-                        .workCondition(o.getWorkCondition())
-                        .wish(o.getWish())
                         .score(o.getScore())
                         .build();
             }

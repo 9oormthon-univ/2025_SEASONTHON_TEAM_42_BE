@@ -72,6 +72,9 @@ public class Member extends BaseTimeEntity {
     private MemberDetail memberDetail;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<MemberOccupation> memberOccupationList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<RoadMap> roadMapList = new ArrayList<>();
 
     @Builder
@@ -118,5 +121,9 @@ public class Member extends BaseTimeEntity {
 
     public void createMemberDetail(MemberDetail memberDetail1) {
         this.memberDetail = memberDetail1;
+    }
+
+    public void updateMemberOccupation(MemberOccupation memberOccupation) {
+        this.memberOccupationList.add(memberOccupation);
     }
 }

@@ -233,9 +233,7 @@ public class OpenAiService {
         return content;
     }
 
-    private Map requestOpenAI(Map<String, Object> body, Map<String, Object> responseFormat) {
-
-        body.put("response_format", responseFormat);
+    private Map requestOpenAI(Map<String, Object> body) {
 
         Map res = openAiClient.post()
                 .uri("/chat/completions")
@@ -324,7 +322,7 @@ public class OpenAiService {
 
         try {
 
-            Map res = requestOpenAI(body, aiChatOptionForm);
+            Map res = requestOpenAI(body);
 
             if (res == null) return AiChatDto.OptionResponse.builder().optionList(List.of()).build();
 

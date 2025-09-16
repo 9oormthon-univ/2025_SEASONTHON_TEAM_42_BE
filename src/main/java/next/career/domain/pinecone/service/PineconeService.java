@@ -2,6 +2,8 @@ package next.career.domain.pinecone.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import next.career.domain.education.entity.Education;
+import next.career.domain.education.repository.EducationRepository;
 import next.career.domain.embedding.service.EmbeddingService;
 import next.career.domain.job.entity.Job;
 import next.career.domain.job.repository.JobRepository;
@@ -32,12 +34,13 @@ public class PineconeService {
     @Value("${pinecone.host}")
     private String jobHost;
 
-    @Value("${pinecone.edu.host}")
+    @Value("${pinecone-edu.host.host}")
     private String eduHost;
 
     private final WebClient pineconeClient;
     private final EmbeddingService embeddingService;
     private final JobRepository jobRepository;
+    private final EducationRepository educationRepository;
 
     public Mono<Void> saveJobVector(Long jobId) {
         Mono<Job> jobMono = Mono.fromCallable(() ->
@@ -63,7 +66,7 @@ public class PineconeService {
                     log.info("body = {}", body);
 
                     return pineconeClient.post()
-                            .uri("/vectors/upsert")
+                            .uri(jobHost + "/vectors/upsert")
                             .header("Api-Key", apiKey)
                             .contentType(MediaType.APPLICATION_JSON)
                             .bodyValue(body)
@@ -79,6 +82,46 @@ public class PineconeService {
                 .doOnError(e -> log.warn("upsert failed id={}", jobId, e));
     }
 
+    public Mono<Void> saveEducationVector(Long educationId) {
+        Mono<Education> jobMono = Mono.fromCallable(() ->
+                educationRepository.findById(educationId)
+                        .orElseThrow(() -> new CoreException(GlobalErrorType.JOB_NOT_FOUND_ERROR))
+        ).subscribeOn(Schedulers.boundedElastic());
+
+        return Mono.zip(embeddingService.getEmbeddingJob(educationId), jobMono)
+                .flatMap(tuple -> {
+                    List<Float> vector = tuple.getT1();
+                    Education education = tuple.getT2();
+
+                    Map<String, Object> metadata = new HashMap<>();
+                    metadata.put("educationId", education.getEducationId());
+
+                    Map<String, Object> body = Map.of(
+                            "vectors", List.of(Map.of(
+                                    "id", String.valueOf(education.getEducationId()),
+                                    "values", vector,
+                                    "metadata", metadata
+                            ))
+                    );
+                    log.info("body = {}", body);
+
+                    return pineconeClient.post()
+                            .uri(eduHost + "/vectors/upsert")
+                            .header("Api-Key", apiKey)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .bodyValue(body)
+                            .retrieve()
+                            .onStatus(HttpStatusCode::isError, r ->
+                                    r.bodyToMono(String.class).flatMap(msg ->
+                                            Mono.error(new RuntimeException("Pinecone query failed: " + msg))
+                                    )
+                            )
+                            .toBodilessEntity()
+                            .then();
+                })
+                .doOnError(e -> log.warn("upsert failed id={}", educationId, e));
+    }
+
     public List<PineconeRecommendDto> getRecommendJob(List<Float> vector) {
 
         Map<String, Object> body = Map.of(
@@ -88,7 +131,7 @@ public class PineconeService {
         );
 
         Map response = pineconeClient.post()
-                .uri(jobHost)
+                .uri(jobHost + "/query")
                 .header("Api-Key", apiKey)
                 .header("X-Pinecone-Api-Version", "2025-04")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -127,7 +170,7 @@ public class PineconeService {
         );
 
         Map response = pineconeClient.post()
-                .uri(eduHost)
+                .uri(eduHost + "/query")
                 .header("Api-Key", apiKey)
                 .header("X-Pinecone-Api-Version", "2025-04")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -169,6 +212,18 @@ public class PineconeService {
                     .doOnError(e -> log.error("❌ Failed embedding for jobId={}", job.getJobId(), e))
                     .block(); // 호출을 실제로 실행 (동기)
         }
+    }
 
+    @Transactional
+    public void saveAllEducationVector() {
+        List<Education> educationList = educationRepository.findAll();
+
+        for (Education education : educationList) {
+            saveEducationVector(education.getEducationId())
+                    .doOnSubscribe(s -> log.info("▶️ Start embedding for jobId={}", education.getEducationId()))
+                    .doOnSuccess(v -> log.info("✅ Saved embedding for jobId={}", education.getEducationId()))
+                    .doOnError(e -> log.error("❌ Failed embedding for jobId={}", education.getEducationId(), e))
+                    .block(); // 호출을 실제로 실행 (동기)
+        }
     }
 }

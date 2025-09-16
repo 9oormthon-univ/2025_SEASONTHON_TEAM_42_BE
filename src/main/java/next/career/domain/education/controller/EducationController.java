@@ -5,10 +5,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import next.career.domain.education.controller.dto.GetEducationDto;
+import next.career.domain.education.facade.EducationFacadeService;
 import next.career.domain.education.service.EducationService;
 import next.career.domain.education.service.dto.EducationDto;
-import next.career.domain.job.controller.dto.GetJobDto;
-import next.career.domain.job.service.dto.JobDto;
 import next.career.domain.user.entity.Member;
 import next.career.global.apiPayload.response.ApiResponse;
 import next.career.global.security.AuthDetails;
@@ -27,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class EducationController {
 
     private final EducationService educationService;
+    private final EducationFacadeService educationFacadeService;
 
     @GetMapping("/recommend")
     @Operation(summary = "맞춤형 교육 추천", description = "사용자의 정보를 기반으로 맞춤형 일자리를 추천합니다.")
@@ -46,5 +46,21 @@ public class EducationController {
             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
         Page<EducationDto.AllResponse> EducationDtoList = educationService.getBookMarkedEducations(searchRequest, authDetails.getUser(), pageable);
         return ApiResponse.success(GetEducationDto.SearchAllResponse.of(EducationDtoList));
+    }
+
+    @GetMapping("/education-data")
+    @Operation(
+            summary = "서울시 채용 데이터 조회 및 저장",
+            description = "서울시 채용 데이터를 가져와 DB에 저장하고, Pinecone 벡터 DB에 업서트합니다."
+    )
+    public ApiResponse<?> getEducationDataFromWork24(
+            @Parameter(
+                    description = "페이징 정보 (page, size)",
+                    example = "page=0&size=10"
+            )
+            Pageable pageable
+    ) {
+        educationFacadeService.getEducationDataFromWork24(pageable.getPageNumber(), pageable.getPageSize());
+        return ApiResponse.success();
     }
 }

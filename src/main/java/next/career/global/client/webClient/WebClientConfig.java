@@ -26,12 +26,6 @@ public class WebClientConfig {
     @Value("${pinecone.api-key}")
     private String pineconeApiKey;
 
-    @Value("${pinecone.host}")
-    private String pineconeHost;
-
-    @Value("${pinecone.edu.host}")
-    private String pineconeEduHost;
-
     @Value("${seoul.job.host}")
     private String seoulJobHost;
 

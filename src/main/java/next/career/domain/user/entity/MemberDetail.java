@@ -23,21 +23,21 @@ public class MemberDetail {
     @OneToOne(mappedBy = "memberDetail", fetch = FetchType.EAGER)
     private Member member;
 
+    private String job;
+
     private String experience;
 
     private String certificateOrSkill;
 
     private String workingStyle;
 
+    private String avoidConditions;
+
     private String personalityType;
 
     private String interests;
 
     private String preferredWorkStyles;
-
-    private String avoidConditions;
-
-    private String availableWorkingTime;
 
     private String physicalCondition;
 

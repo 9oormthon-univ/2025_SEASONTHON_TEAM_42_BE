@@ -192,8 +192,6 @@ public class JobDto {
                         .occupationName(o.getOccupationName())
                         .description(o.getDescription())
                         .strength(o.getStrength())
-                        .workCondition(o.getWorkCondition())
-                        .wish(o.getWish())
                         .score(o.getScore())
                         .build();
             }

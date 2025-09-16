@@ -85,7 +85,7 @@ public class JobController {
     }
 
     // 맞춤형 직업 추천
-    @GetMapping("/recommend/occupation")
+    @PostMapping("/recommend/occupation")
     @Operation(summary = "맞춤형 직업 추천", description = "사용자의 정보를 기반으로 맞춤형 직업을 추천합니다.")
     public ApiResponse<JobDto.RecommendJob> recommendOccupation(
             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {

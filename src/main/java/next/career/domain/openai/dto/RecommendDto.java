@@ -30,8 +30,6 @@ public class RecommendDto {
             private String occupationName;
             private String description;
             private String strength;
-            private String workCondition;
-            private String wish;
             private String score;
         }
 

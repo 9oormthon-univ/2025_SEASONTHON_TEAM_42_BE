@@ -12,6 +12,7 @@ import next.career.domain.openai.dto.RecommendDto;
 import next.career.domain.openai.entity.Prompt;
 import next.career.domain.openai.repository.PromptRepository;
 import next.career.domain.pinecone.service.PineconeService;
+import next.career.domain.roadmap.controller.dto.RoadmapDto;
 import next.career.domain.user.entity.Member;
 import next.career.domain.user.entity.MemberDetail;
 import next.career.global.apiPayload.exception.CoreException;
@@ -375,6 +376,85 @@ public class OpenAiService {
             throw new CoreException(GlobalErrorType.GET_AI_CHAT_OPTION_FAILED);
         }
 
+    }
+
+    public List<String> getRecommendRoadmapActionAI(String category) {
+
+        List<Prompt> roadmapAction = promptRepository.findAllByTag("roadmap action");
+
+        String system = roadmapAction.stream()
+                .map(Prompt::getContent)
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.joining("\n"));
+
+        String finalSystemPrompt = system + "\n\n[카테고리]\n" + category;
+
+        Map<String, Object> body = setRecommendRoadmapActionPrompt(finalSystemPrompt);
+
+        try {
+            Map res = requestOpenAI(body);
+            log.info("res = {}", res);
+
+            if (res == null) return List.of();
+
+            List<Map<String, Object>> choices = (List<Map<String, Object>>) res.get("choices");
+            if (choices == null || choices.isEmpty()) return List.of();
+
+            String content = getContent(choices);
+
+            RoadmapDto.RoadmapActionRecommendResponse dto =
+                    MAPPER.readValue(content, RoadmapDto.RoadmapActionRecommendResponse.class);
+
+            return Optional.ofNullable(dto.getRecommendRoadmapActionList()).orElseGet(List::of)
+                    .stream()
+                    .filter(Objects::nonNull)
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .distinct()
+                    .limit(4)
+                    .toList();
+
+        } catch (Exception e) {
+            throw new CoreException(GlobalErrorType.GET_RECOMMEND_ROADMAP_ACTION_ERROR);
+        }
+
+
+    }
+
+    private static Map<String, Object> setRecommendRoadmapActionPrompt(String system) {
+        List<Map<String, Object>> messages = new ArrayList<>();
+
+        if (!system.isBlank()) {
+            messages.add(Map.of("role", "system", "content", system));
+        }
+
+        Map<String, Object> responseFormat = Map.of(
+                "type", "json_schema",
+                "json_schema", Map.of(
+                        "name", "roadmap_action_recommend_response",
+                        "schema", Map.of(
+                                "type", "object",
+                                "properties", Map.of(
+                                        "recommendRoadmapActionList", Map.of(
+                                                "type", "array",
+                                                "items", Map.of("type", "string")
+                                        )
+                                ),
+                                "required", List.of("recommendRoadmapActionList")
+                        )
+                )
+        );
+
+
+        return Map.of(
+                "model", "gpt-4o",
+                "messages", messages,
+                "temperature", 0.5,
+                "max_tokens", 800,
+                "response_format", responseFormat
+        );
     }
 
 }

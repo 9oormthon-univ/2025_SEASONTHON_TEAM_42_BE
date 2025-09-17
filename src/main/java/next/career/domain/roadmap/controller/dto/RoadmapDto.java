@@ -29,4 +29,12 @@ public class RoadmapDto {
                     .build();
         }
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class ActionAddRequest {
+        private String action;
+    }
 }

@@ -63,6 +63,31 @@ public class RoadmapController {
         return ApiResponse.success();
     }
 
+    @PostMapping("{roadmapId}/roadmapAction")
+    @Operation(
+            summary = "로드맵 액션 추가",
+            description = "특정 로드맵 내에 새로운 액션을 추가합니다."
+    )
+    public ApiResponse<?> addRoadmapAction(
+            @Parameter(
+                    description = "로드맵 ID",
+                    required = true,
+                    example = "1"
+            )
+            @PathVariable Long roadmapId,
+
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "로드맵 액션 추가 요청 DTO",
+                    required = true
+            )
+            @RequestBody RoadmapDto.ActionAddRequest request
+    ) {
+        roadmapService.addRoadmapAction(roadmapId, request);
+        return ApiResponse.success();
+    }
+
+
+
     @PutMapping("/{roadMapActionId}")
     @Operation(
             summary = "로드맵 액션 수정",
@@ -94,9 +119,9 @@ public class RoadmapController {
         return ApiResponse.success();
     }
 
-    @GetMapping("/roadmapAction/recommend")
+    @GetMapping("/roadmapAction/recommend/category")
     @Operation(
-            summary = "로드맵 액션 추천",
+            summary = "로드맵 액션 추천 (카테고리 기반)",
             description = "카테고리를 기반으로 로드맵 내에서 수행할 수 있는 액션을 추천합니다."
     )
     public ApiResponse<RoadmapDto.RoadmapActionRecommendResponse> recommendRoadmapAction(
@@ -109,6 +134,25 @@ public class RoadmapController {
     ) {
         List<String> recommendRoadmapActionList = roadmapService.recommendRoadmapAction(category);
         RoadmapDto.RoadmapActionRecommendResponse response = RoadmapDto.RoadmapActionRecommendResponse.of(recommendRoadmapActionList);
+        return ApiResponse.success(response);
+    }
+
+    @GetMapping("/roadmapAction/recommend/ai")
+    @Operation(
+            summary = "로드맵 액션 추천 (AI 기반)",
+            description = "AI 모델을 활용해 카테고리를 기반으로 로드맵 내에서 수행할 수 있는 액션을 추천합니다."
+    )
+    public ApiResponse<RoadmapDto.RoadmapActionRecommendResponse> recommendRoadmapActionAI(
+            @Parameter(
+                    description = "추천을 받고 싶은 카테고리 (예: 교육, 현장경험 등)",
+                    required = true,
+                    example = "교육"
+            )
+            @RequestParam String category
+    ) {
+        List<String> recommendRoadmapActionList = roadmapService.recommendRoadmapActionAI(category);
+        RoadmapDto.RoadmapActionRecommendResponse response =
+                RoadmapDto.RoadmapActionRecommendResponse.of(recommendRoadmapActionList);
         return ApiResponse.success(response);
     }
 

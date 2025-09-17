@@ -35,4 +35,12 @@ public class RoadMapAction {
     public void updateNotCompleted() {
         this.isCompleted = false;
     }
+
+    public static RoadMapAction of(String action, RoadMap roadMap) {
+        return RoadMapAction.builder()
+                .action(action)
+                .isCompleted(false)
+                .roadMap(roadMap)
+                .build();
+    }
 }

@@ -122,4 +122,15 @@ public class RoadmapService {
 
         return openAiService.getRecommendRoadmapActionAI(category);
     }
+
+    @Transactional
+    public void addRoadmapAction(Long roadmapId, RoadmapDto.ActionAddRequest request) {
+
+        RoadMap roadMap = roadMapRepository.findById(roadmapId)
+                .orElseThrow(() -> new CoreException(GlobalErrorType.ROAD_MAP_NOT_FOUND));
+
+        RoadMapAction roadMapAction = RoadMapAction.of(request.getAction(), roadMap);
+
+        roadmapActionRepository.save(roadMapAction);
+    }
 }

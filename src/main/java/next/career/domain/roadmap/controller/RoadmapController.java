@@ -63,6 +63,17 @@ public class RoadmapController {
         return ApiResponse.success();
     }
 
+    @PostMapping("{roadmapId}/roadmapAction")
+
+    public ApiResponse<?> addRoadmapAction(
+            @PathVariable Long roadmapId,
+            @RequestBody RoadmapDto.ActionAddRequest request
+    ) {
+        roadmapService.addRoadmapAction(roadmapId, request);
+        return ApiResponse.success();
+    }
+
+
     @PutMapping("/{roadMapActionId}")
     @Operation(
             summary = "로드맵 액션 수정",

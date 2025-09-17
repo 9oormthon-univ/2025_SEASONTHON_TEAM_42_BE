@@ -8,6 +8,7 @@ import next.career.global.apiPayload.response.ApiResponse;
 import next.career.global.security.AuthDetails;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,8 +20,8 @@ public class ReportController {
     private final ReportService reportService;
 
 
-    @GetMapping("/strength")
-    public ApiResponse<GetStrengthReportDto.Response> getStrengthReport(
+    @PostMapping("/strength")
+    public ApiResponse<GetStrengthReportDto.Response> createStrengthReport(
             @AuthenticationPrincipal AuthDetails authDetails) {
         Member member = authDetails.getUser();
 

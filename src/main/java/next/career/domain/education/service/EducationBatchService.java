@@ -1,5 +1,6 @@
 package next.career.domain.education.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,6 +8,7 @@ import next.career.domain.education.entity.Education;
 import next.career.domain.education.repository.EducationRepository;
 import next.career.domain.education.service.dto.SaveWork24EducationDto;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
@@ -32,31 +34,36 @@ public class EducationBatchService {
      * 고용24 API에서 데이터 가져와 DB 저장
      */
     @Transactional
-    public List<Education> fetchAndSaveEducations(int pageNo, int numOfRows) {
+    public List<Education> fetchAndSaveEducations(int pageNo, int numOfRows) throws Exception {
 
         log.info("pageNo = {}, numofRows = {}", pageNo, numOfRows);
 
-        String xmlResponse = work24Client.get()
+        SaveWork24EducationDto.Response response = work24Client.get()
                 .uri(urlBuilder -> urlBuilder.path(apiPath)
                         .queryParam("authKey", apiKey)
-                        .queryParam("returnType", "XML")
+                        .queryParam("returnType", "JSON")
                         .queryParam("outType", 1)
                         .queryParam("pageNum", pageNo)
                         .queryParam("pageSize", numOfRows)
+//                        .queryParam("srchTraStDt", "20240101")
+//                        .queryParam("srchTraEndDt", "20251231")
+//                        .queryParam("srchTraProcessNm", "")
                         .build())
+                .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .body(String.class);
+                .body(SaveWork24EducationDto.Response.class);
 
-        log.info("xmlResposne = {}", xmlResponse);
+        log.info("response json = {}", new ObjectMapper().writeValueAsString(response));
+        log.info("response = {}", response);
 
         try {
-            SaveWork24EducationDto.Response response =
-                    xmlMapper.readValue(xmlResponse, SaveWork24EducationDto.Response.class);
+//            SaveWork24EducationDto.Response response =
+//                    xmlMapper.readValue(response, SaveWork24EducationDto.Response.class);
 
             log.info("SaveWork24 education dto response = {}", response);
 
-            List<Education> educations = response.getWork24EducationDtoList().stream()
-                    .filter(dto -> !educationRepository.findAlreadyExists(dto.getTitle(), dto.getSubTitle()))
+            List<Education> educations = response.srchList().stream()
+                    .filter(dto -> !educationRepository.findAlreadyExists(dto.title(), dto.subTitle()))
                     .map(this::toEntity)
                     .toList();
 
@@ -69,16 +76,16 @@ public class EducationBatchService {
 
     private Education toEntity(SaveWork24EducationDto.Work24EducationDto dto) {
         return Education.ofWork24Education(
-                dto.getCertificate(),
-                dto.getTitle(),
-                dto.getSubTitle(),
-                dto.getTraStartDate(),
-                dto.getTraEndDate(),
-                dto.getAddress(),
-                dto.getCourseMan(),
-                dto.getTrainTarget(),
-                dto.getTrprDegr(),
-                dto.getTitleLink()
+                dto.certificate(),
+                dto.title(),
+                dto.subTitle(),
+                dto.traStartDate(),
+                dto.traEndDate(),
+                dto.address(),
+                dto.courseMan(),
+                dto.trainTarget(),
+                dto.trprDegr(),
+                dto.titleLink()
         );
     }
 }

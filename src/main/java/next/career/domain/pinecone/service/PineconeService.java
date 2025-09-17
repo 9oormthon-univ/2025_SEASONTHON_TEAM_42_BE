@@ -34,7 +34,7 @@ public class PineconeService {
     @Value("${pinecone.host}")
     private String jobHost;
 
-    @Value("${pinecone-edu.host.host}")
+    @Value("${pinecone-edu.host}")
     private String eduHost;
 
     private final WebClient pineconeClient;
@@ -88,7 +88,7 @@ public class PineconeService {
                         .orElseThrow(() -> new CoreException(GlobalErrorType.JOB_NOT_FOUND_ERROR))
         ).subscribeOn(Schedulers.boundedElastic());
 
-        return Mono.zip(embeddingService.getEmbeddingJob(educationId), jobMono)
+        return Mono.zip(embeddingService.getEmbeddingEducation(educationId), jobMono)
                 .flatMap(tuple -> {
                     List<Float> vector = tuple.getT1();
                     Education education = tuple.getT2();

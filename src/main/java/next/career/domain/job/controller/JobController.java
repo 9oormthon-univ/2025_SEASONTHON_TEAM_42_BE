@@ -2,17 +2,11 @@ package next.career.domain.job.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import next.career.domain.job.controller.dto.GetJobDto;
-import next.career.domain.job.controller.dto.GetRoadMapDto;
-import next.career.domain.job.controller.dto.Work24;
-import next.career.domain.job.entity.Job;
+import next.career.domain.education.service.dto.SaveWork24EducationDto;
 import next.career.domain.job.facade.JobFacadeService;
-import next.career.domain.job.service.JobBatchService;
 import next.career.domain.job.service.JobService;
 import next.career.domain.job.service.dto.JobDto;
 import next.career.domain.openai.dto.AiChatDto;
@@ -155,11 +149,11 @@ public class JobController {
     }
 
     @GetMapping("/hrd-course")
-    public ApiResponse<Work24.CardCoursePage> raw(@RequestParam(defaultValue = "") String keyword,
-                                                  @RequestParam(defaultValue = "1") int pageNo,
-                                                  @RequestParam(defaultValue = "10") int pageSize,
-                                                  @RequestParam(defaultValue = "20250101") String startYmd,
-                                                  @RequestParam(defaultValue = "20251231") String endYmd) {
+    public ApiResponse<SaveWork24EducationDto.Response> raw(@RequestParam(defaultValue = "") String keyword,
+                                                                  @RequestParam(defaultValue = "1") int pageNo,
+                                                                  @RequestParam(defaultValue = "10") int pageSize,
+                                                                  @RequestParam(defaultValue = "20250101") String startYmd,
+                                                                  @RequestParam(defaultValue = "20251231") String endYmd) {
         return ApiResponse.success(rawClient.callRaw(keyword, pageNo, pageSize, startYmd, endYmd));
     }
 

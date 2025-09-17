@@ -17,7 +17,7 @@ public class EducationFacadeService {
     private final EducationBatchService educationBatchService;
     private final PineconeService pineconeService;
 
-    public void getEducationDataFromWork24(int pageNumber, int pageSize) {
+    public void getEducationDataFromWork24(int pageNumber, int pageSize) throws  Exception {
         List<Education> educations = educationBatchService.fetchAndSaveEducations(pageNumber, pageSize);
 
         Flux.fromIterable(educations)

@@ -55,11 +55,10 @@ public class EducationController {
     )
     public ApiResponse<?> getEducationDataFromWork24(
             @Parameter(
-                    description = "페이징 정보 (page, size)",
-                    example = "page=0&size=10"
+                    description = "페이징 정보 (page, size)"
             )
             Pageable pageable
-    ) {
+    ) throws Exception {
         educationFacadeService.getEducationDataFromWork24(pageable.getPageNumber(), pageable.getPageSize());
         return ApiResponse.success();
     }

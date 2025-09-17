@@ -1,6 +1,10 @@
 package next.career.domain.embedding.service;
 
 import lombok.RequiredArgsConstructor;
+import next.career.domain.education.entity.Education;
+import next.career.domain.education.exception.EducationErrorType;
+import next.career.domain.education.exception.EducationException;
+import next.career.domain.education.repository.EducationRepository;
 import next.career.domain.job.entity.Job;
 import next.career.domain.job.repository.JobRepository;
 import next.career.domain.user.entity.Member;
@@ -25,9 +29,20 @@ public class EmbeddingService {
 
     private final WebClient openAiClient;
     private final JobRepository jobRepository;
-    private final MemberRepository memberRepository;
+    private final EducationRepository educationRepository;
 
     private static final DateTimeFormatter F = DateTimeFormatter.ISO_LOCAL_DATE;
+
+
+    public Mono<List<Float>> getEmbeddingEducation(Long educationId) {
+        return Mono.fromCallable(() ->
+                        educationRepository.findById(educationId)
+                                .orElseThrow(() -> new EducationException(EducationErrorType.EDUCATION_NOT_FOUND))
+                )
+                .subscribeOn(Schedulers.boundedElastic())
+                .map(this::toEmbeddingEducationTextV2)
+                .flatMap(this::getEmbeddingMono);
+    }
 
     public Mono<List<Float>> getEmbeddingJob(Long jobId) {
         return Mono.fromCallable(() ->
@@ -67,6 +82,7 @@ public class EmbeddingService {
                     return nums.stream().map(n -> n == null ? 0f : n.floatValue()).toList();
                 });
     }
+
 
     private String toEmbeddingMemberText(Member member) {
         MemberDetail memberDetail = member.getMemberDetail();
@@ -153,6 +169,28 @@ public class EmbeddingService {
                 nz(job.getEmploymentType()),
                 nz(job.getPostingDate()),
                 nz(job.getClosingDate())
+        );
+    }
+
+    //TODO: 추후에 수정
+    private String toEmbeddingEducationTextV2(Education education) {
+        return """
+        이 교육 과정은 %s 분야의 %s 교육입니다.
+        교육기관은 %s이며, 훈련 기간은 %s부터 %s까지입니다.
+        교육 장소는 %s이고, 수강비는 %s입니다.
+        관련 자격증은 %s이며, 수강 횟수는 %s회입니다.
+        교육 키워드는 %s입니다.
+        """.formatted(
+                nz(education.getCertificate()),
+                nz(education.getTitle()),
+                nz(education.getSubTitle()),
+                nz(education.getTraStartDate()),
+                nz(education.getTraEndDate()),
+                nz(education.getAddress()),
+                nz(education.getCourseMan()),
+                nz(education.getCertificate()),
+                nz(education.getTrprDegr()),
+                nz(education.getTrainTarget())
         );
     }
 

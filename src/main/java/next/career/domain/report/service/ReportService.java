@@ -40,4 +40,21 @@ public class ReportService {
 
 
     }
+
+    public GetStrengthReportDto.Response getStrengthReport(Member member) {
+
+        List<StrengthReport> strengthReportList = strengthReportRepository.findAllByMember(member);
+
+        List<GetStrengthReportDto.Report> reportList = strengthReportList.stream()
+                .map(r -> GetStrengthReportDto.Report.of(
+                        r.getStrength(),
+                        r.getExperience(),
+                        r.getKeyword(),
+                        r.getJob()
+                ))
+                .toList();
+
+
+        return GetStrengthReportDto.Response.of(reportList);
+    }
 }

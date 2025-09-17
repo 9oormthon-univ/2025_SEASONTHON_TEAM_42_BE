@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface StrengthReportRepository extends JpaRepository<StrengthReport, Long> {
 
     void deleteAllByMember(Member member);
+
+    List<StrengthReport> findAllByMember(Member member);
 }

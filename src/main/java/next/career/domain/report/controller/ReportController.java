@@ -28,4 +28,11 @@ public class ReportController {
         return ApiResponse.success(reportService.createStrengthReport(member));
     }
 
+    @GetMapping("/strength")
+    public ApiResponse<GetStrengthReportDto.Response> getStrengthReport(
+            @AuthenticationPrincipal AuthDetails authDetails) {
+        Member member = authDetails.getUser();
+
+        return ApiResponse.success(reportService.getStrengthReport(member));
+    }
 }

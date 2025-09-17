@@ -118,4 +118,8 @@ public class RoadmapService {
         return recommendRoadmapAction;
     }
 
+    public List<String> recommendRoadmapActionAI(String category) {
+
+        return openAiService.getRecommendRoadmapActionAI(category);
+    }
 }

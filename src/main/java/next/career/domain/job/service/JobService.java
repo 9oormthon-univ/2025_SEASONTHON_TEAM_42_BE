@@ -1,22 +1,21 @@
 package next.career.domain.job.service;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import next.career.domain.UserJobMap.repository.MemberJobMapRepository;
 import next.career.domain.UserJobMap.service.BookMarkFinder;
 import next.career.domain.job.controller.dto.GetJobDto;
-import next.career.domain.job.service.dto.SaveSeoulJobDto;
 import next.career.domain.job.entity.Job;
 import next.career.domain.job.repository.JobCustomRepository;
 import next.career.domain.job.repository.JobRepository;
 import next.career.domain.job.repository.OccupationRepository;
 import next.career.domain.job.service.dto.JobDto;
 import next.career.domain.job.service.dto.PineconeRecommendDto;
+import next.career.domain.job.service.dto.SaveSeoulJobDto;
 import next.career.domain.openai.dto.AiChatDto;
 import next.career.domain.openai.dto.RecommendDto;
 import next.career.domain.openai.service.OpenAiService;
-import next.career.domain.roadmap.repository.RoadMapRepository;
-import next.career.domain.roadmap.repository.RoadmapActionRepository;
 import next.career.domain.roadmap.repository.RoadmapInputRepository;
 import next.career.domain.user.entity.Member;
 import next.career.domain.user.entity.MemberDetail;
@@ -31,7 +30,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 import java.util.List;
 import java.util.Map;
@@ -48,10 +46,7 @@ public class JobService {
     private final MemberDetailRepository memberDetailRepository;
     private final MemberRepository memberRepository;
     private final BookMarkFinder bookMarkFinder;
-    private final RoadMapRepository roadMapRepository;
-    private final RoadmapActionRepository roadmapActionRepository;
     private final MemberJobMapRepository memberJobMapRepository;
-    private final RoadmapInputRepository roadmapInputRepository;
     private final OccupationRepository occupationRepository;
     private final WebClient seoulJobClient;
     private final XmlMapper xmlMapper = new XmlMapper();

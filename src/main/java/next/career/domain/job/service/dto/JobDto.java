@@ -5,6 +5,8 @@ import next.career.domain.job.entity.Job;
 import next.career.domain.openai.dto.RecommendDto;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class JobDto {
 
@@ -53,7 +55,7 @@ public class JobDto {
                     .screeningMethod(job.getScreeningMethod())
                     .receptionMethod(job.getReceptionMethod())
                     .requiredDocuments(job.getRequiredDocuments())
-                    .jobCategory(job.getJobCategory())
+                    .jobCategory(filterJobCategory(job.getJobCategory()))
                     .postingDate(job.getPostingDate())
                     .closingDate(job.getClosingDate())
                     .imageUrl(job.getImageUrl())
@@ -78,7 +80,7 @@ public class JobDto {
                     .screeningMethod(job.getScreeningMethod())
                     .receptionMethod(job.getReceptionMethod())
                     .requiredDocuments(job.getRequiredDocuments())
-                    .jobCategory(job.getJobCategory())
+                    .jobCategory(filterJobCategory(job.getJobCategory()))
                     .postingDate(job.getPostingDate())
                     .closingDate(job.getClosingDate())
                     .imageUrl(job.getImageUrl())
@@ -102,7 +104,7 @@ public class JobDto {
                     .screeningMethod(job.getScreeningMethod())
                     .receptionMethod(job.getReceptionMethod())
                     .requiredDocuments(job.getRequiredDocuments())
-                    .jobCategory(job.getJobCategory())
+                    .jobCategory(filterJobCategory(job.getJobCategory()))
                     .postingDate(job.getPostingDate())
                     .closingDate(job.getClosingDate())
                     .imageUrl(job.getImageUrl())
@@ -156,7 +158,7 @@ public class JobDto {
                     .screeningMethod(job.getScreeningMethod())
                     .receptionMethod(job.getReceptionMethod())
                     .requiredDocuments(job.getRequiredDocuments())
-                    .jobCategory(job.getJobCategory())
+                    .jobCategory(filterJobCategory(job.getJobCategory()))
                     .postingDate(job.getPostingDate())
                     .closingDate(job.getClosingDate())
                     .imageUrl(job.getImageUrl())
@@ -198,5 +200,13 @@ public class JobDto {
                         .build();
             }
         }
+    }
+
+    private static String filterJobCategory(String jobCategory) {
+        if (jobCategory == null || jobCategory.isEmpty()) return jobCategory;
+        return Arrays.stream(jobCategory.split(","))
+                .map(String::trim)
+                .filter(s -> s.length() <= 10)
+                .collect(Collectors.joining(","));
     }
 }

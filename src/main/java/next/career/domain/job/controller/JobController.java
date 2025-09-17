@@ -14,7 +14,7 @@ import next.career.domain.openai.dto.RecommendDto;
 import next.career.domain.user.entity.Member;
 import next.career.domain.user.entity.MemberDetail;
 import next.career.global.apiPayload.response.ApiResponse;
-import next.career.domain.job.service.HrdCourseService;
+import next.career.domain.education.service.HrdCourseService;
 import next.career.global.security.AuthDetails;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -32,7 +32,6 @@ import java.util.Optional;
 public class JobController {
 
     private final JobService jobService;
-    private final HrdCourseService rawClient;
     private final JobFacadeService jobFacadeService;
 
     // 전체 채용 조회
@@ -187,15 +186,6 @@ public class JobController {
         AiChatDto.HistoryResponse memberDetailResponse = AiChatDto.HistoryResponse.of(memberDetail);
 
         return ApiResponse.success(memberDetailResponse);
-    }
-
-    @GetMapping("/hrd-course")
-    public ApiResponse<SaveWork24EducationDto.Response> raw(@RequestParam(defaultValue = "") String keyword,
-                                                                  @RequestParam(defaultValue = "1") int pageNo,
-                                                                  @RequestParam(defaultValue = "10") int pageSize,
-                                                                  @RequestParam(defaultValue = "20250101") String startYmd,
-                                                                  @RequestParam(defaultValue = "20251231") String endYmd) {
-        return ApiResponse.success(rawClient.callRaw(keyword, pageNo, pageSize, startYmd, endYmd));
     }
 
     @GetMapping("/job-data")

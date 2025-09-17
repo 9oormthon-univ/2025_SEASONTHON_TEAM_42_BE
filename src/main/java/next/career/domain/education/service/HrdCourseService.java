@@ -1,4 +1,4 @@
-package next.career.domain.job.service;
+package next.career.domain.education.service;
 
 import lombok.RequiredArgsConstructor;
 import next.career.domain.education.service.dto.SaveWork24EducationDto;
@@ -19,7 +19,7 @@ public class HrdCourseService {
     @Value("${work24.api-key}")
     private String apiKey;
 
-    public SaveWork24EducationDto.Response callRaw(String keyword, int pageNo, int pageSize, String startYmd, String endYmd) {
+    public SaveWork24EducationDto.Response getEducations(String keyword, int pageNo, int pageSize, String startYmd, String endYmd) {
         return work24Client.get()
                 .uri(urlBuilder -> urlBuilder.path(apiPath)
                         .queryParam("authKey", apiKey)

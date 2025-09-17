@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import next.career.domain.education.controller.dto.GetEducationDto;
 import next.career.domain.education.facade.EducationFacadeService;
 import next.career.domain.education.service.EducationService;
+import next.career.domain.education.service.HrdCourseService;
 import next.career.domain.education.service.dto.EducationDto;
+import next.career.domain.education.service.dto.SaveWork24EducationDto;
 import next.career.domain.user.entity.Member;
 import next.career.global.apiPayload.response.ApiResponse;
 import next.career.global.security.AuthDetails;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -27,6 +30,7 @@ public class EducationController {
 
     private final EducationService educationService;
     private final EducationFacadeService educationFacadeService;
+    private final HrdCourseService hrdCourseService;
 
     @GetMapping("/recommend")
     @Operation(summary = "맞춤형 교육 추천", description = "사용자의 정보를 기반으로 맞춤형 일자리를 추천합니다.")
@@ -61,5 +65,14 @@ public class EducationController {
     ) throws Exception {
         educationFacadeService.getEducationDataFromWork24(pageable.getPageNumber(), pageable.getPageSize());
         return ApiResponse.success();
+    }
+
+    @GetMapping("/hrd-course")
+    public ApiResponse<SaveWork24EducationDto.Response> raw(@RequestParam(defaultValue = "") String keyword,
+                                                            @RequestParam(defaultValue = "1") int pageNo,
+                                                            @RequestParam(defaultValue = "10") int pageSize,
+                                                            @RequestParam(defaultValue = "20250101") String startYmd,
+                                                            @RequestParam(defaultValue = "20251231") String endYmd) {
+        return ApiResponse.success(hrdCourseService.getEducations(keyword, pageNo, pageSize, startYmd, endYmd));
     }
 }

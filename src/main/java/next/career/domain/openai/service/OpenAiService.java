@@ -12,6 +12,7 @@ import next.career.domain.openai.dto.RecommendDto;
 import next.career.domain.openai.entity.Prompt;
 import next.career.domain.openai.repository.PromptRepository;
 import next.career.domain.pinecone.service.PineconeService;
+import next.career.domain.report.controller.dto.GetStrengthReportDto;
 import next.career.domain.roadmap.controller.dto.RoadmapDto;
 import next.career.domain.user.entity.Member;
 import next.career.domain.user.entity.MemberDetail;
@@ -463,4 +464,87 @@ public class OpenAiService {
         );
     }
 
+    public GetStrengthReportDto.Response createStrengthReport(Member member) {
+
+        List<Prompt> roadmapAction = promptRepository.findAllByTag("strength report");
+
+        String system = roadmapAction.stream()
+                .map(Prompt::getContent)
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.joining("\n"));
+
+        String finalSystemPrompt = system + "\n\n[사용자 정보]\n" + member.getMemberDetail();
+        log.info("member detail = {}", member.getMemberDetail());
+
+        Map<String, Object> body = setStrengthReportPrompt(finalSystemPrompt);
+
+        try {
+            Map res = requestOpenAI(body);
+            log.info("res = {}", res);
+
+            List<Map<String, Object>> choices = (List<Map<String, Object>>) res.get("choices");
+
+            String content = getContent(choices);
+
+            GetStrengthReportDto.Response dto =
+                    MAPPER.readValue(content, GetStrengthReportDto.Response.class);
+
+            return dto;
+
+        } catch (Exception e) {
+            throw new CoreException(GlobalErrorType.GET_STRENGTH_REPORT_ERROR);
+        }
+
+    }
+
+    private Map<String, Object> setStrengthReportPrompt(String system) {
+
+        List<Map<String, Object>> messages = new ArrayList<>();
+
+        if (!system.isBlank()) {
+            messages.add(Map.of("role", "system", "content", system));
+        }
+
+        Map<String, Object> responseFormat = Map.of(
+                "type", "json_schema",
+                "json_schema", Map.of(
+                        "name", "response",
+                        "schema", Map.of(
+                                "type", "object",
+                                "properties", Map.of(
+                                        "reportList", Map.of(
+                                                "type", "array",
+                                                "items", Map.of(
+                                                        "type", "object",
+                                                        "properties", Map.of(
+                                                                "strength", Map.of("type", "string"),
+                                                                "experience", Map.of("type", "string"),
+                                                                "keyword", Map.of(
+                                                                        "type", "array",
+                                                                        "items", Map.of("type", "string")
+                                                                ),
+                                                                "job", Map.of(
+                                                                        "type", "array",
+                                                                        "items", Map.of("type", "string")
+                                                                )
+                                                        ),
+                                                        "required", List.of("strength", "experience", "keyword", "job")
+                                                )
+                                        )
+                                ),
+                                "required", List.of("reportList")
+                        )
+                )
+        );
+
+        return Map.of(
+                "model", "gpt-4o",
+                "messages", messages,
+                "temperature", 0.5,
+                "max_tokens", 800,
+                "response_format", responseFormat
+        );
+    }
 }

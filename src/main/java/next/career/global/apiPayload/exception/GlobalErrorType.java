@@ -44,6 +44,8 @@ public enum GlobalErrorType implements ErrorType {
 
     MEMBER_OCCUPATION_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "추천 직업이 존재하지 않습니다"),
 
+    GET_STRENGTH_REPORT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "강점 리포트 생성에 실패했습니다")
+
     ;
 
     private final HttpStatus status;

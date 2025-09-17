@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import next.career.domain.education.controller.dto.GetEducationDto;
 import next.career.domain.education.entity.Education;
 import next.career.domain.education.entity.QEducation;
+import next.career.domain.job.controller.dto.GetJobDto;
+import next.career.domain.job.entity.Job;
+import next.career.domain.job.entity.QJob;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -22,6 +25,31 @@ import java.util.Optional;
 public class EducationCustomRepository {
 
     private final JPAQueryFactory queryFactory;
+
+    public Page<Education> findAll(GetEducationDto.SearchRequest request, Pageable pageable) {
+        QEducation education = QEducation.education;
+
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+        Optional.ofNullable(request.getKeyword()).ifPresent(n -> booleanBuilder.and(education.title.contains(n)));
+        Optional.ofNullable(request.getKeyword()).ifPresent(n -> booleanBuilder.and(education.address.contains(n)));
+        Optional.ofNullable(request.getWorkLocation()).ifPresent(n -> booleanBuilder.and(education.address.contains(n)));
+
+
+        List<Education> content = queryFactory
+                .selectFrom(education)
+                .where(booleanBuilder)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        JPAQuery<Long> countQuery = queryFactory
+                .select(education.educationId.count())
+                .from(education)
+                .where(booleanBuilder);
+
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    }
 
     public Page<Education> getBookMarkedEducations(GetEducationDto.SearchRequest request, List<Long> bookmarkedIds, Pageable pageable) {
         QEducation education = QEducation.education;
@@ -83,5 +111,4 @@ public class EducationCustomRepository {
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
-
 }

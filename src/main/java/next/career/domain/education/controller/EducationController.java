@@ -10,6 +10,8 @@ import next.career.domain.education.service.EducationService;
 import next.career.domain.education.service.HrdCourseService;
 import next.career.domain.education.service.dto.EducationDto;
 import next.career.domain.education.service.dto.SaveWork24EducationDto;
+import next.career.domain.job.controller.dto.GetJobDto;
+import next.career.domain.job.service.dto.JobDto;
 import next.career.domain.user.entity.Member;
 import next.career.global.apiPayload.response.ApiResponse;
 import next.career.global.security.AuthDetails;
@@ -54,7 +56,7 @@ public class EducationController {
 
     @GetMapping("/education-data")
     @Operation(
-            summary = "교육 데이터 조회 및 저장",
+            summary = "교육 데이터 조회 및 저장 - 사용 X",
             description = "교육 데이터를 가져와 DB에 저장하고, Pinecone 벡터 DB에 업서트합니다."
     )
     public ApiResponse<?> getEducationDataFromWork24(
@@ -75,5 +77,14 @@ public class EducationController {
                                                               @RequestParam(defaultValue = "20250101") String startYmd,
                                                               @RequestParam(defaultValue = "20251231") String endYmd) {
         return ApiResponse.success(hrdCourseService.getEducations(keyword, pageNo, pageSize, startYmd, endYmd));
+    }
+
+    @GetMapping("/all/anonymous")
+    @Operation(summary = "전체 교육 조회 비로그인 사용자", description = "검색 조건과 페이징을 통해 전체 채용 공고 목록을 조회합니다.")
+    public ApiResponse<GetEducationDto.SearchAllResponse> getAllJobAnonymous(
+            @ParameterObject GetEducationDto.SearchRequest searchRequest,
+            @Parameter(hidden = true) Pageable pageable) {
+        Page<EducationDto.AllResponse> EducationDtoList = educationService.getAllJobAnonymous(searchRequest, pageable);
+        return ApiResponse.success(GetEducationDto.SearchAllResponse.of(EducationDtoList));
     }
 }

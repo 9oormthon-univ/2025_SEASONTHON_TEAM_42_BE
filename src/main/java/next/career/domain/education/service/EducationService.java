@@ -8,6 +8,8 @@ import next.career.domain.education.controller.dto.GetEducationDto;
 import next.career.domain.education.entity.Education;
 import next.career.domain.education.repository.EducationCustomRepository;
 import next.career.domain.education.service.dto.EducationDto;
+import next.career.domain.job.controller.dto.GetJobDto;
+import next.career.domain.job.service.dto.JobDto;
 import next.career.domain.job.service.dto.PineconeRecommendDto;
 import next.career.domain.openai.service.OpenAiService;
 import next.career.domain.user.entity.Member;
@@ -66,6 +68,12 @@ public class EducationService {
                         education,
                         getIsBookmark(education, member)
                 ));
+    }
+
+    public Page<EducationDto.AllResponse> getAllJobAnonymous(GetEducationDto.SearchRequest request, Pageable pageable) {
+
+        return educationCustomRepository.findAll(request, pageable)
+                .map(EducationDto.AllResponse::ofAnonymous);
     }
 
     public String getRandomImageUrl() {

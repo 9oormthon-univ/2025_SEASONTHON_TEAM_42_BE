@@ -43,7 +43,5 @@ public class GetEducationDto {
     public static class SearchRequest{
         private String keyword;
         private String workLocation;
-        private String employmentType;
-        private String jobCategory;
     }
 }

@@ -42,6 +42,7 @@ public class EducationDto {
                     .imageUrl(education.getImageUrl())
                     .trprDegr(education.getTrprDegr())
                     .address(education.getAddress())
+                    .imageUrl(getRandomImageUrl())
                     .title(education.getTitle())
                     .isBookmark(isBookmark)
                     .build();
@@ -59,6 +60,7 @@ public class EducationDto {
                     .imageUrl(education.getImageUrl())
                     .trprDegr(education.getTrprDegr())
                     .address(education.getAddress())
+                    .imageUrl(getRandomImageUrl())
                     .title(education.getTitle())
                     .build();
         }
@@ -72,9 +74,9 @@ public class EducationDto {
                     .keyword2(education.getTrainTarget())
                     .courseMan(education.getCourseMan())
                     .subTitle(education.getSubTitle())
-                    .imageUrl(education.getImageUrl())
                     .trprDegr(education.getTrprDegr())
                     .address(education.getAddress())
+                    .imageUrl(getRandomImageUrl())
                     .title(education.getTitle())
                     .isBookmark(isBookmark)
                     .score(score)
@@ -84,16 +86,28 @@ public class EducationDto {
 
     public static AllResponse fromWork24EducationDto(SaveWork24EducationDto.Work24EducationDto dto) {
         return AllResponse.builder()
-                .title(dto.title())
-                .subTitle(dto.subTitle())
                 .traStartDate(dto.traStartDate())
+                .imageUrl(getRandomImageUrl())
                 .traEndDate(dto.traEndDate())
-                .address(dto.address())
-                .courseMan(dto.courseMan())
                 .keyword1(dto.certificate())
                 .keyword2(dto.trainTarget())
+                .courseMan(dto.courseMan())
+                .subTitle(dto.subTitle())
                 .trprDegr(dto.trprDegr())
-                // 필요한 필드는 매핑하고, 나머지는 null 또는 적절한 기본값 설정
+                .address(dto.address())
+                .title(dto.title())
+                .isBookmark(false)
                 .build();
+    }
+
+    private static String getRandomImageUrl() {
+        List<String> imageUrls = List.of(
+                "https://kr.object.ncloudstorage.com/ilhaeng-artifacts-dev/educationThumbnail/600689.png",
+                "https://kr.object.ncloudstorage.com/ilhaeng-artifacts-dev/educationThumbnail/600690.png",
+                "https://kr.object.ncloudstorage.com/ilhaeng-artifacts-dev/educationThumbnail/600691.png",
+                "https://kr.object.ncloudstorage.com/ilhaeng-artifacts-dev/educationThumbnail/600692.png"
+        );
+        int randomIndex = (int) (Math.random() * imageUrls.size());
+        return imageUrls.get(randomIndex);
     }
 }

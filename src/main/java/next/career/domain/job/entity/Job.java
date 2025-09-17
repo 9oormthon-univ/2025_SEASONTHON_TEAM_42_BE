@@ -75,8 +75,16 @@ public class Job {
                 .requiredDocuments(requiredDocuments)
                 .jobCategory(jobCategory)
                 .postingDate(postingDate)
-                .closingDate(closingDate)
+                .closingDate(extractDate(closingDate))
                 .imageUrl(null)
                 .build();
+    }
+
+    private static String extractDate(String closingDate) {
+        if (closingDate == null || closingDate.isEmpty()) {
+            return null;
+        }
+        String[] parts = closingDate.split(" ");
+        return parts[0];
     }
 }

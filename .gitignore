@@ -51,3 +51,4 @@ src/test/resources/application.yml
 
 /deploy/docker-compose.yaml
 /src/test/resources/application-test.yaml
+/server.txt

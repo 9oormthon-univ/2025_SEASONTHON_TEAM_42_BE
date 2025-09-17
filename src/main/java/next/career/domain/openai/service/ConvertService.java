@@ -29,7 +29,7 @@ public class ConvertService {
         StringBuilder sb = new StringBuilder();
 
         if (memberDetail.getExperience() != null && !memberDetail.getExperience().isBlank()) {
-            sb.append("경력/경험: ").append(memberDetail.getExperience()).append("\n");
+            sb.append("경험: ").append(memberDetail.getExperience()).append("\n");
         }
         if (memberDetail.getCertificateOrSkill() != null && !memberDetail.getCertificateOrSkill().isBlank()) {
             sb.append("자격증/기술: ").append(memberDetail.getCertificateOrSkill()).append("\n");
@@ -46,8 +46,8 @@ public class ConvertService {
         if (memberDetail.getAvoidConditions() != null && !memberDetail.getAvoidConditions().isBlank()) {
             sb.append("피하고 싶은 근무 조건: ").append(memberDetail.getAvoidConditions()).append("\n");
         }
-        if (memberDetail.getAvailableWorkingTime() != null && !memberDetail.getAvailableWorkingTime().isBlank()) {
-            sb.append("근무 가능 시간: ").append(memberDetail.getAvailableWorkingTime()).append("\n");
+        if (memberDetail.getJob() != null && !memberDetail.getJob().isBlank()) {
+            sb.append("경력: ").append(memberDetail.getJob()).append("\n");
         }
         if (memberDetail.getPhysicalCondition() != null && !memberDetail.getPhysicalCondition().isBlank()) {
             sb.append("체력 상태: ").append(memberDetail.getPhysicalCondition()).append("\n");

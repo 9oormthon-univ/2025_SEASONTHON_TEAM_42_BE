@@ -1,11 +1,16 @@
-package next.career.domain.job.service;
+package next.career.domain.education.service;
 
 import lombok.RequiredArgsConstructor;
-import next.career.domain.job.controller.dto.Work24;
+import next.career.domain.education.controller.dto.GetEducationDto;
+import next.career.domain.education.service.dto.EducationDto;
+import next.career.domain.education.service.dto.SaveWork24EducationDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -19,8 +24,8 @@ public class HrdCourseService {
     @Value("${work24.api-key}")
     private String apiKey;
 
-    public Work24.CardCoursePage callRaw(String keyword, int pageNo, int pageSize, String startYmd, String endYmd) {
-        return work24Client.get()
+    public GetEducationDto.SearchAllResponse getEducations(String keyword, int pageNo, int pageSize, String startYmd, String endYmd) {
+        SaveWork24EducationDto.Response response = work24Client.get()
                 .uri(urlBuilder -> urlBuilder.path(apiPath)
                         .queryParam("authKey", apiKey)
                         .queryParam("returnType", "JSON")
@@ -33,7 +38,13 @@ public class HrdCourseService {
                         .build())
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .body(Work24.CardCoursePage.class);
+                .body(SaveWork24EducationDto.Response.class);
+
+        List<EducationDto.AllResponse> educationList = response.srchList().stream()
+                .map(EducationDto::fromWork24EducationDto)
+                .collect(Collectors.toList());
+
+        return GetEducationDto.SearchAllResponse.of(response, educationList);
     }
 }
 

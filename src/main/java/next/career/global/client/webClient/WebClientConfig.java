@@ -26,9 +26,6 @@ public class WebClientConfig {
     @Value("${pinecone.api-key}")
     private String pineconeApiKey;
 
-    @Value("${pinecone.host}")
-    private String pineconeHost;
-
     @Value("${seoul.job.host}")
     private String seoulJobHost;
 
@@ -58,7 +55,7 @@ public class WebClientConfig {
     @Bean
     public WebClient pineconeClient(WebClient.Builder builder) {
         return builder
-                .baseUrl(pineconeHost)
+                .baseUrl("")
                 .defaultHeader("Api-Key", pineconeApiKey)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .clientConnector(new ReactorClientHttpConnector(httpClient()))

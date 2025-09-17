@@ -1,20 +1,20 @@
-package next.career.domain.job.controller.dto;
+package next.career.domain.education.service.dto;
 
 import java.util.List;
 
-public record Work24() {
+public record SaveWork24EducationDto() {
 
-    public record CardCoursePage(
+    public record Response(
             int pageNum,
 
             int pageSize,
 
             int scn_cnt,
 
-            List<CardCourseItem> srchList
+            List<Work24EducationDto> srchList
     ){}
 
-    public record CardCourseItem(
+    public record Work24EducationDto(
             String eiEmplCnt3Gt10,
             String eiEmplRate6,
             String eiEmplCnt3,

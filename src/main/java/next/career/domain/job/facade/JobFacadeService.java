@@ -1,6 +1,7 @@
 package next.career.domain.job.facade;
 
 import lombok.RequiredArgsConstructor;
+import next.career.domain.education.entity.Education;
 import next.career.domain.job.entity.Job;
 import next.career.domain.job.service.JobBatchService;
 import next.career.domain.pinecone.service.PineconeService;

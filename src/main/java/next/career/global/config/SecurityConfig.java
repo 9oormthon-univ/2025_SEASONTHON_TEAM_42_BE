@@ -61,7 +61,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/",
                                 "/index.html",
-                                "/job/all/anonymous"
+                                "/job/all/anonymous",
+                                "/education/all/anonymous"
                         ).permitAll()
                         .requestMatchers(
                                 "/v1/api-docs/**",

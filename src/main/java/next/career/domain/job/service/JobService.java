@@ -4,7 +4,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import next.career.domain.UserJobMap.repository.MemberJobMapRepository;
-import next.career.domain.UserJobMap.service.BookMarkFinder;
+import next.career.domain.UserJobMap.service.JobBookMarkFinder;
 import next.career.domain.job.controller.dto.GetJobDto;
 import next.career.domain.job.entity.Job;
 import next.career.domain.job.repository.JobCustomRepository;
@@ -16,7 +16,6 @@ import next.career.domain.job.service.dto.SaveSeoulJobDto;
 import next.career.domain.openai.dto.AiChatDto;
 import next.career.domain.openai.dto.RecommendDto;
 import next.career.domain.openai.service.OpenAiService;
-import next.career.domain.roadmap.repository.RoadmapInputRepository;
 import next.career.domain.user.entity.Member;
 import next.career.domain.user.entity.MemberDetail;
 import next.career.domain.user.entity.MemberOccupation;
@@ -45,7 +44,7 @@ public class JobService {
     private final JobCustomRepository jobCustomRepository;
     private final MemberDetailRepository memberDetailRepository;
     private final MemberRepository memberRepository;
-    private final BookMarkFinder bookMarkFinder;
+    private final JobBookMarkFinder jobBookMarkFinder;
     private final MemberJobMapRepository memberJobMapRepository;
     private final OccupationRepository occupationRepository;
     private final WebClient seoulJobClient;
@@ -68,7 +67,7 @@ public class JobService {
     }
 
     public Page<JobDto.AllResponse> getBookMarkedJobs(GetJobDto.SearchRequest request, Member member, Pageable pageable) {
-        List<Long> bookMarkedJobIds = bookMarkFinder.findBookMarkedJobs(member.getId());
+        List<Long> bookMarkedJobIds = jobBookMarkFinder.findBookMarkedJobs(member.getId());
 
         return jobCustomRepository.getBookMarkedJobs(request, bookMarkedJobIds, pageable)
                 .map(job -> JobDto.AllResponse.of(
@@ -267,4 +266,5 @@ public class JobService {
                 .occupationList(occupationList)
                 .build();
     }
+
 }

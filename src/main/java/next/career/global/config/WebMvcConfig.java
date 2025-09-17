@@ -21,10 +21,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOriginPatterns(
                         devOrigin, prodOrigin,
-                        "http://localhost:3000",
                         "http://127.0.0.1:3000",
-                        "https://api.ilhaeng.cloud",
-                        "https://www.next-career.co.kr"
+                        "https://api.ilhaeng.cloud"
                 )
                 .allowedMethods("GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .allowedHeaders("*")

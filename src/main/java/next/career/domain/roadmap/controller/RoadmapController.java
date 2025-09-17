@@ -64,13 +64,28 @@ public class RoadmapController {
     }
 
     @PostMapping("{roadmapId}/roadmapAction")
+    @Operation(
+            summary = "로드맵 액션 추가",
+            description = "특정 로드맵 내에 새로운 액션을 추가합니다."
+    )
     public ApiResponse<?> addRoadmapAction(
+            @Parameter(
+                    description = "로드맵 ID",
+                    required = true,
+                    example = "1"
+            )
             @PathVariable Long roadmapId,
+
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "로드맵 액션 추가 요청 DTO",
+                    required = true
+            )
             @RequestBody RoadmapDto.ActionAddRequest request
     ) {
         roadmapService.addRoadmapAction(roadmapId, request);
         return ApiResponse.success();
     }
+
 
 
     @PutMapping("/{roadMapActionId}")

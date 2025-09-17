@@ -64,7 +64,6 @@ public class RoadmapController {
     }
 
     @PostMapping("{roadmapId}/roadmapAction")
-
     public ApiResponse<?> addRoadmapAction(
             @PathVariable Long roadmapId,
             @RequestBody RoadmapDto.ActionAddRequest request

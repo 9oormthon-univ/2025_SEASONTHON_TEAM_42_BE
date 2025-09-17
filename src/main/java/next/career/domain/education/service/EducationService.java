@@ -78,10 +78,10 @@ public class EducationService {
 
     public String getRandomImageUrl() {
         List<String> imageUrls = List.of(
-                "https://kr.object.ncloudstorage.com/ilhaeng-artifacts-dev/educationThumbnail/600689.png",
-                "https://kr.object.ncloudstorage.com/ilhaeng-artifacts-dev/educationThumbnail/600690.png",
-                "https://kr.object.ncloudstorage.com/ilhaeng-artifacts-dev/educationThumbnail/600691.png",
-                "https://kr.object.ncloudstorage.com/ilhaeng-artifacts-dev/educationThumbnail/600692.png"
+                "https://kr.object.ncloudstorage.com/ilhaeng-artifacts-dev/educationThumbnail/star1.png",
+                "https://kr.object.ncloudstorage.com/ilhaeng-artifacts-dev/educationThumbnail/star2.png",
+                "https://kr.object.ncloudstorage.com/ilhaeng-artifacts-dev/educationThumbnail/star3.png",
+                "https://kr.object.ncloudstorage.com/ilhaeng-artifacts-dev/educationThumbnail/star4.png"
         );
         int randomIndex = (int) (Math.random() * imageUrls.size());
         return imageUrls.get(randomIndex);

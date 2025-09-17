@@ -78,6 +78,7 @@ dependencies {
 	// xml mapper
 	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
 
+	implementation 'com.vladmihalcea:hibernate-types-60:2.21.1'
 
 	// feignClients
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'

@@ -1,11 +1,13 @@
 package next.career.domain.report.entity;
 
+import com.vladmihalcea.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import next.career.domain.user.entity.Member;
+import org.hibernate.annotations.Type;
 
 import java.util.List;
 
@@ -28,10 +30,12 @@ public class StrengthReport {
 
     private String experience;
 
-    @ElementCollection
+    @Type(JsonType.class)
+    @Column(columnDefinition = "json")
     private List<String> keyword;
 
-    @ElementCollection
+    @Type(JsonType.class)
+    @Column(columnDefinition = "json")
     private List<String> job;
 
     public static StrengthReport of(Member member, String strength, String experience,

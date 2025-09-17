@@ -2,6 +2,7 @@ package next.career.domain.roadmap.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import next.career.domain.job.controller.dto.GetRoadMapDto;
 import next.career.domain.job.service.JobService;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Roadmap API", description = "커리어 로드맵 관련 API")
 @RequestMapping("/roadmap")
 public class RoadmapController {
 

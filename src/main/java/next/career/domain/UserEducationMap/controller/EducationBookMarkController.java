@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@Tag(name = "BookMark API")
+@Tag(name = "BookMark API", description = "북마크 관련 API")
 @RequestMapping("/v1/bookmark/edu")
 @RequiredArgsConstructor
 public class EducationBookMarkController {

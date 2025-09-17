@@ -54,8 +54,8 @@ public class EducationController {
 
     @GetMapping("/education-data")
     @Operation(
-            summary = "서울시 채용 데이터 조회 및 저장",
-            description = "서울시 채용 데이터를 가져와 DB에 저장하고, Pinecone 벡터 DB에 업서트합니다."
+            summary = "교육 데이터 조회 및 저장",
+            description = "교육 데이터를 가져와 DB에 저장하고, Pinecone 벡터 DB에 업서트합니다."
     )
     public ApiResponse<?> getEducationDataFromWork24(
             @Parameter(
@@ -68,11 +68,12 @@ public class EducationController {
     }
 
     @GetMapping("/hrd-course")
-    public ApiResponse<SaveWork24EducationDto.Response> raw(@RequestParam(defaultValue = "") String keyword,
-                                                            @RequestParam(defaultValue = "1") int pageNo,
-                                                            @RequestParam(defaultValue = "10") int pageSize,
-                                                            @RequestParam(defaultValue = "20250101") String startYmd,
-                                                            @RequestParam(defaultValue = "20251231") String endYmd) {
+    @Operation(summary = "교육 조회", description = "교육을 조회합니다.")
+    public ApiResponse<GetEducationDto.SearchAllResponse> raw(@RequestParam(defaultValue = "") String keyword,
+                                                              @RequestParam(defaultValue = "1") int pageNo,
+                                                              @RequestParam(defaultValue = "10") int pageSize,
+                                                              @RequestParam(defaultValue = "20250101") String startYmd,
+                                                              @RequestParam(defaultValue = "20251231") String endYmd) {
         return ApiResponse.success(hrdCourseService.getEducations(keyword, pageNo, pageSize, startYmd, endYmd));
     }
 }

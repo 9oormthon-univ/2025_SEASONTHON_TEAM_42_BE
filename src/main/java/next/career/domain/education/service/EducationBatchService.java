@@ -45,21 +45,12 @@ public class EducationBatchService {
                         .queryParam("outType", 1)
                         .queryParam("pageNum", pageNo)
                         .queryParam("pageSize", numOfRows)
-//                        .queryParam("srchTraStDt", "20240101")
-//                        .queryParam("srchTraEndDt", "20251231")
-//                        .queryParam("srchTraProcessNm", "")
                         .build())
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .body(SaveWork24EducationDto.Response.class);
 
-        log.info("response json = {}", new ObjectMapper().writeValueAsString(response));
-        log.info("response = {}", response);
-
         try {
-//            SaveWork24EducationDto.Response response =
-//                    xmlMapper.readValue(response, SaveWork24EducationDto.Response.class);
-
             log.info("SaveWork24 education dto response = {}", response);
 
             List<Education> educations = response.srchList().stream()

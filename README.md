@@ -12,9 +12,8 @@
 
 <br></br>
 
-## 스웨거
-
-https://api.ilhaeng.cloud/swagger-ui/index.html
+## API 명세서
+https://api.zapply.site/swagger-ui/index.html
 
 <br></br>
 

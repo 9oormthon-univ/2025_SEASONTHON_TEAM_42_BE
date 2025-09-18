@@ -51,7 +51,7 @@ public class JobCustomRepository {
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
 
-    public Page<Job> getBookMarkedJobs(GetJobDto.SearchRequest request, List<Long> bookmarkedIds, Pageable pageable) {
+    public Page<Job> getBookMarkedJobs(List<Long> bookmarkedIds, Pageable pageable) {
         QJob job = QJob.job;
 
         if (bookmarkedIds == null || bookmarkedIds.isEmpty()) {
@@ -59,11 +59,6 @@ public class JobCustomRepository {
         }
 
         BooleanBuilder where = new BooleanBuilder();
-
-        Optional.ofNullable(request.getKeyword()).ifPresent(k -> where.and(job.jobTitle.contains(k).or(job.workLocation.contains(k))));
-        Optional.ofNullable(request.getJobCategory()).ifPresent(c -> where.and(job.jobCategory.contains(c)));
-        Optional.ofNullable(request.getEmploymentType()).ifPresent(e -> where.and(job.employmentType.contains(e)));
-        Optional.ofNullable(request.getWorkLocation()).ifPresent(w -> where.and(job.workLocation.contains(w)));
 
         where.and(job.jobId.in(bookmarkedIds));
 

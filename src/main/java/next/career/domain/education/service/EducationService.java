@@ -60,10 +60,10 @@ public class EducationService {
         ));
     }
 
-    public Page<EducationDto.AllResponse> getBookMarkedEducations(GetEducationDto.SearchRequest request, Member member, Pageable pageable) {
+    public Page<EducationDto.AllResponse> getBookMarkedEducations(Member member, Pageable pageable) {
         List<Long> bookMarkedJobIds = educationBookMarkFinder.findBookMarkedEducations(member.getId());
 
-        return educationCustomRepository.getBookMarkedEducations(request, bookMarkedJobIds, pageable)
+        return educationCustomRepository.getBookMarkedEducations(bookMarkedJobIds, pageable)
                 .map(education -> EducationDto.AllResponse.of(
                         education,
                         getIsBookmark(education, member)

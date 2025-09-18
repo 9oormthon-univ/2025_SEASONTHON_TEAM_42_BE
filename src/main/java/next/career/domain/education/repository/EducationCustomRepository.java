@@ -51,7 +51,7 @@ public class EducationCustomRepository {
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
 
-    public Page<Education> getBookMarkedEducations(GetEducationDto.SearchRequest request, List<Long> bookmarkedIds, Pageable pageable) {
+    public Page<Education> getBookMarkedEducations(List<Long> bookmarkedIds, Pageable pageable) {
         QEducation education = QEducation.education;
 
         if (bookmarkedIds == null || bookmarkedIds.isEmpty()) {
@@ -59,9 +59,6 @@ public class EducationCustomRepository {
         }
 
         BooleanBuilder where = new BooleanBuilder();
-
-        Optional.ofNullable(request.getKeyword()).ifPresent(k -> where.and(education.title.contains(k).or(education.address.contains(k))));
-        Optional.ofNullable(request.getWorkLocation()).ifPresent(w -> where.and(education.address.contains(w)));
 
         where.and(education.educationId.in(bookmarkedIds));
 

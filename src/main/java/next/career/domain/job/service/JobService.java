@@ -66,10 +66,10 @@ public class JobService {
                 .map(JobDto.AllResponse::ofAnonymous);
     }
 
-    public Page<JobDto.AllResponse> getBookMarkedJobs(GetJobDto.SearchRequest request, Member member, Pageable pageable) {
+    public Page<JobDto.AllResponse> getBookMarkedJobs(Member member, Pageable pageable) {
         List<Long> bookMarkedJobIds = jobBookMarkFinder.findBookMarkedJobs(member.getId());
 
-        return jobCustomRepository.getBookMarkedJobs(request, bookMarkedJobIds, pageable)
+        return jobCustomRepository.getBookMarkedJobs(bookMarkedJobIds, pageable)
                 .map(job -> JobDto.AllResponse.of(
                         job,
                         getIsBookmark(job, member)

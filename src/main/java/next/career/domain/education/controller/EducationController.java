@@ -46,11 +46,10 @@ public class EducationController {
 
     @GetMapping("/bookmarks")
     @Operation(summary = "북마크된 교육 조회", description = "북마크된 교육을 조회합니다.")
-    public ApiResponse<GetEducationDto.SearchAllResponse> getBookMarkedJobs(
-            @ParameterObject GetEducationDto.SearchRequest searchRequest,
+    public ApiResponse<GetEducationDto.SearchAllResponse> getBookMarkedEducations(
             @Parameter(hidden = true) Pageable pageable,
             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
-        Page<EducationDto.AllResponse> EducationDtoList = educationService.getBookMarkedEducations(searchRequest, authDetails.getUser(), pageable);
+        Page<EducationDto.AllResponse> EducationDtoList = educationService.getBookMarkedEducations(authDetails.getUser(), pageable);
         return ApiResponse.success(GetEducationDto.SearchAllResponse.of(EducationDtoList));
     }
 

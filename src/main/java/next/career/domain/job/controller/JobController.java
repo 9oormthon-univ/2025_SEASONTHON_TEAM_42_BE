@@ -69,10 +69,9 @@ public class JobController {
     @GetMapping("/bookmarks")
     @Operation(summary = "북마크된 채용 공고 조회", description = "북마크된 채용 공고를 조회합니다.")
     public ApiResponse<GetJobDto.SearchAllResponse> getBookMarkedJobs(
-            @ParameterObject GetJobDto.SearchRequest searchRequest,
             @Parameter(hidden = true) Pageable pageable,
             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
-        Page<JobDto.AllResponse> jobDtoList = jobService.getBookMarkedJobs(searchRequest, authDetails.getUser(), pageable);
+        Page<JobDto.AllResponse> jobDtoList = jobService.getBookMarkedJobs(authDetails.getUser(), pageable);
         return ApiResponse.success(GetJobDto.SearchAllResponse.of(jobDtoList));
     }
 

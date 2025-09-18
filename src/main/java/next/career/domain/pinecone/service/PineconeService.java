@@ -63,7 +63,6 @@ public class PineconeService {
                                     "metadata", metadata
                             ))
                     );
-                    log.info("body = {}", body);
 
                     return pineconeClient.post()
                             .uri(jobHost + "/vectors/upsert")

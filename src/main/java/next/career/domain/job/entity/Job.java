@@ -20,22 +20,54 @@ public class Job {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long jobId; // 내부 PK (자동 생성)
 
+    @Column(columnDefinition = "TEXT")
     private String companyName;     // 기업명
+
+    @Column(columnDefinition = "TEXT")
     private String jobCodeName;     // 직종명
-    private Integer recruitNumber;  // 모집 인원
+
+    private Integer recruitNumber;  // 모집 인원 (숫자라 그대로 둠)
+
+    @Column(columnDefinition = "TEXT")
     private String employmentType;  // 고용 형태 (정규직, 계약직 등)
+
+    @Column(columnDefinition = "TEXT")
     private String workLocation;    // 근무 지역
+
+    @Column(columnDefinition = "TEXT")
     private String description;     // 직무 내용
+
+    @Column(columnDefinition = "TEXT")
     private String wage;            // 임금
+
+    @Column(columnDefinition = "TEXT")
     private String insurance;       // 4대 보험
+
+    @Column(columnDefinition = "TEXT")
     private String workTime;        // 근무 시간
+
+    @Column(columnDefinition = "TEXT")
     private String managerPhone;    // 담당자 연락처
+
+    @Column(columnDefinition = "TEXT")
     private String jobTitle;        // 직무명
+
+    @Column(columnDefinition = "TEXT")
     private String screeningMethod; // 전형 방법
+
+    @Column(columnDefinition = "TEXT")
     private String receptionMethod; // 접수 방법
+
+    @Column(columnDefinition = "TEXT")
     private String requiredDocuments; // 제출 서류
+
+    @Column(columnDefinition = "TEXT")
     private String jobCategory;     // 직무 분야 (산업)
+
+    @Column(columnDefinition = "TEXT")
     private String postingDate;     // 공고 등록일
+
+    @Column(columnDefinition = "TEXT")
     private String closingDate;     // 공고 마감일
     private String imageUrl;
 

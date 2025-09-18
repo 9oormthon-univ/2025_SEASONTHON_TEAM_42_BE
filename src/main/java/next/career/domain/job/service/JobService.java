@@ -111,6 +111,7 @@ public class JobService {
         List<RecommendDto.OccupationResponse.Occupation> updatedList = savedList.stream()
                 .map(entity -> {
                     String occupationImageUrl = occupationRepository.findImageUrlByOccupationName(entity.getOccupationName());
+
                     return RecommendDto.OccupationResponse.Occupation.builder()
                             .memberOccupationId(entity.getMemberOccupationId())
                             .occupationName(entity.getOccupationName())

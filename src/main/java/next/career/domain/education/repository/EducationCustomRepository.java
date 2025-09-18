@@ -26,14 +26,13 @@ public class EducationCustomRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    public Page<Education> findAll(GetEducationDto.SearchRequest request, Pageable pageable) {
+    public Page<Education> findAll(String keyword, Pageable pageable) {
         QEducation education = QEducation.education;
 
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
-        Optional.ofNullable(request.getKeyword()).ifPresent(n -> booleanBuilder.and(education.title.contains(n)));
-        Optional.ofNullable(request.getKeyword()).ifPresent(n -> booleanBuilder.and(education.address.contains(n)));
-        Optional.ofNullable(request.getWorkLocation()).ifPresent(n -> booleanBuilder.and(education.address.contains(n)));
+        Optional.ofNullable(keyword).ifPresent(n -> booleanBuilder.and(education.title.contains(n)));
+        Optional.ofNullable(keyword).ifPresent(n -> booleanBuilder.and(education.address.contains(n)));
 
 
         List<Education> content = queryFactory

@@ -1,6 +1,7 @@
 package next.career.domain.education.controller.dto;
 
 import lombok.*;
+import next.career.domain.education.entity.Education;
 import next.career.domain.education.service.dto.EducationDto;
 import next.career.domain.education.service.dto.SaveWork24EducationDto;
 import org.springframework.data.domain.Page;
@@ -26,13 +27,14 @@ public class GetEducationDto {
                     .build();
         }
 
-        public static GetEducationDto.SearchAllResponse of(SaveWork24EducationDto.Response response, List<EducationDto.AllResponse> educationList) {
+        public static GetEducationDto.SearchAllResponse of(Page<Education> educationPage, List<EducationDto.AllResponse> educationList) {
             return GetEducationDto.SearchAllResponse.builder()
                     .educationDtoList(educationList)
-                    .totalElements((long) response.scn_cnt())
-                    .numberOfElements(educationList.size())
+                    .totalElements(educationPage.getTotalElements())
+                    .numberOfElements(educationPage.getNumberOfElements())
                     .build();
         }
+
     }
 
     @Getter

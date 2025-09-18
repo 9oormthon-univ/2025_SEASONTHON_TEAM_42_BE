@@ -72,7 +72,18 @@ public class EducationService {
 
     public Page<EducationDto.AllResponse> getAllJobAnonymous(GetEducationDto.SearchRequest request, Pageable pageable) {
 
-        return educationCustomRepository.findAll(request, pageable)
+        return educationCustomRepository.findAll(request.getKeyword(), pageable)
                 .map(EducationDto.AllResponse::ofAnonymous);
+    }
+
+    public GetEducationDto.SearchAllResponse getEducations(String keyword, Pageable pageable, String startYmd, String endYmd) {
+
+        Page<Education> response = educationCustomRepository.findAll(keyword, pageable);
+
+        List<EducationDto.AllResponse> educationList = response.getContent().stream()
+                .map(education -> EducationDto.AllResponse.of(education, false)) // 기본은 북마크 X
+                .toList();
+
+        return GetEducationDto.SearchAllResponse.of(response, educationList);
     }
 }

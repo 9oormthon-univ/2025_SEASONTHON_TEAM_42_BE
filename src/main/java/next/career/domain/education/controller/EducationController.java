@@ -71,20 +71,19 @@ public class EducationController {
     @GetMapping("/hrd-course")
     @Operation(summary = "교육 조회", description = "교육을 조회합니다.")
     public ApiResponse<GetEducationDto.SearchAllResponse> raw(@RequestParam(defaultValue = "") String keyword,
-                                                              @RequestParam(defaultValue = "1") int pageNo,
-                                                              @RequestParam(defaultValue = "10") int pageSize,
+                                                              @Parameter(hidden = true) Pageable pageable,
                                                               @RequestParam(defaultValue = "20250101") String startYmd,
                                                               @RequestParam(defaultValue = "20251231") String endYmd) {
-        return ApiResponse.success(hrdCourseService.getEducations(keyword, pageNo, pageSize, startYmd, endYmd));
+        return ApiResponse.success(educationService.getEducations(keyword, pageable, startYmd, endYmd));
     }
 
-    @GetMapping("/all/anonymous")
-    @Operation(summary = "전체 교육 조회 비로그인 사용자", description = "검색 조건과 페이징을 통해 전체 채용 공고 목록을 조회합니다.")
-    public ApiResponse<GetEducationDto.SearchAllResponse> getAllJobAnonymous(@RequestParam(defaultValue = "") String keyword,
-                                                                             @RequestParam(defaultValue = "1") int pageNo,
-                                                                             @RequestParam(defaultValue = "10") int pageSize,
-                                                                             @RequestParam(defaultValue = "20250101") String startYmd,
-                                                                             @RequestParam(defaultValue = "20251231") String endYmd) {
-        return ApiResponse.success(hrdCourseService.getEducations(keyword, pageNo, pageSize, startYmd, endYmd));
-    }
+//    @GetMapping("/all/anonymous")
+//    @Operation(summary = "전체 교육 조회 비로그인 사용자", description = "검색 조건과 페이징을 통해 전체 채용 공고 목록을 조회합니다.")
+//    public ApiResponse<GetEducationDto.SearchAllResponse> getAllJobAnonymous(@RequestParam(defaultValue = "") String keyword,
+//                                                                             @RequestParam(defaultValue = "1") int pageNo,
+//                                                                             @RequestParam(defaultValue = "10") int pageSize,
+//                                                                             @RequestParam(defaultValue = "20250101") String startYmd,
+//                                                                             @RequestParam(defaultValue = "20251231") String endYmd) {
+//        return ApiResponse.success(hrdCourseService.getEducations(keyword, pageNo, pageSize, startYmd, endYmd));
+//    }
 }

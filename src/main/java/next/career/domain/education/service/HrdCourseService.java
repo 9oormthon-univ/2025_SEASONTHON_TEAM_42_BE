@@ -24,27 +24,27 @@ public class HrdCourseService {
     @Value("${work24.api-key}")
     private String apiKey;
 
-    public GetEducationDto.SearchAllResponse getEducations(String keyword, int pageNo, int pageSize, String startYmd, String endYmd) {
-        SaveWork24EducationDto.Response response = work24Client.get()
-                .uri(urlBuilder -> urlBuilder.path(apiPath)
-                        .queryParam("authKey", apiKey)
-                        .queryParam("returnType", "JSON")
-                        .queryParam("outType", 1)
-                        .queryParam("pageNum", pageNo)
-                        .queryParam("pageSize", pageSize)
-                        .queryParam("srchTraStDt", startYmd)
-                        .queryParam("srchTraEndDt", endYmd)
-                        .queryParam("srchTraProcessNm", keyword)
-                        .build())
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .body(SaveWork24EducationDto.Response.class);
-
-        List<EducationDto.AllResponse> educationList = response.srchList().stream()
-                .map(EducationDto::fromWork24EducationDto)
-                .collect(Collectors.toList());
-
-        return GetEducationDto.SearchAllResponse.of(response, educationList);
-    }
+//    public GetEducationDto.SearchAllResponse getEducations(String keyword, int pageNo, int pageSize, String startYmd, String endYmd) {
+//        SaveWork24EducationDto.Response response = work24Client.get()
+//                .uri(urlBuilder -> urlBuilder.path(apiPath)
+//                        .queryParam("authKey", apiKey)
+//                        .queryParam("returnType", "JSON")
+//                        .queryParam("outType", 1)
+//                        .queryParam("pageNum", pageNo)
+//                        .queryParam("pageSize", pageSize)
+//                        .queryParam("srchTraStDt", startYmd)
+//                        .queryParam("srchTraEndDt", endYmd)
+//                        .queryParam("srchTraProcessNm", keyword)
+//                        .build())
+//                .accept(MediaType.APPLICATION_JSON)
+//                .retrieve()
+//                .body(SaveWork24EducationDto.Response.class);
+//
+//        List<EducationDto.AllResponse> educationList = response.srchList().stream()
+//                .map(EducationDto::fromWork24EducationDto)
+//                .collect(Collectors.toList());
+//
+//        return GetEducationDto.SearchAllResponse.of(response, educationList);
+//    }
 }
 

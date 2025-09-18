@@ -1,14 +1,17 @@
 package next.career.domain.education.facade;
 
 import lombok.RequiredArgsConstructor;
+import next.career.domain.education.controller.dto.GetEducationDto;
 import next.career.domain.education.entity.Education;
 import next.career.domain.education.service.EducationBatchService;
+import next.career.domain.education.service.dto.EducationDto;
 import next.career.domain.job.service.JobBatchService;
 import next.career.domain.pinecone.service.PineconeService;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

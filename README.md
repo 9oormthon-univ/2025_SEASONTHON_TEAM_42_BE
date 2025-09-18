@@ -14,9 +14,9 @@
 
 ## 스웨거
 
-https://api.ilhaeng.cloud/swagger-ui/index.html#
+https://api.ilhaeng.cloud/swagger-ui/index.html
 
-<br>/</br>
+<br></br>
 
 
 ## 📝 Technology Stack

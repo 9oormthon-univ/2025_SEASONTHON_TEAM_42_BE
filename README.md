@@ -118,7 +118,7 @@ https://api.zapply.site/swagger-ui/index.html
 ### 
 - `컨벤션명/#이슈번호-작업내용`
 - pull request를 통해 develop branch에 merge 후, branch delete
-- 부득이하게 develop branch에 직접 commit 해야 할 경우, `!hotfix:` 사용
+- 부득이하게 develop branch에 직접 commit 해야 할 경우, `!hotfix:` 나 `Hofix:` 사용
 
 <br></br>
 

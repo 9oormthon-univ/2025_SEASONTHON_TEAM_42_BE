@@ -94,33 +94,34 @@ public class JobService {
     @Transactional
     public RecommendDto.OccupationResponse recommendOccupation(Member member) {
 
-        member.getMemberOccupationList().clear();
-
         RecommendDto.OccupationResponse recommendOccupation = openAiService.getRecommendOccupation(member);
         List<RecommendDto.OccupationResponse.Occupation> occupationList = recommendOccupation.getOccupationList();
 
-        List<RecommendDto.OccupationResponse.Occupation> updatedList = occupationList.stream()
-                .map(occ -> {
-                    String occupationImageUrl = occupationRepository.findImageUrlByOccupationName(occ.getOccupationName());
+        List<MemberOccupation> savedList = occupationList.stream()
+                .map(occupation -> MemberOccupation.of(
+                        occupation.getOccupationName(),
+                        occupation.getDescription(),
+                        occupation.getStrength(),
+                        occupation.getScore(),
+                        member
+                ))
+                .map(memberOccupationRepository::save)
+                .toList();
+
+        List<RecommendDto.OccupationResponse.Occupation> updatedList = savedList.stream()
+                .map(entity -> {
+                    String occupationImageUrl = occupationRepository.findImageUrlByOccupationName(entity.getOccupationName());
                     return RecommendDto.OccupationResponse.Occupation.builder()
-                            .occupationName(occ.getOccupationName())
-                            .description(occ.getDescription())
-                            .strength(occ.getStrength())
-                            .score(occ.getScore())
+                            .memberOccupationId(entity.getMemberOccupationId())
+                            .occupationName(entity.getOccupationName())
+                            .description(entity.getOccupationDescription())
+                            .strength(entity.getStrength())
+                            .score(entity.getScore())
+                            .memberOccupationId(entity.getMemberOccupationId())
                             .imageUrl(occupationImageUrl)
                             .build();
                 })
                 .toList();
-
-        for (RecommendDto.OccupationResponse.Occupation occupation : occupationList) {
-            MemberOccupation memberOccupation = MemberOccupation.of(occupation.getOccupationName(),
-                    occupation.getDescription(),
-                    occupation.getStrength(),
-                    occupation.getScore(),
-                    member);
-
-            memberOccupationRepository.save(memberOccupation);
-        }
 
         return RecommendDto.OccupationResponse.builder()
                 .occupationList(updatedList)
@@ -129,8 +130,7 @@ public class JobService {
 
     public RecommendDto.OccupationResponse getRecommendOccupation(Member member) {
 
-        List<MemberOccupation> memberOccupations = memberOccupationRepository.findByMember(member);
-        log.info("memberOccupations = {}", memberOccupations);
+        List<MemberOccupation> memberOccupations = memberOccupationRepository.findByMemberOrderByCreatedAtDesc(member);
 
         List<RecommendDto.OccupationResponse.Occupation> occupationList = memberOccupations.stream()
                 .map(occ -> {

@@ -148,8 +148,6 @@ public class JobController {
         return ApiResponse.success(GetJobDto.SearchAllResponse.of(jobDtoList));
     }
 
-
-
     // AI 채팅 답변 저장
     @PostMapping("/chat/{sequence}")
     @Operation(summary = "AI 채팅 답변 저장", description = "AI가 제공하는 질문 시퀀스에 대해 사용자의 답변을 저장합니다.")

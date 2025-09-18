@@ -42,7 +42,6 @@ public class OpenAiService {
     public RecommendDto.OccupationResponse getRecommendOccupation(Member member) {
 
         List<Prompt> occupation = promptRepository.findAllByTag("occupation");
-        log.info("occupationList = {}", occupation.size());
 
         String system = occupation.stream()
                 .map(Prompt::getContent)
@@ -80,7 +79,6 @@ public class OpenAiService {
             RecommendDto.OccupationResponse dto =
                     MAPPER.readValue(content, RecommendDto.OccupationResponse.class);
 
-            // Occupation 객체 리스트 필터링 (null 제거, 최대 3개 제한)
             List<RecommendDto.OccupationResponse.Occupation> list =
                     Optional.ofNullable(dto.getOccupationList()).orElseGet(List::of)
                             .stream()

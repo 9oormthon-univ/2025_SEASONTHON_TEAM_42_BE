@@ -10,4 +10,6 @@ public interface MemberOccupationRepository extends JpaRepository<MemberOccupati
     List<MemberOccupation> findByMember(Member member);
 
     List<MemberOccupation> findByMemberAndIsBookmarkTrue(Member member);
+
+    List<MemberOccupation> findByMemberOrderByCreatedAtDesc(Member member);
 }

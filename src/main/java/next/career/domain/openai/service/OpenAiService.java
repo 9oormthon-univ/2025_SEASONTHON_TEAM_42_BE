@@ -473,7 +473,11 @@ public class OpenAiService {
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.joining("\n"));
 
-        String finalSystemPrompt = system + "\n\n[사용자 정보]\n" + member.getMemberDetail();
+        MemberDetail memberDetail = member.getMemberDetail();
+
+        String memberDetailText = convertService.convertMemberDetailToText(memberDetail);
+
+        String finalSystemPrompt = system + "\n\n[사용자 정보]\n" + memberDetailText;
         log.info("member detail = {}", member.getMemberDetail());
 
         Map<String, Object> body = setStrengthReportPrompt(finalSystemPrompt);

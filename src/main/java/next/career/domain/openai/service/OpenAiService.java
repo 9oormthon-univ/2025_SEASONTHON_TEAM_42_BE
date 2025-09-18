@@ -147,7 +147,7 @@ public class OpenAiService {
         return Map.of(
                 "model", "gpt-4o",
                 "messages", messages,
-                "temperature", 0.2,
+                "temperature", 0.5,
                 "max_tokens", 800,
                 "response_format", responseFormat
         );

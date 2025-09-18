@@ -29,7 +29,7 @@
 <br></br>
 
 ## 🔨 Project Architecture
-<img width="7440" height="5920" alt="image" src="https://github.com/user-attachments/assets/682a6bec-51d5-4251-a266-c33c02826d2a" />
+<img width="7416" height="6000" alt="image" src="https://github.com/user-attachments/assets/93f12a4c-aaf4-45fa-a14e-bed1be42058d" />
 
 <br></br>
 

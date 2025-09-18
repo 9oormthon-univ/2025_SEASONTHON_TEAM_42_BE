@@ -6,6 +6,7 @@ import next.career.domain.openai.dto.RecommendDto;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class JobDto {
@@ -58,7 +59,7 @@ public class JobDto {
                     .jobCategory(filterJobCategory(job.getJobCategory()))
                     .postingDate(job.getPostingDate())
                     .closingDate(job.getClosingDate())
-                    .imageUrl(job.getImageUrl())
+                    .imageUrl(getRandomImageUrl())
                     .isBookmark(isBookmark)
                     .build();
         }
@@ -83,7 +84,7 @@ public class JobDto {
                     .jobCategory(filterJobCategory(job.getJobCategory()))
                     .postingDate(job.getPostingDate())
                     .closingDate(job.getClosingDate())
-                    .imageUrl(job.getImageUrl())
+                    .imageUrl(getRandomImageUrl())
                     .build();
         }
 
@@ -107,7 +108,7 @@ public class JobDto {
                     .jobCategory(filterJobCategory(job.getJobCategory()))
                     .postingDate(job.getPostingDate())
                     .closingDate(job.getClosingDate())
-                    .imageUrl(job.getImageUrl())
+                    .imageUrl(getRandomImageUrl())
                     .isBookmark(isBookmark)
                     .score(score)
                     .build();
@@ -161,7 +162,7 @@ public class JobDto {
                     .jobCategory(filterJobCategory(job.getJobCategory()))
                     .postingDate(job.getPostingDate())
                     .closingDate(job.getClosingDate())
-                    .imageUrl(job.getImageUrl())
+                    .imageUrl(getRandomImageUrl())
                     .isScrap(isScrap)
                     .build();
         }
@@ -208,5 +209,17 @@ public class JobDto {
                 .map(String::trim)
                 .filter(s -> s.length() <= 10)
                 .collect(Collectors.joining(","));
+    }
+
+    private static String getRandomImageUrl() {
+        List<String> imageUrls = List.of(
+                "https://kr.object.ncloudstorage.com/ilhaeng-artifacts-dev/JobThumbnail/job1.png",
+                "https://kr.object.ncloudstorage.com/ilhaeng-artifacts-dev/JobThumbnail/job2.png",
+                "https://kr.object.ncloudstorage.com/ilhaeng-artifacts-dev/JobThumbnail/job3.png",
+                "https://kr.object.ncloudstorage.com/ilhaeng-artifacts-dev/JobThumbnail/job4.png",
+                "https://kr.object.ncloudstorage.com/ilhaeng-artifacts-dev/JobThumbnail/job5.png"
+        );
+        int randomIndex = (int) (Math.random() * imageUrls.size());
+        return imageUrls.get(randomIndex);
     }
 }

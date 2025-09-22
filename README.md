@@ -35,8 +35,7 @@ https://api.zapply.site/swagger-ui/index.html
 <br></br>
 
 ## 🔨 Project Architecture
-<img width="7416" height="6000" alt="image" src="https://github.com/user-attachments/assets/93f12a4c-aaf4-45fa-a14e-bed1be42058d" />
-
+<img width="8320" height="6000" alt="image" src="https://github.com/user-attachments/assets/7859c8a2-0077-4b37-b434-77f373fc7311" />
 
 <br></br>
 

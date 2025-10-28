@@ -13,7 +13,7 @@
 <br></br>
 
 ## API 명세서
-https://api.zapply.site/swagger-ui/index.html
+https://api.ilhaeng.cloud/swagger-ui/index.html
 
 <br></br>
 

@@ -27,6 +27,7 @@ import next.career.global.apiPayload.exception.GlobalErrorType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -178,9 +179,16 @@ public class JobService {
         ));
     }
 
-
-
-
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public boolean saveJob(Job job) {
+        try {
+            jobRepository.save(job);
+            return true;
+        } catch (Exception e) {
+            log.warn("Job 저장 실패: {}, 사유: {}", job.getJobTitle(), e.getMessage());
+            return false;
+        }
+    }
 
     @Transactional
     public void answerAIChat(Integer sequence, String answer, Member member) {

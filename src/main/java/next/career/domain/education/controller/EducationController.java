@@ -73,8 +73,9 @@ public class EducationController {
     public ApiResponse<GetEducationDto.SearchAllResponse> raw(@RequestParam(defaultValue = "") String keyword,
                                                               @Parameter(hidden = true) Pageable pageable,
                                                               @RequestParam(defaultValue = "20250101") String startYmd,
-                                                              @RequestParam(defaultValue = "20251231") String endYmd) {
-        return ApiResponse.success(educationService.getEducations(keyword, pageable, startYmd, endYmd));
+                                                              @RequestParam(defaultValue = "20251231") String endYmd,
+                                                              @AuthenticationPrincipal AuthDetails authDetails) {
+        return ApiResponse.success(educationService.getEducations(keyword, pageable, startYmd, endYmd, authDetails.getUser()));
     }
 
 //    @GetMapping("/all/anonymous")

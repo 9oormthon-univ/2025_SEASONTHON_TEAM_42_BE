@@ -9,6 +9,7 @@ import next.career.domain.education.entity.Education;
 import next.career.domain.education.repository.EducationCustomRepository;
 import next.career.domain.education.service.dto.EducationDto;
 import next.career.domain.job.controller.dto.GetJobDto;
+import next.career.domain.job.entity.Job;
 import next.career.domain.job.service.dto.JobDto;
 import next.career.domain.job.service.dto.PineconeRecommendDto;
 import next.career.domain.openai.service.OpenAiService;
@@ -76,12 +77,12 @@ public class EducationService {
                 .map(EducationDto.AllResponse::ofAnonymous);
     }
 
-    public GetEducationDto.SearchAllResponse getEducations(String keyword, Pageable pageable, String startYmd, String endYmd) {
+    public GetEducationDto.SearchAllResponse getEducations(String keyword, Pageable pageable, String startYmd, String endYmd, Member member) {
 
         Page<Education> response = educationCustomRepository.findAll(keyword, pageable);
 
         List<EducationDto.AllResponse> educationList = response.getContent().stream()
-                .map(education -> EducationDto.AllResponse.of(education, false)) // 기본은 북마크 X
+                .map(education -> EducationDto.AllResponse.of(education, getIsBookmark(education, member)))
                 .toList();
 
         return GetEducationDto.SearchAllResponse.of(response, educationList);

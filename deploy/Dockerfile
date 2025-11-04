@@ -1,5 +1,5 @@
 # 빌드 단계
-FROM openjdk:21-jdk-slim AS builder
+FROM eclipse-temurin:21-jdk-jammy AS builder
 WORKDIR /app
 COPY . .
 RUN ./gradlew build -x test

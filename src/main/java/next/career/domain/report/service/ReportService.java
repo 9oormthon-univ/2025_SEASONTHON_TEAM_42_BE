@@ -22,8 +22,6 @@ public class ReportService {
     public GetStrengthReportDto.Response createStrengthReport(Member member) {
         GetStrengthReportDto.Response response = openAiService.createStrengthReport(member);
 
-        strengthReportRepository.deleteAllByMember(member);
-
         List<StrengthReport> reports = response.getReportList().stream()
                 .map(r -> StrengthReport.of(
                         member,

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +46,33 @@ public class ReportService {
         List<StrengthReport> strengthReportList = strengthReportRepository.findAllByMember(member);
 
         List<GetStrengthReportDto.Report> reportList = strengthReportList.stream()
+                .map(r -> GetStrengthReportDto.Report.of(
+                        r.getStrength(),
+                        r.getExperience(),
+                        r.getKeyword(),
+                        r.getJob()
+                        , r.getAppeal()
+                ))
+                .toList();
+
+
+        return GetStrengthReportDto.Response.of(reportList);
+    }
+
+    public GetStrengthReportDto.Response getStrengthReportCurrentHistory(Member member) {
+
+        List<StrengthReport> strengthReportList = strengthReportRepository.findAllByMember(member);
+
+        int latestVersion = strengthReportList.stream()
+                .mapToInt(StrengthReport::getVersion)
+                .max()
+                .orElse(0);
+
+        List<StrengthReport> latestReports = strengthReportList.stream()
+                .filter(r -> r.getVersion() == latestVersion)
+                .toList();
+
+        List<GetStrengthReportDto.Report> reportList = latestReports.stream()
                 .map(r -> GetStrengthReportDto.Report.of(
                         r.getStrength(),
                         r.getExperience(),

@@ -48,4 +48,13 @@ public class ReportController {
         return ApiResponse.success(reportService.getStrengthReport(member));
     }
 
+    @GetMapping("/strength/history")
+    public ApiResponse<GetStrengthReportDto.Response> getStrengthReportHistory(
+            @Parameter(hidden = true, description = "인증된 사용자 정보")
+            @AuthenticationPrincipal AuthDetails authDetails
+    ) {
+        Member member = authDetails.getUser();
+        return ApiResponse.success(reportService.getStrengthReportCurrentHistory(member));
+    }
+
 }

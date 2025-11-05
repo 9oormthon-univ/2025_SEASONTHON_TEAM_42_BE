@@ -17,4 +17,6 @@ public interface StrengthReportRepository extends JpaRepository<StrengthReport, 
 
     @Query("SELECT MAX(sr.version) FROM StrengthReport sr WHERE sr.member = :member")
     Optional<Integer> findMaxVersionByMember(@Param("member") Member member);
+
+    List<StrengthReport> findAllByMember(Member member);
 }

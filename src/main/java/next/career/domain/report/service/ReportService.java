@@ -69,7 +69,7 @@ public class ReportService {
 
     public GetStrengthReportDto.Response getStrengthReportCurrentHistory(Member member) {
 
-        List<StrengthReport> strengthReportList = strengthReportRepository.findAllByMemberAndIsDeletedFalse(member);
+        List<StrengthReport> strengthReportList = strengthReportRepository.findAllByMember(member);
 
         int latestVersion = strengthReportList.stream()
                 .mapToInt(StrengthReport::getVersion)

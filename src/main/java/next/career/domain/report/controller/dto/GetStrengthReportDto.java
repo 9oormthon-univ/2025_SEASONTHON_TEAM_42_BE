@@ -32,13 +32,15 @@ public class GetStrengthReportDto {
         private String experience;
         private List<String> keyword;
         private List<String> job;
+        private String appeal;
 
-        public static Report of(String strength, String experience, List<String> keyword, List<String> job){
+        public static Report of(String strength, String experience, List<String> keyword, List<String> job, String appeal){
             return Report.builder()
                     .strength(strength)
                     .experience(experience)
                     .keyword(keyword)
                     .job(job)
+                    .appeal(appeal)
                     .build();
         }
     }

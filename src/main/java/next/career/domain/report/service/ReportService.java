@@ -28,7 +28,8 @@ public class ReportService {
                         r.getStrength(),
                         r.getExperience(),
                         r.getKeyword(),
-                        r.getJob()
+                        r.getJob(),
+                        r.getAppeal()
                 ))
                 .toList();
 
@@ -49,6 +50,7 @@ public class ReportService {
                         r.getExperience(),
                         r.getKeyword(),
                         r.getJob()
+                        , r.getAppeal()
                 ))
                 .toList();
 

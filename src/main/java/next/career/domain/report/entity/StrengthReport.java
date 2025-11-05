@@ -30,6 +30,9 @@ public class StrengthReport {
 
     private String experience;
 
+    @Column(columnDefinition = "TEXT")
+    private String appeal;
+
     @Type(JsonType.class)
     @Column(columnDefinition = "json")
     private List<String> keyword;
@@ -39,13 +42,14 @@ public class StrengthReport {
     private List<String> job;
 
     public static StrengthReport of(Member member, String strength, String experience,
-                                    List<String> keyword, List<String> job) {
+                                    List<String> keyword, List<String> job, String appeal) {
         return StrengthReport.builder()
                 .member(member)
                 .strength(strength)
                 .experience(experience)
                 .keyword(keyword)
                 .job(job)
+                .appeal(appeal)
                 .build();
     }
 }

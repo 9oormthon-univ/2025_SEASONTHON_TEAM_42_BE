@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import next.career.domain.user.dto.response.TokenResponse; // 기존 AuthService에서 쓰는 타입과 동일
+import next.career.global.config.redis.RedisClient;
 import next.career.global.security.AuthDetails;
 import next.career.global.security.jwt.JwtProvider;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,10 @@ import java.nio.charset.StandardCharsets;
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtProvider jwtProvider;
+    private final RedisClient redisClient;
+
+    @Value("${jwt.token.refresh-expiration-time}")
+    private Long refreshTokenExpirationTime;
 
     @Value("${app.oauth2.success-redirect:/}")
     private String successRedirectBase;
@@ -45,6 +50,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         String redirect = successRedirectBase
                 + "?access="  + URLEncoder.encode(access, StandardCharsets.UTF_8)
                 + "&refresh=" + URLEncoder.encode(refresh, StandardCharsets.UTF_8);
+
+        redisClient.setValue(principal.member().getEmail(), tokens.refreshToken(), refreshTokenExpirationTime);
 
         res.sendRedirect(redirect);
     }

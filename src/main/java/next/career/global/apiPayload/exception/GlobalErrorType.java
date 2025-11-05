@@ -49,7 +49,7 @@ public enum GlobalErrorType implements ErrorType {
     // Strength Report
     STRENGTH_REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "강점 리포트를 찾을 수 없습니다"),
 
-    ;
+    MEMBER_DETAIL_IS_NULL(HttpStatus.BAD_REQUEST, "먼저 채팅을 진행해야 합니다.");
 
     private final HttpStatus status;
 

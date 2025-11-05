@@ -3,6 +3,8 @@ package next.career.domain.openai.service;
 import lombok.RequiredArgsConstructor;
 import next.career.domain.job.controller.dto.GetRoadMapDto;
 import next.career.domain.user.entity.MemberDetail;
+import next.career.global.apiPayload.exception.CoreException;
+import next.career.global.apiPayload.exception.GlobalErrorType;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,6 +29,10 @@ public class ConvertService {
 
     public String convertMemberDetailToText(MemberDetail memberDetail) {
         StringBuilder sb = new StringBuilder();
+
+        if(memberDetail == null){
+            throw new CoreException(GlobalErrorType.MEMBER_DETAIL_IS_NULL);
+        }
 
         if (memberDetail.getExperience() != null && !memberDetail.getExperience().isBlank()) {
             sb.append("경험: ").append(memberDetail.getExperience()).append("\n");

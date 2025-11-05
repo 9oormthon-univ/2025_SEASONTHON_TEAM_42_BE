@@ -9,10 +9,7 @@ import next.career.domain.user.entity.Member;
 import next.career.global.apiPayload.response.ApiResponse;
 import next.career.global.security.AuthDetails;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -46,6 +43,26 @@ public class ReportController {
     ) {
         Member member = authDetails.getUser();
         return ApiResponse.success(reportService.getStrengthReport(member));
+    }
+
+    @GetMapping("/strength/history")
+    public ApiResponse<GetStrengthReportDto.Response> getStrengthReportHistory(
+            @Parameter(hidden = true, description = "인증된 사용자 정보")
+            @AuthenticationPrincipal AuthDetails authDetails
+    ) {
+        Member member = authDetails.getUser();
+        return ApiResponse.success(reportService.getStrengthReportCurrentHistory(member));
+    }
+
+    @DeleteMapping("/strength/{strengthReportId}")
+    public ApiResponse<?> deleteStrengthReport(
+            @Parameter(hidden = true, description = "인증된 사용자 정보")
+            @AuthenticationPrincipal AuthDetails authDetails,
+            @PathVariable Long strengthReportId
+    ) {
+        Member member = authDetails.getUser();
+        reportService.deleteStrengthReport(member, strengthReportId);
+        return ApiResponse.success();
     }
 
 }

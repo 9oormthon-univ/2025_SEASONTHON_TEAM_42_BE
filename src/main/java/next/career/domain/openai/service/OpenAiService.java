@@ -523,6 +523,7 @@ public class OpenAiService {
                                                         "properties", Map.of(
                                                                 "strength", Map.of("type", "string"),
                                                                 "experience", Map.of("type", "string"),
+                                                                "appeal", Map.of("type", "string"),
                                                                 "keyword", Map.of(
                                                                         "type", "array",
                                                                         "items", Map.of("type", "string")
@@ -532,7 +533,13 @@ public class OpenAiService {
                                                                         "items", Map.of("type", "string")
                                                                 )
                                                         ),
-                                                        "required", List.of("strength", "experience", "keyword", "job")
+                                                        "required", List.of(
+                                                                "strength",
+                                                                "experience",
+                                                                "appeal",
+                                                                "keyword",
+                                                                "job"
+                                                        )
                                                 )
                                         )
                                 ),
@@ -549,4 +556,5 @@ public class OpenAiService {
                 "response_format", responseFormat
         );
     }
+
 }

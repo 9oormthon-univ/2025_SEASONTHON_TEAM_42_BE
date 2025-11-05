@@ -30,6 +30,9 @@ public class StrengthReport {
 
     private String experience;
 
+    @Column(columnDefinition = "TEXT")
+    private String appeal;
+
     @Type(JsonType.class)
     @Column(columnDefinition = "json")
     private List<String> keyword;
@@ -38,14 +41,24 @@ public class StrengthReport {
     @Column(columnDefinition = "json")
     private List<String> job;
 
+    private int version;
+
+    boolean isDeleted = false;
+
     public static StrengthReport of(Member member, String strength, String experience,
-                                    List<String> keyword, List<String> job) {
+                                    List<String> keyword, List<String> job, String appeal, int version) {
         return StrengthReport.builder()
                 .member(member)
                 .strength(strength)
                 .experience(experience)
                 .keyword(keyword)
                 .job(job)
+                .appeal(appeal)
+                .version(version)
                 .build();
+    }
+
+    public void markAsDeleted() {
+        this.isDeleted = true;
     }
 }

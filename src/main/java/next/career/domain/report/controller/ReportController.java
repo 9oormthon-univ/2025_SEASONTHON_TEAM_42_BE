@@ -2,6 +2,7 @@ package next.career.domain.report.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import next.career.domain.report.controller.dto.GetStrengthReportDto;
 import next.career.domain.report.service.ReportService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/reports")
+@Tag(name = "Report", description = "강점 보고서 생성 및 조회 관련 API")
 public class ReportController {
 
     private final ReportService reportService;

@@ -30,8 +30,7 @@ public class JobCustomRepository {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
         Optional.ofNullable(request.getKeyword()).ifPresent(n -> booleanBuilder.and(job.jobTitle.contains(n)));
-        Optional.ofNullable(request.getKeyword()).ifPresent(n -> booleanBuilder.and(job.workLocation.contains(n)));
-        Optional.ofNullable(request.getJobCategory()).ifPresent(n -> booleanBuilder.and(job.jobCategory.contains(n)));
+        Optional.ofNullable(request.getKeyword()).ifPresent(n -> booleanBuilder.and(job.jobCategory.contains(n)));
         Optional.ofNullable(request.getEmploymentType()).ifPresent(n -> booleanBuilder.and(job.employmentType.contains(n)));
         Optional.ofNullable(request.getWorkLocation()).ifPresent(n -> booleanBuilder.and(job.workLocation.contains(n)));
 

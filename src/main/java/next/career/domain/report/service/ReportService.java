@@ -21,7 +21,12 @@ public class ReportService {
 
     @Transactional
     public GetStrengthReportDto.Response createStrengthReport(Member member) {
+        Integer latestVersion = strengthReportRepository.findMaxVersionByMember(member)
+                .orElse(0);
+
         GetStrengthReportDto.Response response = openAiService.createStrengthReport(member);
+
+        int newVersion = latestVersion + 1;
 
         List<StrengthReport> reports = response.getReportList().stream()
                 .map(r -> StrengthReport.of(
@@ -30,15 +35,14 @@ public class ReportService {
                         r.getExperience(),
                         r.getKeyword(),
                         r.getJob(),
-                        r.getAppeal()
+                        r.getAppeal(),
+                        newVersion
                 ))
                 .toList();
 
         strengthReportRepository.saveAll(reports);
 
         return response;
-
-
     }
 
     public GetStrengthReportDto.Response getStrengthReport(Member member) {

@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
+import java.text.Normalizer;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -29,8 +30,26 @@ public class JobCustomRepository {
 
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
-        Optional.ofNullable(request.getKeyword()).ifPresent(n -> booleanBuilder.and(job.jobTitle.contains(n)));
-        Optional.ofNullable(request.getKeyword()).ifPresent(n -> booleanBuilder.and(job.jobCategory.contains(n)));
+        Optional.ofNullable(request.getKeyword())
+                .map(String::trim)
+                .map(k -> Normalizer.normalize(k, Normalizer.Form.NFC))
+                .ifPresent(keyword -> {
+                    String[] words = keyword.split("\\s+");
+                    for (String word : words) {
+                        booleanBuilder.and(job.jobTitle.trim().lower().contains(word.toLowerCase()));
+                    }
+                });
+
+        Optional.ofNullable(request.getKeyword())
+                .map(String::trim)
+                .map(k -> Normalizer.normalize(k, Normalizer.Form.NFC))
+                .ifPresent(keyword -> {
+                    String[] words = keyword.split("\\s+");
+                    for (String word : words) {
+                        booleanBuilder.and(job.jobCategory.trim().lower().contains(word.toLowerCase()));
+                    }
+                });
+
         Optional.ofNullable(request.getEmploymentType()).ifPresent(n -> booleanBuilder.and(job.employmentType.contains(n)));
         Optional.ofNullable(request.getWorkLocation()).ifPresent(n -> booleanBuilder.and(job.workLocation.contains(n)));
 

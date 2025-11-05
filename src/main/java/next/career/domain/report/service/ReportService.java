@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -99,7 +100,7 @@ public class ReportService {
         StrengthReport strengthReport = strengthReportRepository.findById(strengthReportId)
                 .orElseThrow(() -> new CoreException(GlobalErrorType.STRENGTH_REPORT_NOT_FOUND));
 
-        if(strengthReport.getMember() != member) {
+        if(!Objects.equals(strengthReport.getMember().getId(), member.getId())){
             throw new CoreException(GlobalErrorType.FORBIDDEN);
         }
 

@@ -49,7 +49,7 @@ public class ReportService {
 
     public GetStrengthReportDto.Response getStrengthReport(Member member) {
 
-        List<StrengthReport> strengthReportList = strengthReportRepository.findAllByMember(member);
+        List<StrengthReport> strengthReportList = strengthReportRepository.findAllByMemberAndIsDeletedFalse(member);
 
         List<GetStrengthReportDto.Report> reportList = strengthReportList.stream()
                 .map(r -> GetStrengthReportDto.Report.of(
@@ -68,7 +68,7 @@ public class ReportService {
 
     public GetStrengthReportDto.Response getStrengthReportCurrentHistory(Member member) {
 
-        List<StrengthReport> strengthReportList = strengthReportRepository.findAllByMember(member);
+        List<StrengthReport> strengthReportList = strengthReportRepository.findAllByMemberAndIsDeletedFalse(member);
 
         int latestVersion = strengthReportList.stream()
                 .mapToInt(StrengthReport::getVersion)

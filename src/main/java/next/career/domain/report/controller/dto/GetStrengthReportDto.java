@@ -28,14 +28,16 @@ public class GetStrengthReportDto {
     @AllArgsConstructor
     @Builder
     public static class Report{
+        private Long strengthReportId;
         private String strength;
         private String experience;
         private List<String> keyword;
         private List<String> job;
         private String appeal;
 
-        public static Report of(String strength, String experience, List<String> keyword, List<String> job, String appeal){
+        public static Report of(Long reportId, String strength, String experience, List<String> keyword, List<String> job, String appeal){
             return Report.builder()
+                    .strengthReportId(reportId)
                     .strength(strength)
                     .experience(experience)
                     .keyword(keyword)

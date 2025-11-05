@@ -6,6 +6,8 @@ import next.career.domain.report.controller.dto.GetStrengthReportDto;
 import next.career.domain.report.entity.StrengthReport;
 import next.career.domain.report.repository.StrengthReportRepository;
 import next.career.domain.user.entity.Member;
+import next.career.global.apiPayload.exception.CoreException;
+import next.career.global.apiPayload.exception.GlobalErrorType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,6 +53,7 @@ public class ReportService {
 
         List<GetStrengthReportDto.Report> reportList = strengthReportList.stream()
                 .map(r -> GetStrengthReportDto.Report.of(
+                        r.getStrengthReportId(),
                         r.getStrength(),
                         r.getExperience(),
                         r.getKeyword(),
@@ -78,6 +81,7 @@ public class ReportService {
 
         List<GetStrengthReportDto.Report> reportList = latestReports.stream()
                 .map(r -> GetStrengthReportDto.Report.of(
+                        r.getStrengthReportId(),
                         r.getStrength(),
                         r.getExperience(),
                         r.getKeyword(),
@@ -88,5 +92,17 @@ public class ReportService {
 
 
         return GetStrengthReportDto.Response.of(reportList);
+    }
+
+    @Transactional
+    public void deleteStrengthReport(Member member, Long strengthReportId) {
+        StrengthReport strengthReport = strengthReportRepository.findById(strengthReportId)
+                .orElseThrow(() -> new CoreException(GlobalErrorType.STRENGTH_REPORT_NOT_FOUND));
+
+        if(strengthReport.getMember() != member) {
+            throw new CoreException(GlobalErrorType.FORBIDDEN);
+        }
+
+        strengthReport.markAsDeleted();
     }
 }

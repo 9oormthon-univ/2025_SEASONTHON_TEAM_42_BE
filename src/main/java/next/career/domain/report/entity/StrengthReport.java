@@ -43,6 +43,8 @@ public class StrengthReport {
 
     private int version;
 
+    boolean isDeleted = false;
+
     public static StrengthReport of(Member member, String strength, String experience,
                                     List<String> keyword, List<String> job, String appeal, int version) {
         return StrengthReport.builder()
@@ -54,5 +56,9 @@ public class StrengthReport {
                 .appeal(appeal)
                 .version(version)
                 .build();
+    }
+
+    public void markAsDeleted() {
+        this.isDeleted = true;
     }
 }

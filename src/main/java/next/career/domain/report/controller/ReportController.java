@@ -2,6 +2,8 @@ package next.career.domain.report.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import next.career.domain.report.controller.dto.GetStrengthReportDto;
@@ -103,6 +105,26 @@ public class ReportController {
             @AuthenticationPrincipal AuthDetails authDetails,
             @Parameter(description = "복원할 강점 리포트의 ID", example = "1")
             @PathVariable Long strengthReportId,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "수정할 리포트의 필드 정보",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(
+                                            name = "Update Strength Report Request",
+                                            value = """
+                                                {
+                                                  "strength": "빠른 학습력과 문제 해결 능력",
+                                                  "experience": "새로운 기술 스택(Spring Boot, Redis 등)을 단기간에 습득해 프로젝트에 성공적으로 적용한 경험이 있습니다.",
+                                                  "keyword": ["학습속도", "문제해결", "도전정신"],
+                                                  "appeal": "변화에 두려움이 없고, 새로운 기술을 배우는 과정에서 즐거움을 느낍니다."
+                                                }
+                                                """
+                                    )
+                            }
+                    )
+            )
             @RequestBody GetStrengthReportDto.UpdateRequest request
     ) {
         Member member = authDetails.getUser();

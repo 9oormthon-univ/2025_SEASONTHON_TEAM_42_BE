@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -97,13 +98,30 @@ public class ReportService {
 
     @Transactional
     public void deleteStrengthReport(Member member, Long strengthReportId) {
+        StrengthReport strengthReport = validStrengthAccess(member, strengthReportId);
+
+        strengthReport.markAsDeleted();
+    }
+
+    @Transactional
+    public void updateStrengthReport(Member member, Long strengthReportId, GetStrengthReportDto.UpdateRequest request) {
+        StrengthReport strengthReport = validStrengthAccess(member, strengthReportId);
+
+        strengthReport.update(
+                request.getStrength(),
+                request.getExperience(),
+                request.getKeyword(),
+                request.getAppeal()
+        );
+    }
+
+    private StrengthReport validStrengthAccess(Member member, Long strengthReportId) {
         StrengthReport strengthReport = strengthReportRepository.findById(strengthReportId)
                 .orElseThrow(() -> new CoreException(GlobalErrorType.STRENGTH_REPORT_NOT_FOUND));
 
         if(!Objects.equals(strengthReport.getMember().getId(), member.getId())){
             throw new CoreException(GlobalErrorType.FORBIDDEN);
         }
-
-        strengthReport.markAsDeleted();
+        return strengthReport;
     }
 }

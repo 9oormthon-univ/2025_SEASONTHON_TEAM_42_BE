@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import next.career.domain.report.controller.dto.GetStrengthReportDto;
 import next.career.domain.user.entity.Member;
 import org.hibernate.annotations.Type;
 
@@ -61,4 +62,21 @@ public class StrengthReport {
     public void markAsDeleted() {
         this.isDeleted = true;
     }
+
+    public void update(String strength, String experience, List<String> keyword, String appeal) {
+        if (strength != null) {
+            this.strength = strength;
+        }
+        if (experience != null) {
+            this.experience = experience;
+        }
+        if (keyword != null) {
+            this.keyword = keyword;
+        }
+        if (appeal != null) {
+            this.appeal = appeal;
+        }
+    }
+
+
 }

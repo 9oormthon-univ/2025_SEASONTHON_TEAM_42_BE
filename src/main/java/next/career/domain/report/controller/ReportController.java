@@ -88,4 +88,17 @@ public class ReportController {
         reportService.deleteStrengthReport(member, strengthReportId);
         return ApiResponse.success();
     }
+
+    @PatchMapping("/strength/{strengthReportId}")
+    public ApiResponse<?> updateStrengthReport(
+            @Parameter(hidden = true, description = "인증된 사용자 정보")
+            @AuthenticationPrincipal AuthDetails authDetails,
+            @Parameter(description = "복원할 강점 보고서의 ID", example = "1")
+            @PathVariable Long strengthReportId,
+            @RequestBody GetStrengthReportDto.UpdateRequest request
+    ) {
+        Member member = authDetails.getUser();
+        reportService.updateStrengthReport(member, strengthReportId, request);
+        return ApiResponse.success();
+    }
 }

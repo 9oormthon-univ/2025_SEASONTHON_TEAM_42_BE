@@ -46,4 +46,15 @@ public class GetStrengthReportDto {
                     .build();
         }
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class UpdateRequest{
+        private String strength;
+        private String experience;
+        private List<String> keyword;
+        private String appeal;
+    }
 }

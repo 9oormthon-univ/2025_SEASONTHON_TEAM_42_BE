@@ -90,6 +90,14 @@ public class ReportController {
     }
 
     @PatchMapping("/strength/{strengthReportId}")
+    @Operation(
+            summary = "강점 리포트 수정",
+            description = """
+                    특정 강점 리포트를 수정합니다.
+                    `strengthReportId`에 해당하는 리포트의 `strength`, `experience`, `appeal`, `keyword` 필드를
+                    요청 본문에 포함된 값으로 업데이트합니다.
+                    """
+    )
     public ApiResponse<?> updateStrengthReport(
             @Parameter(hidden = true, description = "인증된 사용자 정보")
             @AuthenticationPrincipal AuthDetails authDetails,

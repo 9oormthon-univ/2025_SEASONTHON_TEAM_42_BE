@@ -79,11 +79,29 @@ public class EducationController {
     }
 
     @GetMapping("/anonymous")
-    @Operation(summary = "전체 교육 조회 비로그인 사용자", description = "검색 조건과 페이징을 통해 전체 채용 공고 목록을 조회합니다.")
-    public ApiResponse<GetEducationDto.SearchAllResponse> getAllJobAnonymous(@RequestParam(defaultValue = "") String keyword,
-                                                                             @Parameter(hidden = true) Pageable pageable,
-                                                                             @RequestParam(defaultValue = "20250101") String startYmd,
-                                                                             @RequestParam(defaultValue = "20251231") String endYmd) {
+    @Operation(
+            summary = "전체 교육 조회 (비로그인 사용자)",
+            description = """
+                로그인하지 않은 사용자가 전체 교육(채용 공고) 목록을 조회합니다.  
+                검색 키워드(`keyword`)와 기간(`startYmd`, `endYmd`)을 설정할 수 있으며,  
+                기본값은 전체 기간(2025-01-01 ~ 2025-12-31)입니다.  
+                페이징(`page`, `size`) 파라미터를 함께 사용할 수 있습니다.
+                """
+    )
+    public ApiResponse<GetEducationDto.SearchAllResponse> getAllJobAnonymous(
+            @Parameter(description = "검색 키워드", example = "백엔드 개발자")
+            @RequestParam(defaultValue = "") String keyword,
+
+            @Parameter(hidden = true, description = "페이징 정보 (page, size)")
+            Pageable pageable,
+
+            @Parameter(description = "조회 시작일 (yyyyMMdd)", example = "20250101")
+            @RequestParam(defaultValue = "20250101") String startYmd,
+
+            @Parameter(description = "조회 종료일 (yyyyMMdd)", example = "20251231")
+            @RequestParam(defaultValue = "20251231") String endYmd
+    ) {
         return ApiResponse.success(educationService.getEducationsForAnonymous(keyword, pageable, startYmd, endYmd));
     }
+
 }

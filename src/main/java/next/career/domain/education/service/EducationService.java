@@ -87,4 +87,15 @@ public class EducationService {
 
         return GetEducationDto.SearchAllResponse.of(response, educationList);
     }
+
+    public GetEducationDto.SearchAllResponse getEducationsForAnonymous(String keyword, Pageable pageable, String startYmd, String endYmd) {
+
+        Page<Education> response = educationCustomRepository.findAll(keyword, pageable);
+
+        List<EducationDto.AllResponse> educationList = response.getContent().stream()
+                .map(EducationDto.AllResponse::ofAnonymous)
+                .toList();
+
+        return GetEducationDto.SearchAllResponse.of(response, educationList);
+    }
 }

@@ -37,4 +37,14 @@ public class RoadmapDto {
     public static class ActionAddRequest {
         private String action;
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RoadMapUpdateRequest {
+
+        private String career;
+        private String period;
+        private String experience;
+    }
 }

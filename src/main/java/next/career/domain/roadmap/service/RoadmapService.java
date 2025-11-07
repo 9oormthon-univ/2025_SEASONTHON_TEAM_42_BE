@@ -133,4 +133,12 @@ public class RoadmapService {
 
         roadmapActionRepository.save(roadMapAction);
     }
+
+    @Transactional
+    public void updateRoadmapInput(RoadmapDto.RoadMapUpdateRequest request, Member member) {
+
+        RoadmapInput roadmapInput = member.getRoadmapInput();
+
+        roadmapInput.update(request.getCareer(), request.getPeriod(), request.getExperience());
+    }
 }

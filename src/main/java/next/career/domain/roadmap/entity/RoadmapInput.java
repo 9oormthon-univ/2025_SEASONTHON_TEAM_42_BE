@@ -19,7 +19,7 @@ public class RoadmapInput {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long roadmapRequestId;
+    private Long roadmapInputId;
 
     @OneToOne(mappedBy = "roadmapInput", fetch = FetchType.EAGER)
     private Member member;

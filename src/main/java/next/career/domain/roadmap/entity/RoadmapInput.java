@@ -42,4 +42,9 @@ public class RoadmapInput {
                 .build();
     }
 
+    public void update(String career, String period, String experience) {
+        this.career = career;
+        this.period = period;
+        this.experience = experience;
+    }
 }

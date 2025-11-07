@@ -37,6 +37,16 @@ public class RoadmapController {
         return ApiResponse.success(roadmapService.recommendRoadMap(roadmapRequest, member));
     }
 
+    @PatchMapping("/roadmap")
+    public ApiResponse<?> updateRoadmapInput(
+            @RequestBody RoadmapDto.RoadMapUpdateRequest request,
+            @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails
+    ) {
+        Member member = authDetails.getUser();
+        roadmapService.updateRoadmapInput(request, member);
+        return ApiResponse.success();
+    }
+
     // 로드맵 조회
     @GetMapping("/recommend")
     @Operation(

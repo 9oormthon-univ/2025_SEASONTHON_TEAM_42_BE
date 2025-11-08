@@ -37,10 +37,19 @@ public class RoadmapController {
         return ApiResponse.success(roadmapService.recommendRoadMap(roadmapRequest, member));
     }
 
-    @PatchMapping("/roadmap")
+    @PatchMapping("/input")
+    @Operation(
+            summary = "로드맵 정보 입력 수정",
+            description = """
+                로그인한 사용자의 기존 로드맵 입력 내용을 수정합니다.  
+                요청 본문에는 `career`, `period`, `experience` 중 변경하고자 하는 필드만 포함하면 됩니다.  
+                예: {"career": "백엔드 개발자 전향", "period": "6개월", "experience": "프로젝트 중심 학습"}
+                """
+    )
     public ApiResponse<?> updateRoadmapInput(
             @RequestBody RoadmapDto.RoadMapUpdateRequest request,
-            @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails
+            @Parameter(hidden = true, description = "인증된 사용자 정보")
+            @AuthenticationPrincipal AuthDetails authDetails
     ) {
         Member member = authDetails.getUser();
         roadmapService.updateRoadmapInput(request, member);

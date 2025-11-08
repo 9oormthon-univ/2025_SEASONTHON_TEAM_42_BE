@@ -106,8 +106,6 @@ public class RoadmapController {
         return ApiResponse.success();
     }
 
-
-
     @PutMapping("/{roadMapActionId}")
     @Operation(
             summary = "로드맵 액션 수정",
@@ -186,6 +184,47 @@ public class RoadmapController {
     ) {
         roadmapService.deleteRoadmap(authDetails.getUser());
         return ApiResponse.success("로드맵이 성공적으로 삭제되었습니다.");
+    @PostMapping("/certification")
+    @Operation(
+            summary = "사용자 맞춤형 AI 자격증 추천",
+            description = """
+                사용자의 직무 정보를 입력받아, 
+                해당 직무에 적합한 자격증 목록을 AI 모델을 통해 추천합니다.
+
+                예시 요청:
+                {
+                  "occupation": "백엔드 개발자"
+                }
+                """
+    )
+    public ApiResponse<RoadmapDto.CertificationResponse> getCertifications(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "자격증 추천 요청 DTO (occupation 필드 필수)",
+                    required = true
+            )
+            @RequestBody RoadmapDto.CertificationRequest request
+    ) {
+        List<String> certifications = roadmapService.getCertifications(request.getOccupation());
+        RoadmapDto.CertificationResponse response = RoadmapDto.CertificationResponse.of(certifications);
+        return ApiResponse.success(response);
+    }
+
+    @PatchMapping("/{roadmapId}/category")
+    @Operation(
+            summary = "로드맵 카테고리 수정",
+            description = "특정 로드맵의 카테고리를 수정합니다."
+    )
+    public ApiResponse<?> updateRoadmap(
+            @Parameter(
+                    description = "로드맵 ID",
+                    required = true,
+                    example = "1"
+            )
+            @PathVariable Long roadmapId,
+            @RequestBody RoadmapDto.RoadMapCategoryUpdateRequest request
+    ) {
+        roadmapService.updateRoadmapCategory(roadmapId, request.getCategory());
+        return ApiResponse.success();
     }
 
 }

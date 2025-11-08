@@ -23,7 +23,6 @@ import java.util.List;
 @RequestMapping("/roadmap")
 public class RoadmapController {
 
-    private final JobService jobService;
     private final RoadmapService roadmapService;
 
     // 맞춤형 로드맵 추천
@@ -218,4 +217,15 @@ public class RoadmapController {
         return ApiResponse.success();
     }
 
+    @DeleteMapping
+    @Operation(
+            summary = "로드맵 삭제",
+            description = "해당 사용자에게 연관된 로드맵 및 관련 항목을 전부 삭제합니다."
+    )
+    public ApiResponse<?> deleteRoadmap(
+            @AuthenticationPrincipal AuthDetails authDetails
+    ) {
+        roadmapService.deleteRoadmap(authDetails.getUser());
+        return ApiResponse.success("로드맵이 성공적으로 삭제되었습니다.");
+    }
 }

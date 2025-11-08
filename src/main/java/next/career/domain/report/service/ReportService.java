@@ -66,10 +66,10 @@ public class ReportService {
                 .toList();
 
 
-        return GetStrengthReportDto.Response.of(reportList, strengthReportList.getFirst().getOccupation());
+        return GetStrengthReportDto.Response.of(reportList);
     }
 
-    public GetStrengthReportDto.Response getStrengthReportCurrentHistory(Member member) {
+    public GetStrengthReportDto.HistoryResponse getStrengthReportCurrentHistory(Member member) {
 
         List<StrengthReport> strengthReportList = strengthReportRepository.findAllByMember(member);
 
@@ -94,7 +94,7 @@ public class ReportService {
                 .toList();
 
 
-        return GetStrengthReportDto.Response.of(reportList, latestReports.getFirst().getOccupation());
+        return GetStrengthReportDto.HistoryResponse.of(reportList, latestReports.getFirst().getOccupation());
     }
 
     @Transactional

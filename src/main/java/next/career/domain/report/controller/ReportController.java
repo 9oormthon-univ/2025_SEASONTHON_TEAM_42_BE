@@ -62,7 +62,7 @@ public class ReportController {
                     각 리포트에는 `strength`, `experience`, `appeal`, `keyword`, `job` 정보가 포함됩니다.
                     """
     )
-    public ApiResponse<GetStrengthReportDto.Response> getStrengthReportHistory(
+    public ApiResponse<GetStrengthReportDto.HistoryResponse> getStrengthReportHistory(
             @Parameter(hidden = true, description = "인증된 사용자 정보")
             @AuthenticationPrincipal AuthDetails authDetails
     ) {

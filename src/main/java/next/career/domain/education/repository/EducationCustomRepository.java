@@ -26,20 +26,38 @@ public class EducationCustomRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    public Page<Education> findAll(String keyword, Pageable pageable) {
+    public Page<Education> findAll(String keyword, String region, String type, Pageable pageable) {
         QEducation education = QEducation.education;
 
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
-        Optional.ofNullable(keyword).ifPresent(n -> booleanBuilder.and(education.title.contains(n)));
-        Optional.ofNullable(keyword).ifPresent(n -> booleanBuilder.and(education.address.contains(n)));
+        if (keyword != null && !keyword.isBlank()) {
+            booleanBuilder.and(
+                    education.title.containsIgnoreCase(keyword)
+                            .or(education.address.containsIgnoreCase(keyword))
+            );
+        }
 
+        if (region != null && !region.isBlank()) {
+            booleanBuilder.and(education.address.containsIgnoreCase(region));
+        }
+
+        if (type != null && !type.isBlank()) {
+            String normalizedType = type.trim().toUpperCase();
+
+            if (normalizedType.equals("ONLINE") || type.equals("온라인")) {
+                booleanBuilder.and(education.trainTarget.containsIgnoreCase("원격"));
+            } else if (normalizedType.equals("OFFLINE") || type.equals("오프라인")) {
+                booleanBuilder.and(education.trainTarget.notLike("%원격%"));
+            }
+        }
 
         List<Education> content = queryFactory
                 .selectFrom(education)
                 .where(booleanBuilder)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .orderBy(education.createdAt.desc())
                 .fetch();
 
         JPAQuery<Long> countQuery = queryFactory

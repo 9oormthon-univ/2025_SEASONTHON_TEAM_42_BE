@@ -71,15 +71,9 @@ public class EducationService {
                 ));
     }
 
-    public Page<EducationDto.AllResponse> getAllJobAnonymous(GetEducationDto.SearchRequest request, Pageable pageable) {
+    public GetEducationDto.SearchAllResponse getEducations(String keyword, String region, String type, Pageable pageable, Member member) {
 
-        return educationCustomRepository.findAll(request.getKeyword(), pageable)
-                .map(EducationDto.AllResponse::ofAnonymous);
-    }
-
-    public GetEducationDto.SearchAllResponse getEducations(String keyword, Pageable pageable, String startYmd, String endYmd, Member member) {
-
-        Page<Education> response = educationCustomRepository.findAll(keyword, pageable);
+        Page<Education> response = educationCustomRepository.findAll(keyword, region, type, pageable);
 
         List<EducationDto.AllResponse> educationList = response.getContent().stream()
                 .map(education -> EducationDto.AllResponse.of(education, getIsBookmark(education, member)))
@@ -88,9 +82,9 @@ public class EducationService {
         return GetEducationDto.SearchAllResponse.of(response, educationList);
     }
 
-    public GetEducationDto.SearchAllResponse getEducationsForAnonymous(String keyword, Pageable pageable, String startYmd, String endYmd) {
+    public GetEducationDto.SearchAllResponse getEducationsForAnonymous(String keyword, String region, String type, Pageable pageable) {
 
-        Page<Education> response = educationCustomRepository.findAll(keyword, pageable);
+        Page<Education> response = educationCustomRepository.findAll(keyword, region, type, pageable);
 
         List<EducationDto.AllResponse> educationList = response.getContent().stream()
                 .map(EducationDto.AllResponse::ofAnonymous)

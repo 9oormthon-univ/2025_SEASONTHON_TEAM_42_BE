@@ -25,15 +25,13 @@ public class ReportController {
     @PostMapping("/strength")
     @Operation(
             summary = "강점 리포트 생성",
-            description = """
-                    OpenAI API를 호출하여 사용자의 강점 리포트를 새로 생성합니다.  
-                    생성된 리포트는 DB에 저장되며, 응답 본문에는 `strength`, `experience`, `appeal`, `keyword`, `job` 필드가 포함됩니다.
-                    """
+            description = "OpenAI API를 호출하여 사용자의 강점 리포트를 새로 생성합니다. "
+                    + "생성된 리포트는 DB에 저장되며, 응답 본문에는 `strength`, `experience`, `appeal`, `keyword`, `job` 필드가 포함됩니다."
     )
     public ApiResponse<GetStrengthReportDto.Response> createStrengthReport(
             @Parameter(hidden = true, description = "인증된 사용자 정보")
             @AuthenticationPrincipal AuthDetails authDetails,
-            @RequestBody GetStrengthReportDto.Request request
+            @RequestBody GetStrengthReportDto.ReportRequest request
     ) {
         Member member = authDetails.getUser();
         return ApiResponse.success(reportService.createStrengthReport(member, request.getOccupation()));

@@ -61,7 +61,7 @@ public class GetStrengthReportDto {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Request {
+    public static class ReportRequest {
         private String occupation;
     }
 }

@@ -10,6 +10,7 @@ import next.career.domain.roadmap.entity.RoadMapAction;
 import next.career.domain.roadmap.entity.RoadmapInput;
 import next.career.domain.roadmap.repository.RoadMapRepository;
 import next.career.domain.roadmap.repository.RoadmapActionRepository;
+import next.career.domain.roadmap.repository.RoadmapInputRepository;
 import next.career.domain.user.entity.Member;
 import next.career.domain.user.repository.MemberRepository;
 import next.career.global.apiPayload.exception.CoreException;
@@ -28,6 +29,7 @@ public class RoadmapService {
     private final OpenAiService openAiService;
     private final RoadMapRepository roadMapRepository;
     private final RoadmapActionRepository roadmapActionRepository;
+    private final RoadmapInputRepository roadmapInputRepository;
 
     @Transactional
     public RecommendDto.RoadMapResponse recommendRoadMap(GetRoadMapDto.Request roadmapRequest, Member member) {
@@ -140,6 +142,7 @@ public class RoadmapService {
         RoadmapInput roadmapInput = member.getRoadmapInput();
 
         roadmapInput.update(request.getCareer(), request.getPeriod(), request.getExperience());
+        roadmapInputRepository.save(roadmapInput);
     }
 
     public List<String> getCertifications(String occupation) {

@@ -177,6 +177,11 @@ public class RoadmapController {
         return ApiResponse.success(response);
     }
 
-
+    @GetMapping("/certification")
+    public ApiResponse<RoadmapDto.CertificationResponse> getCertifications() {
+        List<String> certifications = roadmapService.getCertifications();
+        RoadmapDto.CertificationResponse response = RoadmapDto.CertificationResponse.of(certifications);
+        return ApiResponse.success(response);
+    }
 
 }

@@ -557,4 +557,75 @@ public class OpenAiService {
         );
     }
 
+    public List<String> getCertificationList() {
+
+        List<Prompt> certification = promptRepository.findAllByTag("자격증");
+
+        String system = certification.stream()
+                .map(Prompt::getContent)
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.joining("\n"));
+
+        Map<String, Object> body = setCertificationPrompt(system);
+
+        try {
+            Map res = requestOpenAI(body);
+            log.info("res = {}", res);
+
+            List<Map<String, Object>> choices = (List<Map<String, Object>>) res.get("choices");
+
+            String content = getContent(choices);
+
+            RoadmapDto.CertificationResponse dto =
+                    MAPPER.readValue(content, RoadmapDto.CertificationResponse.class);
+
+            return Optional.ofNullable(dto.getCertificationList()).orElseGet(List::of)
+                    .stream()
+                    .filter(Objects::nonNull)
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .distinct()
+                    .limit(10)
+                    .toList();
+
+        } catch (Exception e) {
+            throw new CoreException(GlobalErrorType.GET_CERTIFICATION_ERROR);
+        }
+    }
+
+    private Map<String, Object> setCertificationPrompt(String system) {
+
+        List<Map<String, Object>> messages = new ArrayList<>();
+
+        if (!system.isBlank()) {
+            messages.add(Map.of("role", "system", "content", system));
+        }
+
+        Map<String, Object> responseFormat = Map.of(
+                "type", "json_schema",
+                "json_schema", Map.of(
+                        "name", "certification_response",
+                        "schema", Map.of(
+                                "type", "object",
+                                "properties", Map.of(
+                                        "certificationList", Map.of(
+                                                "type", "array",
+                                                "items", Map.of("type", "string")
+                                        )
+                                ),
+                                "required", List.of("certificationList")
+                        )
+                )
+        );
+
+        return Map.of(
+                "model", "gpt-4o",
+                "messages", messages,
+                "temperature", 0.5,
+                "max_tokens", 800,
+                "response_format", responseFormat
+        );
+    }
 }

@@ -47,4 +47,19 @@ public class RoadmapDto {
         private String period;
         private String experience;
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class CertificationResponse {
+        private List<String> certificationList;
+
+        public static CertificationResponse of(List<String> certificationList) {
+            return CertificationResponse.builder()
+                    .certificationList(certificationList)
+                    .build();
+        }
+    }
+
 }

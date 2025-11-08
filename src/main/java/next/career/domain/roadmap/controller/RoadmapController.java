@@ -177,15 +177,30 @@ public class RoadmapController {
         return ApiResponse.success(response);
     }
 
-    @GetMapping("/certification")
+    @PostMapping("/certification")
     @Operation(
             summary = "사용자 맞춤형 AI 자격증 추천",
-            description = "직무별 혹은 공통적으로 취득할 수 있는 자격증 목록을 조회합니다. "
+            description = """
+                사용자의 직무 정보를 입력받아, 
+                해당 직무에 적합한 자격증 목록을 AI 모델을 통해 추천합니다.
+
+                예시 요청:
+                {
+                  "occupation": "백엔드 개발자"
+                }
+                """
     )
-    public ApiResponse<RoadmapDto.CertificationResponse> getCertifications(@RequestBody RoadmapDto.CertificationRequest request) {
+    public ApiResponse<RoadmapDto.CertificationResponse> getCertifications(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "자격증 추천 요청 DTO (occupation 필드 필수)",
+                    required = true
+            )
+            @RequestBody RoadmapDto.CertificationRequest request
+    ) {
         List<String> certifications = roadmapService.getCertifications(request.getOccupation());
         RoadmapDto.CertificationResponse response = RoadmapDto.CertificationResponse.of(certifications);
         return ApiResponse.success(response);
     }
+
 
 }

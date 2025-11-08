@@ -141,4 +141,8 @@ public class RoadmapService {
 
         roadmapInput.update(request.getCareer(), request.getPeriod(), request.getExperience());
     }
+
+    public List<String> getCertifications(String occupation) {
+        return openAiService.getCertificationList(occupation);
+    }
 }

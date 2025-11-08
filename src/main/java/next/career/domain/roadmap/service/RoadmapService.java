@@ -141,4 +141,10 @@ public class RoadmapService {
 
         roadmapInput.update(request.getCareer(), request.getPeriod(), request.getExperience());
     }
+
+    @Transactional
+    public void deleteRoadmap(Member member) {
+        member.clearRoadMapList();
+        member.clearRoadMapInput();
+    }
 }

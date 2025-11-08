@@ -462,7 +462,7 @@ public class OpenAiService {
         );
     }
 
-    public GetStrengthReportDto.Response createStrengthReport(Member member) {
+    public GetStrengthReportDto.Response createStrengthReport(Member member, String occupation) {
 
         List<Prompt> roadmapAction = promptRepository.findAllByTag("strength report");
 
@@ -479,6 +479,8 @@ public class OpenAiService {
 
         String finalSystemPrompt = system + "\n\n[사용자 정보]\n" + memberDetailText;
         log.info("member detail = {}", member.getMemberDetail());
+
+        finalSystemPrompt += " \n\n[사용자 희망 직업]\n" + occupation;
 
         Map<String, Object> body = setStrengthReportPrompt(finalSystemPrompt);
 

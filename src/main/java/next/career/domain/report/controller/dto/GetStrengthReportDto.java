@@ -57,4 +57,11 @@ public class GetStrengthReportDto {
         private List<String> keyword;
         private String appeal;
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Request {
+        private String occupation;
+    }
 }

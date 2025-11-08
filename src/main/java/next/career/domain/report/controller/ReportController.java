@@ -32,10 +32,11 @@ public class ReportController {
     )
     public ApiResponse<GetStrengthReportDto.Response> createStrengthReport(
             @Parameter(hidden = true, description = "인증된 사용자 정보")
-            @AuthenticationPrincipal AuthDetails authDetails
+            @AuthenticationPrincipal AuthDetails authDetails,
+            @RequestBody GetStrengthReportDto.Request request
     ) {
         Member member = authDetails.getUser();
-        return ApiResponse.success(reportService.createStrengthReport(member));
+        return ApiResponse.success(reportService.createStrengthReport(member, request.getOccupation()));
     }
 
     @GetMapping("/strength")

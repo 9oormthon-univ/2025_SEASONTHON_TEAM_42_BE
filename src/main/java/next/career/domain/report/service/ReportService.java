@@ -24,11 +24,11 @@ public class ReportService {
     private final StrengthReportRepository strengthReportRepository;
 
     @Transactional
-    public GetStrengthReportDto.Response createStrengthReport(Member member) {
+    public GetStrengthReportDto.Response createStrengthReport(Member member, String occupation) {
         Integer latestVersion = strengthReportRepository.findMaxVersionByMember(member)
                 .orElse(0);
 
-        GetStrengthReportDto.Response response = openAiService.createStrengthReport(member);
+        GetStrengthReportDto.Response response = openAiService.createStrengthReport(member, occupation);
 
         int newVersion = latestVersion + 1;
 

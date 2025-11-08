@@ -62,4 +62,11 @@ public class RoadmapDto {
         }
     }
 
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CertificationRequest{
+        private String occupation;
+    }
+
 }

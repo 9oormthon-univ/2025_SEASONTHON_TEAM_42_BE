@@ -178,8 +178,12 @@ public class RoadmapController {
     }
 
     @GetMapping("/certification")
-    public ApiResponse<RoadmapDto.CertificationResponse> getCertifications() {
-        List<String> certifications = roadmapService.getCertifications();
+    @Operation(
+            summary = "사용자 맞춤형 AI 자격증 추천",
+            description = "직무별 혹은 공통적으로 취득할 수 있는 자격증 목록을 조회합니다. "
+    )
+    public ApiResponse<RoadmapDto.CertificationResponse> getCertifications(@RequestBody RoadmapDto.CertificationRequest request) {
+        List<String> certifications = roadmapService.getCertifications(request.getOccupation());
         RoadmapDto.CertificationResponse response = RoadmapDto.CertificationResponse.of(certifications);
         return ApiResponse.success(response);
     }

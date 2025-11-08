@@ -557,9 +557,9 @@ public class OpenAiService {
         );
     }
 
-    public List<String> getCertificationList() {
+    public List<String> getCertificationList(String occupation) {
 
-        List<Prompt> certification = promptRepository.findAllByTag("자격증");
+        List<Prompt> certification = promptRepository.findAllByTag("certification");
 
         String system = certification.stream()
                 .map(Prompt::getContent)
@@ -568,7 +568,9 @@ public class OpenAiService {
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.joining("\n"));
 
-        Map<String, Object> body = setCertificationPrompt(system);
+        String finalSystemPrompt = system + "\n\n[사용자 희망 직무]\n" + occupation;
+
+        Map<String, Object> body = setCertificationPrompt(finalSystemPrompt);
 
         try {
             Map res = requestOpenAI(body);

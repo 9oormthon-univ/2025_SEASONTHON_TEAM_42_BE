@@ -107,8 +107,6 @@ public class RoadmapController {
         return ApiResponse.success();
     }
 
-
-
     @PutMapping("/{roadMapActionId}")
     @Operation(
             summary = "로드맵 액션 수정",

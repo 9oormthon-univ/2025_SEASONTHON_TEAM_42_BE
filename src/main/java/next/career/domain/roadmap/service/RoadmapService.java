@@ -148,4 +148,12 @@ public class RoadmapService {
     public List<String> getCertifications(String occupation) {
         return openAiService.getCertificationList(occupation);
     }
+
+    @Transactional
+    public void updateRoadmapCategory(Long roadmapId, String category) {
+        RoadMap roadMap = roadMapRepository.findById(roadmapId)
+                .orElseThrow(() -> new CoreException(GlobalErrorType.ROAD_MAP_NOT_FOUND));
+
+        roadMap.updateCategory(category);
+    }
 }

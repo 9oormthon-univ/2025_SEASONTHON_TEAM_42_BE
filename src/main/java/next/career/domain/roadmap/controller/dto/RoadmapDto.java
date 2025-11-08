@@ -51,6 +51,13 @@ public class RoadmapDto {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class RoadMapCategoryUpdateRequest {
+        private String category;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Builder
     public static class CertificationResponse {
         private List<String> certificationList;

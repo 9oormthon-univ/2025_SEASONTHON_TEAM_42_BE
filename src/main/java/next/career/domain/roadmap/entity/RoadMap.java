@@ -39,4 +39,8 @@ public class RoadMap {
 
         this.isCompleted = allCompleted;
     }
+
+    public void updateCategory(String category) {
+        this.category = category;
+    }
 }

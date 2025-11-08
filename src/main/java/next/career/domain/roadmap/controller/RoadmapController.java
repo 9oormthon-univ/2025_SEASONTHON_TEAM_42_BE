@@ -200,5 +200,22 @@ public class RoadmapController {
         return ApiResponse.success(response);
     }
 
+    @PatchMapping("/{roadmapId}/category")
+    @Operation(
+            summary = "로드맵 카테고리 수정",
+            description = "특정 로드맵의 카테고리를 수정합니다."
+    )
+    public ApiResponse<?> updateRoadmap(
+            @Parameter(
+                    description = "로드맵 ID",
+                    required = true,
+                    example = "1"
+            )
+            @PathVariable Long roadmapId,
+            @RequestBody RoadmapDto.RoadMapCategoryUpdateRequest request
+    ) {
+        roadmapService.updateRoadmapCategory(roadmapId, request.getCategory());
+        return ApiResponse.success();
+    }
 
 }

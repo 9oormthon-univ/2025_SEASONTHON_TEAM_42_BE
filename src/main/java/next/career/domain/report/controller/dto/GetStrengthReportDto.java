@@ -27,6 +27,22 @@ public class GetStrengthReportDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
+    public static class HistoryResponse{
+        private List<Report> reportList;
+        private String occupation;
+
+        public static HistoryResponse of(List<Report> reportList, String occupation){
+            return HistoryResponse.builder()
+                    .occupation(occupation)
+                    .reportList(reportList)
+                    .build();
+        }
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
     public static class Report{
         private Long strengthReportId;
         private String strength;
@@ -56,5 +72,12 @@ public class GetStrengthReportDto {
         private String experience;
         private List<String> keyword;
         private String appeal;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ReportRequest {
+        private String occupation;
     }
 }

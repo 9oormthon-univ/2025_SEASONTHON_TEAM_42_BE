@@ -24,11 +24,11 @@ public class ReportService {
     private final StrengthReportRepository strengthReportRepository;
 
     @Transactional
-    public GetStrengthReportDto.Response createStrengthReport(Member member) {
+    public GetStrengthReportDto.Response createStrengthReport(Member member, String occupation) {
         Integer latestVersion = strengthReportRepository.findMaxVersionByMember(member)
                 .orElse(0);
 
-        GetStrengthReportDto.Response response = openAiService.createStrengthReport(member);
+        GetStrengthReportDto.Response response = openAiService.createStrengthReport(member, occupation);
 
         int newVersion = latestVersion + 1;
 
@@ -40,7 +40,8 @@ public class ReportService {
                         r.getKeyword(),
                         r.getJob(),
                         r.getAppeal(),
-                        newVersion
+                        newVersion,
+                        occupation
                 ))
                 .toList();
 
@@ -68,7 +69,7 @@ public class ReportService {
         return GetStrengthReportDto.Response.of(reportList);
     }
 
-    public GetStrengthReportDto.Response getStrengthReportCurrentHistory(Member member) {
+    public GetStrengthReportDto.HistoryResponse getStrengthReportCurrentHistory(Member member) {
 
         List<StrengthReport> strengthReportList = strengthReportRepository.findAllByMember(member);
 
@@ -93,7 +94,7 @@ public class ReportService {
                 .toList();
 
 
-        return GetStrengthReportDto.Response.of(reportList);
+        return GetStrengthReportDto.HistoryResponse.of(reportList, latestReports.getFirst().getOccupation());
     }
 
     @Transactional

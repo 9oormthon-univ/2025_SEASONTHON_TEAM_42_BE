@@ -68,14 +68,14 @@ public class EducationController {
         return ApiResponse.success();
     }
 
-    @GetMapping("")
+    @GetMapping
     @Operation(summary = "교육 조회", description = "교육을 조회합니다.")
     public ApiResponse<GetEducationDto.SearchAllResponse> raw(@RequestParam(defaultValue = "") String keyword,
                                                               @Parameter(hidden = true) Pageable pageable,
-                                                              @RequestParam(defaultValue = "20250101") String startYmd,
-                                                              @RequestParam(defaultValue = "20251231") String endYmd,
+                                                              @RequestParam(required = false) String region,
+                                                              @RequestParam(required = false) String type,
                                                               @AuthenticationPrincipal AuthDetails authDetails) {
-        return ApiResponse.success(educationService.getEducations(keyword, pageable, startYmd, endYmd, authDetails.getUser()));
+        return ApiResponse.success(educationService.getEducations(keyword, region, type, pageable, authDetails.getUser()));
     }
 
     @GetMapping("/anonymous")
@@ -92,16 +92,16 @@ public class EducationController {
             @Parameter(description = "검색 키워드", example = "백엔드 개발자")
             @RequestParam(defaultValue = "") String keyword,
 
+            @Parameter(description = "지역 (예: 서울, 경기, 부산 등)", example = "서울")
+            @RequestParam(required = false) String region,
+
+            @Parameter(description = "교육형태 (ONLINE, OFFLINE)", example = "ONLINE")
+            @RequestParam(required = false) String type,
+
             @Parameter(hidden = true, description = "페이징 정보 (page, size)")
-            Pageable pageable,
-
-            @Parameter(description = "조회 시작일 (yyyyMMdd)", example = "20250101")
-            @RequestParam(defaultValue = "20250101") String startYmd,
-
-            @Parameter(description = "조회 종료일 (yyyyMMdd)", example = "20251231")
-            @RequestParam(defaultValue = "20251231") String endYmd
+            Pageable pageable
     ) {
-        return ApiResponse.success(educationService.getEducationsForAnonymous(keyword, pageable, startYmd, endYmd));
+        return ApiResponse.success(educationService.getEducationsForAnonymous(keyword, region, type, pageable));
     }
 
 }

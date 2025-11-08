@@ -46,8 +46,10 @@ public class StrengthReport {
 
     boolean isDeleted = false;
 
+    private String occupation;
+
     public static StrengthReport of(Member member, String strength, String experience,
-                                    List<String> keyword, List<String> job, String appeal, int version) {
+                                    List<String> keyword, List<String> job, String appeal, int version, String occupation) {
         return StrengthReport.builder()
                 .member(member)
                 .strength(strength)
@@ -56,6 +58,7 @@ public class StrengthReport {
                 .job(job)
                 .appeal(appeal)
                 .version(version)
+                .occupation(occupation)
                 .build();
     }
 

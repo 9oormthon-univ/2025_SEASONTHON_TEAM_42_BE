@@ -40,7 +40,8 @@ public class ReportService {
                         r.getKeyword(),
                         r.getJob(),
                         r.getAppeal(),
-                        newVersion
+                        newVersion,
+                        occupation
                 ))
                 .toList();
 
@@ -65,7 +66,7 @@ public class ReportService {
                 .toList();
 
 
-        return GetStrengthReportDto.Response.of(reportList);
+        return GetStrengthReportDto.Response.of(reportList, strengthReportList.getFirst().getOccupation());
     }
 
     public GetStrengthReportDto.Response getStrengthReportCurrentHistory(Member member) {
@@ -93,7 +94,7 @@ public class ReportService {
                 .toList();
 
 
-        return GetStrengthReportDto.Response.of(reportList);
+        return GetStrengthReportDto.Response.of(reportList, latestReports.getFirst().getOccupation());
     }
 
     @Transactional

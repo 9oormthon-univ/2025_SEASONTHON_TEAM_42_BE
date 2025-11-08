@@ -15,9 +15,11 @@ public class GetStrengthReportDto {
     @Builder
     public static class Response{
         private List<Report> reportList;
+        private String occupation;
 
-        public static Response of(List<Report> reportList){
+        public static Response of(List<Report> reportList, String occupation){
             return Response.builder()
+                    .occupation(occupation)
                     .reportList(reportList)
                     .build();
         }

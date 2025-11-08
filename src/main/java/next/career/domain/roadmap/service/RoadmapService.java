@@ -156,4 +156,10 @@ public class RoadmapService {
 
         roadMap.updateCategory(category);
     }
+
+    @Transactional
+    public void deleteRoadmap(Member member) {
+        member.clearRoadMapList();
+        member.clearRoadMapInput();
+    }
 }

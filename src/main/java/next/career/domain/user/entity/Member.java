@@ -126,4 +126,12 @@ public class Member extends BaseTimeEntity {
     public void updateMemberOccupation(MemberOccupation memberOccupation) {
         this.memberOccupationList.add(memberOccupation);
     }
+
+    public void clearRoadMapInput() {
+        this.roadmapInput = null;
+    }
+
+    public void clearRoadMapList() {
+        this.roadMapList.clear();
+    }
 }

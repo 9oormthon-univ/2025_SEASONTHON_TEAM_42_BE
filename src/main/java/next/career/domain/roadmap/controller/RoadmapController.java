@@ -200,5 +200,23 @@ public class RoadmapController {
         return ApiResponse.success(response);
     }
 
+    @PatchMapping("/{roadmapId}/category")
+    public ApiResponse<?> updateRoadmap(
+            @Parameter(
+                    description = "로드맵 ID",
+                    required = true,
+                    example = "1"
+            )
+            @PathVariable Long roadmapId,
+
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "로드맵 수정 요청 DTO",
+                    required = true
+            )
+            @RequestBody RoadmapDto.RoadMapCategoryUpdateRequest request
+    ) {
+        roadmapService.updateRoadmapCategory(roadmapId, request.getCategory());
+        return ApiResponse.success();
+    }
 
 }

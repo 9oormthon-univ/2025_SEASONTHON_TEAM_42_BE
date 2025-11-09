@@ -1,0 +1,30 @@
+<configuration>
+
+    <!-- 콘솔 출력 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Sentry 연동 -->
+    <appender name="SENTRY" class="io.sentry.logback.SentryAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level> <!-- ERROR 이상 로그만 Sentry로 전송 -->
+        </filter>
+    </appender>
+
+    <!-- Hibernate SQL 로그 (선택) -->
+    <logger name="org.hibernate.SQL" level="DEBUG"/>
+    <logger name="org.hibernate.type.descriptor.sql" level="TRACE"/>
+
+    <!-- 내 프로젝트 패키지 로그 레벨 -->
+    <logger name="next.career" level="DEBUG"/>
+
+    <!-- 루트 로거 설정 -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="SENTRY"/>
+    </root>
+
+</configuration>

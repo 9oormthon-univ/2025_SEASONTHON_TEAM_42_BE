@@ -52,6 +52,15 @@ public class RoadmapDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class RoadMapCategoryUpdateRequest {
+        private List<UpdateRoadmap> roadmapList;
+
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UpdateRoadmap {
+        private String roadmapId;
         private String category;
     }
 

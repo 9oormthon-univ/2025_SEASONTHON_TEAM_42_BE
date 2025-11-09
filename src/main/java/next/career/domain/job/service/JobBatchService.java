@@ -10,6 +10,8 @@ import next.career.domain.job.service.dto.SaveSeoulJobDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -32,8 +34,10 @@ public class JobBatchService {
     @Transactional
     public List<Job> fetchAndSaveJobs(int pageNo, int numOfRows) {
 
-        log.info("pageNo = {}, numofRows = {}", pageNo, numOfRows);
+        long startTime = System.currentTimeMillis();
+        log.info("[START] fetchAndSaveJobs 시작 pageNo={}, numOfRows={}", pageNo, numOfRows);
 
+        // 🌐 1. API 호출
         String xmlResponse = seoulJobClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/xml/GetJobInfo/{pageNo}/{numOfRows}")
@@ -41,18 +45,33 @@ public class JobBatchService {
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
+        long apiElapsed = System.currentTimeMillis() - startTime;
+        log.info("[TIME] 서울시 API 응답 완료 ({}ms)", apiElapsed);
 
-        log.info("xmlResposne = {}", xmlResponse);
-
+        // 📦 2. XML 파싱
+        List<Job> jobs;
         try {
-            List<Job> jobs = parseAndConvertJobs(xmlResponse);
-
-            return jobRepository.saveAll(jobs);
-
+            long parseStart = System.currentTimeMillis();
+            jobs = parseAndConvertJobs(xmlResponse);
+            long parseElapsed = System.currentTimeMillis() - parseStart;
+            log.info("[TIME] XML 파싱 완료: {}개, {}ms", jobs.size(), parseElapsed);
         } catch (Exception e) {
             throw new RuntimeException("XML 파싱 실패", e);
         }
+
+        // 💾 3. DB 저장
+        long dbStart = System.currentTimeMillis();
+        List<Job> saved = jobRepository.saveAll(jobs);
+        long dbElapsed = System.currentTimeMillis() - dbStart;
+        log.info("[TIME] DB 저장 완료: {}개, {}ms", saved.size(), dbElapsed);
+
+        // ✅ 4. 전체 수행 시간
+        long totalElapsed = System.currentTimeMillis() - startTime;
+        log.info("[TIME] fetchAndSaveJobs 전체 완료 (총 {}ms)", totalElapsed);
+
+        return saved;
     }
+
 
     @Transactional()
     public List<Job> fetchAndSaveJobsSchedule() {
@@ -154,4 +173,41 @@ public class JobBatchService {
         return closingDate;
     }
 
+    public Mono<List<Job>> fetchAndSaveJobsAsync(int pageNo, int numOfRows) {
+        long startTime = System.currentTimeMillis();
+
+        return seoulJobClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/xml/GetJobInfo/{pageNo}/{numOfRows}")
+                        .build(pageNo, numOfRows))
+                .retrieve()
+                .bodyToMono(String.class)
+                .elapsed()
+                .flatMap(tuple -> {
+                    long elapsed = tuple.getT1();
+                    log.info("[TIME] 서울시 API 호출 완료 ({}ms)", elapsed);
+                    return Mono.just(tuple.getT2());
+                })
+                .flatMap(xmlResponse ->
+                        Mono.fromCallable(() -> parseAndConvertJobs(xmlResponse))
+                                .subscribeOn(Schedulers.boundedElastic())
+                )
+                .elapsed()
+                .flatMap(tuple -> {
+                    long parsingElapsed = tuple.getT1();
+                    List<Job> jobs = tuple.getT2();
+                    log.info("[TIME] XML 파싱 완료: {}개, {}ms", jobs.size(), parsingElapsed);
+
+                    return Mono.fromCallable(() -> jobRepository.saveAll(jobs))
+                            .subscribeOn(Schedulers.boundedElastic());
+                })
+                .elapsed()
+                .map(tuple -> {
+                    long dbElapsed = tuple.getT1();
+                    List<Job> jobs = tuple.getT2();
+                    log.info("[TIME] DB 저장 완료: {}개, {}ms", jobs.size(), dbElapsed);
+                    return jobs;
+                })
+                .doOnError(e -> log.error("[ERROR] fetchAndSaveJobsAsync 실패", e));
+    }
 }

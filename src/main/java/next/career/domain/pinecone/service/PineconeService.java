@@ -43,6 +43,8 @@ public class PineconeService {
     private final EducationRepository educationRepository;
 
     public Mono<Void> saveJobVector(Long jobId) {
+        long start = System.currentTimeMillis();
+
         Mono<Job> jobMono = Mono.fromCallable(() ->
                 jobRepository.findById(jobId)
                         .orElseThrow(() -> new CoreException(GlobalErrorType.JOB_NOT_FOUND_ERROR))
@@ -53,9 +55,43 @@ public class PineconeService {
                     List<Float> vector = tuple.getT1();
                     Job job = tuple.getT2();
 
-                    Map<String, Object> metadata = new HashMap<>();
-                    metadata.put("jobId", job.getJobId());
+                    Map<String, Object> body = Map.of(
+                            "vectors", List.of(Map.of(
+                                    "id", String.valueOf(job.getJobId()),
+                                    "values", vector,
+                                    "metadata", Map.of("jobId", job.getJobId())
+                            ))
+                    );
 
+                    return pineconeClient.post()
+                            .uri(jobHost + "/vectors/upsert")
+                            .header("Api-Key", apiKey)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .bodyValue(body)
+                            .retrieve()
+                            .toBodilessEntity()
+                            .doOnSuccess(r -> {
+                                long elapsed = System.currentTimeMillis() - start;
+                                log.info("[TIME] Pinecone 업서트 성공 jobId={} ({}ms)", jobId, elapsed);
+                            })
+                            .then();
+                });
+    }
+
+    public Mono<Void> saveJobVectorAsync(Long jobId) {
+        long startTime = System.currentTimeMillis();
+
+        Mono<Job> jobMono = Mono.fromCallable(() ->
+                jobRepository.findById(jobId)
+                        .orElseThrow(() -> new CoreException(GlobalErrorType.JOB_NOT_FOUND_ERROR))
+        ).subscribeOn(Schedulers.boundedElastic());
+
+        return Mono.zip(embeddingService.getEmbeddingJob(jobId), jobMono)
+                .flatMap(tuple -> {
+                    List<Float> vector = tuple.getT1();
+                    Job job = tuple.getT2();
+
+                    Map<String, Object> metadata = Map.of("jobId", job.getJobId());
                     Map<String, Object> body = Map.of(
                             "vectors", List.of(Map.of(
                                     "id", String.valueOf(job.getJobId()),
@@ -72,14 +108,19 @@ public class PineconeService {
                             .retrieve()
                             .onStatus(HttpStatusCode::isError, r ->
                                     r.bodyToMono(String.class).flatMap(msg ->
-                                            Mono.error(new RuntimeException("Pinecone query failed: " + msg))
+                                            Mono.error(new CoreException(GlobalErrorType.PINECONE_UPSERT_ERROR))
                                     )
                             )
                             .toBodilessEntity()
+                            .doOnSuccess(res -> {
+                                long elapsed = System.currentTimeMillis() - startTime;
+                                log.info("[TIME] Pinecone 업서트 성공 jobId={} ({}ms)", jobId, elapsed);
+                            })
                             .then();
                 })
-                .doOnError(e -> log.warn("upsert failed id={}", jobId, e));
+                .doOnError(e -> log.warn("[WARN] Pinecone 업서트 실패 jobId={}", jobId, e));
     }
+
 
     public Mono<Void> saveEducationVector(Long educationId) {
         Mono<Education> jobMono = Mono.fromCallable(() ->
@@ -223,6 +264,42 @@ public class PineconeService {
                     .doOnSuccess(v -> log.info("✅ Saved embedding for jobId={}", education.getEducationId()))
                     .doOnError(e -> log.error("❌ Failed embedding for jobId={}", education.getEducationId(), e))
                     .block(); // 호출을 실제로 실행 (동기)
+        }
+    }
+
+    public void saveJobVectorBlocking(Long jobId) {
+        long start = System.currentTimeMillis();
+
+        try {
+            Job job = jobRepository.findById(jobId)
+                    .orElseThrow(() -> new CoreException(GlobalErrorType.JOB_NOT_FOUND_ERROR));
+
+            List<Float> vector = embeddingService.getEmbeddingJobBlocking(jobId);
+
+            Map<String, Object> metadata = Map.of("jobId", job.getJobId());
+            Map<String, Object> body = Map.of(
+                    "vectors", List.of(Map.of(
+                            "id", String.valueOf(job.getJobId()),
+                            "values", vector,
+                            "metadata", metadata
+                    ))
+            );
+
+            pineconeClient.post()
+                    .uri(jobHost + "/vectors/upsert")
+                    .header("Api-Key", apiKey)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(body)
+                    .retrieve()
+                    .toBodilessEntity()
+                    .block();
+
+            log.info("[TIME] Pinecone 업서트 성공 jobId={} ({}ms)",
+                    jobId, System.currentTimeMillis() - start);
+
+        } catch (Exception e) {
+            log.warn("[V3] Pinecone 업서트 실패 id={} ({}ms)", jobId,
+                    System.currentTimeMillis() - start, e);
         }
     }
 }

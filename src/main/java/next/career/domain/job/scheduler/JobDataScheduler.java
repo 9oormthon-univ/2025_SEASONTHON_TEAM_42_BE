@@ -13,6 +13,6 @@ public class JobDataScheduler {
 
     @Scheduled(cron = "0 0 1 * * ?")
     public void fetchSeoulJobData() {
-        jobFacadeService.getJobDataFromSeoulJobSchedule();
+        jobFacadeService.getJobDataFromSeoulJobVirtual(0,999);
     }
 }

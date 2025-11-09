@@ -13,6 +13,8 @@ import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
@@ -85,4 +87,30 @@ public class JobFacadeService {
                 .block();
 
     }
+
+    public void getJobDataFromSeoulJobVirtual(int pageNumber, int pageSize) {
+        long start = System.currentTimeMillis();
+
+        try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+
+            // 🌐 서울시 API 호출 및 DB 저장
+            List<Job> jobs = jobBatchService.fetchAndSaveJobs(pageNumber, pageSize);
+            log.info("[V3] Job 데이터 저장 완료: {}개", jobs.size());
+
+            // 📤 Pinecone 업서트 병렬 수행
+            List<CompletableFuture<Void>> futures = jobs.stream()
+                    .map(job -> CompletableFuture.runAsync(() ->
+                            pineconeService.saveJobVectorBlocking(job.getJobId()), executor))
+                    .toList();
+
+            futures.forEach(CompletableFuture::join);
+
+        } catch (Exception e) {
+            log.error("[V3] Virtual Thread 실행 실패", e);
+            throw new RuntimeException("Virtual Thread execution failed", e);
+        }
+
+        log.info("[V3] 서울시 API + DB + Pinecone 업서트 완료 ({}ms)", System.currentTimeMillis() - start);
+    }
+
 }

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import next.career.domain.job.controller.dto.GetJobDto;
 import next.career.domain.education.service.dto.SaveWork24EducationDto;
 import next.career.domain.job.facade.JobFacadeService;
@@ -25,10 +26,13 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/job")
+@Slf4j
 @Tag(name = "Job API", description = "채용 공고 및 맞춤형 추천 관련 API")
 public class JobController {
 
@@ -212,5 +216,34 @@ public class JobController {
                 .then(Mono.fromCallable(ApiResponse::<Void>success));
 
     }
+
+    @GetMapping("/v3/job-data")
+    @Operation(
+            summary = "서울시 채용 데이터 조회 및 저장 (Virtual Thread 버전)",
+            description = "가상 스레드를 활용하여 서울시 채용 데이터를 병렬로 가져오고 저장하며, Pinecone 벡터 DB에 업서트합니다."
+    )
+    public ApiResponse<Void> getJobDataFromSeoulJobVirtual(Pageable pageable) {
+
+        long start = System.currentTimeMillis();
+        log.info("[START] [V3] 서울시 채용 데이터 수집 시작");
+
+        // ✅ 이 API 내부에서만 가상 스레드 활용
+        try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+
+            CompletableFuture.runAsync(() ->
+                            jobFacadeService.getJobDataFromSeoulJobVirtual(pageable.getPageNumber(), pageable.getPageSize()),
+                    executor
+            ).join(); // 완료까지 대기
+
+        } catch (Exception e) {
+            log.error("[V3] Virtual Thread 실행 중 오류 발생", e);
+            throw e;
+        }
+
+        log.info("[V3] 전체 작업 완료 ({}ms)", System.currentTimeMillis() - start);
+        return ApiResponse.success();
+    }
+
+
 
 }

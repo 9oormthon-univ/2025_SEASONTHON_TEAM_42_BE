@@ -266,4 +266,40 @@ public class PineconeService {
                     .block(); // 호출을 실제로 실행 (동기)
         }
     }
+
+    public void saveJobVectorBlocking(Long jobId) {
+        long start = System.currentTimeMillis();
+
+        try {
+            Job job = jobRepository.findById(jobId)
+                    .orElseThrow(() -> new CoreException(GlobalErrorType.JOB_NOT_FOUND_ERROR));
+
+            List<Float> vector = embeddingService.getEmbeddingJobBlocking(jobId);
+
+            Map<String, Object> metadata = Map.of("jobId", job.getJobId());
+            Map<String, Object> body = Map.of(
+                    "vectors", List.of(Map.of(
+                            "id", String.valueOf(job.getJobId()),
+                            "values", vector,
+                            "metadata", metadata
+                    ))
+            );
+
+            pineconeClient.post()
+                    .uri(jobHost + "/vectors/upsert")
+                    .header("Api-Key", apiKey)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(body)
+                    .retrieve()
+                    .toBodilessEntity()
+                    .block();
+
+            log.info("[TIME] Pinecone 업서트 성공 jobId={} ({}ms)",
+                    jobId, System.currentTimeMillis() - start);
+
+        } catch (Exception e) {
+            log.warn("[V3] Pinecone 업서트 실패 id={} ({}ms)", jobId,
+                    System.currentTimeMillis() - start, e);
+        }
+    }
 }

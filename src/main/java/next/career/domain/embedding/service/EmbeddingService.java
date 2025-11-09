@@ -11,6 +11,7 @@ import next.career.domain.user.entity.Member;
 import next.career.domain.user.entity.MemberDetail;
 import next.career.global.apiPayload.exception.CoreException;
 import next.career.global.apiPayload.exception.GlobalErrorType;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -236,4 +237,23 @@ public class EmbeddingService {
     private static String fmt(LocalDate d) {
         return d == null ? "" : d.format(F);
     }
+
+//    public List<Float> getEmbeddingJobBlocking(Long jobId) {
+//        return openAiClient.post()
+//                .uri("/embeddings")
+//                .bodyValue(Map.of("jobId", jobId))
+//                .retrieve()
+//                .bodyToMono(new ParameterizedTypeReference<List<Float>>() {})
+//                .block(); // 가상 스레드 환경에서는 안전한 blocking
+//    }
+
+    public List<Float> getEmbeddingJobBlocking(Long jobId) {
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new CoreException(GlobalErrorType.JOB_NOT_FOUND_ERROR));
+
+        String text = toEmbeddingJobTextV2(job); // String 형태의 임베딩 텍스트 생성
+
+        return getEmbeddingMono(text).block(); // WebClient 호출 후 결과 block
+    }
+
 }

@@ -5,10 +5,9 @@ import next.career.global.apiPayload.exception.ErrorType;
 
 public record ApiResponse<T>(ResultType result, T data, ErrorMessage error) {
 
-    public static ApiResponse<?> success() {
+    public static <T> ApiResponse<T> success() {
         return new ApiResponse<>(ResultType.SUCCESS, null, null);
     }
-
     public static <S> ApiResponse<S> success(S data) {
         return new ApiResponse<>(ResultType.SUCCESS, data, null);
     }

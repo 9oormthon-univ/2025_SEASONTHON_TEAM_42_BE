@@ -30,6 +30,7 @@ public enum GlobalErrorType implements ErrorType {
 
     // Job
     JOB_NOT_FOUND_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "해당하는 일자리를 찾을 수 없습니다"),
+    PINECONE_UPSERT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "일자리 Pinecone 업서트에 실패했습니다"),
 
     // Open AI
     GET_RECOMMEND_OCCUPATION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "직업 추천에 실패했습니다"),

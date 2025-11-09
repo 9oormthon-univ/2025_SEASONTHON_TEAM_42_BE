@@ -13,6 +13,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +41,30 @@ public class JobFacadeService {
 
         log.info("[TIME] Pinecone 업서트 완료 ({}개, {}ms)", jobs.size(), afterPinecone - afterDb);
         log.info("[TIME] 전체 완료 (총 {}ms)", afterPinecone - startTime);
+    }
+
+    public Mono<Void> getJobDataFromSeoulJobAsync(int pageNumber, int pageSize) {
+        long startTime = System.currentTimeMillis();
+
+        return jobBatchService.fetchAndSaveJobsAsync(pageNumber, pageSize)
+                .flatMapMany(Flux::fromIterable)
+                .collectList()
+                .flatMap(jobs -> {
+                    long dbElapsed = System.currentTimeMillis() - startTime;
+                    log.info("[TIME] 서울시 API + DB 저장 완료: {}개, 소요 {}ms", jobs.size(), dbElapsed);
+
+                    AtomicInteger counter = new AtomicInteger();
+
+                    return Flux.fromIterable(jobs)
+                            .flatMap(job ->
+                                    pineconeService.saveJobVectorAsync(job.getJobId())
+                                            .doOnSuccess(v -> counter.incrementAndGet()), 5)
+                            .doOnComplete(() -> {
+                                long totalElapsed = System.currentTimeMillis() - startTime;
+                                log.info("[TIME] 🧠 Pinecone 업서트 완료: {}개, 총 소요 {}ms", counter.get(), totalElapsed);
+                            })
+                            .then();
+                });
     }
 
     public void getJobDataFromSeoulJobSchedule() {

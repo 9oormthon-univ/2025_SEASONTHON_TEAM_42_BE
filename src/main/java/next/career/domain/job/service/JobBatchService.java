@@ -10,6 +10,8 @@ import next.career.domain.job.service.dto.SaveSeoulJobDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -171,4 +173,41 @@ public class JobBatchService {
         return closingDate;
     }
 
+    public Mono<List<Job>> fetchAndSaveJobsAsync(int pageNo, int numOfRows) {
+        long startTime = System.currentTimeMillis();
+
+        return seoulJobClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/xml/GetJobInfo/{pageNo}/{numOfRows}")
+                        .build(pageNo, numOfRows))
+                .retrieve()
+                .bodyToMono(String.class)
+                .elapsed()
+                .flatMap(tuple -> {
+                    long elapsed = tuple.getT1();
+                    log.info("[TIME] 서울시 API 호출 완료 ({}ms)", elapsed);
+                    return Mono.just(tuple.getT2());
+                })
+                .flatMap(xmlResponse ->
+                        Mono.fromCallable(() -> parseAndConvertJobs(xmlResponse))
+                                .subscribeOn(Schedulers.boundedElastic())
+                )
+                .elapsed()
+                .flatMap(tuple -> {
+                    long parsingElapsed = tuple.getT1();
+                    List<Job> jobs = tuple.getT2();
+                    log.info("[TIME] XML 파싱 완료: {}개, {}ms", jobs.size(), parsingElapsed);
+
+                    return Mono.fromCallable(() -> jobRepository.saveAll(jobs))
+                            .subscribeOn(Schedulers.boundedElastic());
+                })
+                .elapsed()
+                .map(tuple -> {
+                    long dbElapsed = tuple.getT1();
+                    List<Job> jobs = tuple.getT2();
+                    log.info("[TIME] DB 저장 완료: {}개, {}ms", jobs.size(), dbElapsed);
+                    return jobs;
+                })
+                .doOnError(e -> log.error("[ERROR] fetchAndSaveJobsAsync 실패", e));
+    }
 }

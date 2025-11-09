@@ -78,6 +78,49 @@ public class PineconeService {
                 });
     }
 
+    public Mono<Void> saveJobVectorAsync(Long jobId) {
+        long startTime = System.currentTimeMillis();
+
+        Mono<Job> jobMono = Mono.fromCallable(() ->
+                jobRepository.findById(jobId)
+                        .orElseThrow(() -> new CoreException(GlobalErrorType.JOB_NOT_FOUND_ERROR))
+        ).subscribeOn(Schedulers.boundedElastic());
+
+        return Mono.zip(embeddingService.getEmbeddingJob(jobId), jobMono)
+                .flatMap(tuple -> {
+                    List<Float> vector = tuple.getT1();
+                    Job job = tuple.getT2();
+
+                    Map<String, Object> metadata = Map.of("jobId", job.getJobId());
+                    Map<String, Object> body = Map.of(
+                            "vectors", List.of(Map.of(
+                                    "id", String.valueOf(job.getJobId()),
+                                    "values", vector,
+                                    "metadata", metadata
+                            ))
+                    );
+
+                    return pineconeClient.post()
+                            .uri(jobHost + "/vectors/upsert")
+                            .header("Api-Key", apiKey)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .bodyValue(body)
+                            .retrieve()
+                            .onStatus(HttpStatusCode::isError, r ->
+                                    r.bodyToMono(String.class).flatMap(msg ->
+                                            Mono.error(new CoreException(GlobalErrorType.PINECONE_UPSERT_ERROR))
+                                    )
+                            )
+                            .toBodilessEntity()
+                            .doOnSuccess(res -> {
+                                long elapsed = System.currentTimeMillis() - startTime;
+                                log.info("[TIME] Pinecone 업서트 성공 jobId={} ({}ms)", jobId, elapsed);
+                            })
+                            .then();
+                })
+                .doOnError(e -> log.warn("[WARN] Pinecone 업서트 실패 jobId={}", jobId, e));
+    }
+
 
     public Mono<Void> saveEducationVector(Long educationId) {
         Mono<Education> jobMono = Mono.fromCallable(() ->

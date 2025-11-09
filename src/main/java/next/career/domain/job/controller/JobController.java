@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Optional;
@@ -200,4 +201,16 @@ public class JobController {
         jobFacadeService.getJobDataFromSeoulJob(pageable.getPageNumber(), pageable.getPageSize());
         return ApiResponse.success();
     }
+
+    @GetMapping("/v2/job-data")
+    @Operation(
+            summary = "서울시 채용 데이터 조회 및 저장",
+            description = "서울시 채용 데이터를 가져와 DB에 저장하고, Pinecone 벡터 DB에 업서트합니다."
+    )
+    public Mono<ApiResponse<Void>> getJobDataFromSeoulJobAsync(Pageable pageable) {
+        return jobFacadeService.getJobDataFromSeoulJobAsync(pageable.getPageNumber(), pageable.getPageSize())
+                .then(Mono.fromCallable(ApiResponse::<Void>success));
+
+    }
+
 }

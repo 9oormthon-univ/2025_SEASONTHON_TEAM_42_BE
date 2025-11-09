@@ -32,8 +32,10 @@ public class JobBatchService {
     @Transactional
     public List<Job> fetchAndSaveJobs(int pageNo, int numOfRows) {
 
-        log.info("pageNo = {}, numofRows = {}", pageNo, numOfRows);
+        long startTime = System.currentTimeMillis();
+        log.info("[START] fetchAndSaveJobs 시작 pageNo={}, numOfRows={}", pageNo, numOfRows);
 
+        // 🌐 1. API 호출
         String xmlResponse = seoulJobClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/xml/GetJobInfo/{pageNo}/{numOfRows}")
@@ -41,18 +43,33 @@ public class JobBatchService {
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
+        long apiElapsed = System.currentTimeMillis() - startTime;
+        log.info("[TIME] 서울시 API 응답 완료 ({}ms)", apiElapsed);
 
-        log.info("xmlResposne = {}", xmlResponse);
-
+        // 📦 2. XML 파싱
+        List<Job> jobs;
         try {
-            List<Job> jobs = parseAndConvertJobs(xmlResponse);
-
-            return jobRepository.saveAll(jobs);
-
+            long parseStart = System.currentTimeMillis();
+            jobs = parseAndConvertJobs(xmlResponse);
+            long parseElapsed = System.currentTimeMillis() - parseStart;
+            log.info("[TIME] XML 파싱 완료: {}개, {}ms", jobs.size(), parseElapsed);
         } catch (Exception e) {
             throw new RuntimeException("XML 파싱 실패", e);
         }
+
+        // 💾 3. DB 저장
+        long dbStart = System.currentTimeMillis();
+        List<Job> saved = jobRepository.saveAll(jobs);
+        long dbElapsed = System.currentTimeMillis() - dbStart;
+        log.info("[TIME] DB 저장 완료: {}개, {}ms", saved.size(), dbElapsed);
+
+        // ✅ 4. 전체 수행 시간
+        long totalElapsed = System.currentTimeMillis() - startTime;
+        log.info("[TIME] fetchAndSaveJobs 전체 완료 (총 {}ms)", totalElapsed);
+
+        return saved;
     }
+
 
     @Transactional()
     public List<Job> fetchAndSaveJobsSchedule() {

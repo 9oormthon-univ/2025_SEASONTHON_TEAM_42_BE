@@ -185,7 +185,7 @@ public class JobController {
         return ApiResponse.success(memberDetailResponse);
     }
 
-    @GetMapping("/job-data")
+    @GetMapping("/v1/job-data")
     @Operation(
             summary = "서울시 채용 데이터 조회 및 저장",
             description = "서울시 채용 데이터를 가져와 DB에 저장하고, Pinecone 벡터 DB에 업서트합니다."

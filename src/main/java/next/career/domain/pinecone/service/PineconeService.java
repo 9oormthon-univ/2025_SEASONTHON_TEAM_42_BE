@@ -43,6 +43,8 @@ public class PineconeService {
     private final EducationRepository educationRepository;
 
     public Mono<Void> saveJobVector(Long jobId) {
+        long start = System.currentTimeMillis();
+
         Mono<Job> jobMono = Mono.fromCallable(() ->
                 jobRepository.findById(jobId)
                         .orElseThrow(() -> new CoreException(GlobalErrorType.JOB_NOT_FOUND_ERROR))
@@ -53,14 +55,11 @@ public class PineconeService {
                     List<Float> vector = tuple.getT1();
                     Job job = tuple.getT2();
 
-                    Map<String, Object> metadata = new HashMap<>();
-                    metadata.put("jobId", job.getJobId());
-
                     Map<String, Object> body = Map.of(
                             "vectors", List.of(Map.of(
                                     "id", String.valueOf(job.getJobId()),
                                     "values", vector,
-                                    "metadata", metadata
+                                    "metadata", Map.of("jobId", job.getJobId())
                             ))
                     );
 
@@ -70,16 +69,15 @@ public class PineconeService {
                             .contentType(MediaType.APPLICATION_JSON)
                             .bodyValue(body)
                             .retrieve()
-                            .onStatus(HttpStatusCode::isError, r ->
-                                    r.bodyToMono(String.class).flatMap(msg ->
-                                            Mono.error(new RuntimeException("Pinecone query failed: " + msg))
-                                    )
-                            )
                             .toBodilessEntity()
+                            .doOnSuccess(r -> {
+                                long elapsed = System.currentTimeMillis() - start;
+                                log.info("[TIME] Pinecone 업서트 성공 jobId={} ({}ms)", jobId, elapsed);
+                            })
                             .then();
-                })
-                .doOnError(e -> log.warn("upsert failed id={}", jobId, e));
+                });
     }
+
 
     public Mono<Void> saveEducationVector(Long educationId) {
         Mono<Education> jobMono = Mono.fromCallable(() ->

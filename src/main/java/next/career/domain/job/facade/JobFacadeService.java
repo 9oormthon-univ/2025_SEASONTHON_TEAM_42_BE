@@ -23,12 +23,23 @@ public class JobFacadeService {
     private final PineconeService pineconeService;
 
     public void getJobDataFromSeoulJob(int pageNumber, int pageSize) {
-        List<Job> jobs = jobBatchService.fetchAndSaveJobs(pageNumber, pageSize);
+        long startTime = System.currentTimeMillis();
+        log.info("[START] getJobDataFromSeoulJob 시작 page={}, size={}", pageNumber, pageSize);
 
+        // 1️⃣ DB 저장
+        List<Job> jobs = jobBatchService.fetchAndSaveJobs(pageNumber, pageSize);
+        long afterDb = System.currentTimeMillis();
+        log.info("[TIME] DB 저장 완료: {}개, {}ms", jobs.size(), afterDb - startTime);
+
+        // 2️⃣ Pinecone 업서트
         Flux.fromIterable(jobs)
                 .flatMap(job -> pineconeService.saveJobVector(job.getJobId()))
                 .then()
-                .block();
+                .block(); // 동기 대기
+        long afterPinecone = System.currentTimeMillis();
+
+        log.info("[TIME] Pinecone 업서트 완료 ({}개, {}ms)", jobs.size(), afterPinecone - afterDb);
+        log.info("[TIME] 전체 완료 (총 {}ms)", afterPinecone - startTime);
     }
 
     public void getJobDataFromSeoulJobSchedule() {

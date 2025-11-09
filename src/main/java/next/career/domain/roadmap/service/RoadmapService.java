@@ -150,11 +150,15 @@ public class RoadmapService {
     }
 
     @Transactional
-    public void updateRoadmapCategory(Long roadmapId, String category) {
-        RoadMap roadMap = roadMapRepository.findById(roadmapId)
-                .orElseThrow(() -> new CoreException(GlobalErrorType.ROAD_MAP_NOT_FOUND));
+    public void updateRoadmapCategory(RoadmapDto.RoadMapCategoryUpdateRequest request) {
 
-        roadMap.updateCategory(category);
+        request.getRoadmapList().forEach(updateRoadmap -> {
+            RoadMap roadMap = roadMapRepository.findById(Long.parseLong(updateRoadmap.getRoadmapId()))
+                    .orElseThrow(() -> new CoreException(GlobalErrorType.ROAD_MAP_NOT_FOUND));
+
+            roadMap.updateCategory(updateRoadmap.getCategory());
+        });
+
     }
 
     @Transactional

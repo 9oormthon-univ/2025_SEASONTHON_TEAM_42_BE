@@ -46,9 +46,17 @@ public class JobController {
             @ParameterObject GetJobDto.SearchRequest searchRequest,
             @Parameter(hidden = true) Pageable pageable,
             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
+
+        long start = System.currentTimeMillis();
+
         Member member = authDetails.getUser();
         Page<JobDto.AllResponse> jobDtoList = jobService.getAllJob(searchRequest, member, pageable);
-        return ApiResponse.success(GetJobDto.SearchAllResponse.of(jobDtoList));
+        ApiResponse<GetJobDto.SearchAllResponse> response = ApiResponse.success(GetJobDto.SearchAllResponse.of(jobDtoList));
+
+        long end = System.currentTimeMillis();
+        log.info("⏱ 전체 채용 조회 실행 시간: {}ms", (end - start));
+
+        return response;
     }
 
     @GetMapping("/all/anonymous")
@@ -190,21 +198,21 @@ public class JobController {
         return ApiResponse.success(memberDetailResponse);
     }
 
-    @GetMapping("/v1/job-data")
-    @Operation(
-            summary = "서울시 채용 데이터 조회 및 저장",
-            description = "서울시 채용 데이터를 가져와 DB에 저장하고, Pinecone 벡터 DB에 업서트합니다."
-    )
-    public ApiResponse<?> getJobDataFromSeoulJob(
-            @Parameter(
-                    description = "페이징 정보 (page, size)",
-                    example = "page=0&size=10"
-            )
-            Pageable pageable
-    ) {
-        jobFacadeService.getJobDataFromSeoulJob(pageable.getPageNumber(), pageable.getPageSize());
-        return ApiResponse.success();
-    }
+//    @GetMapping("/v1/job-data")
+//    @Operation(
+//            summary = "서울시 채용 데이터 조회 및 저장",
+//            description = "서울시 채용 데이터를 가져와 DB에 저장하고, Pinecone 벡터 DB에 업서트합니다."
+//    )
+//    public ApiResponse<?> getJobDataFromSeoulJob(
+//            @Parameter(
+//                    description = "페이징 정보 (page, size)",
+//                    example = "page=0&size=10"
+//            )
+//            Pageable pageable
+//    ) {
+//        jobFacadeService.getJobDataFromSeoulJob(pageable.getPageNumber(), pageable.getPageSize());
+//        return ApiResponse.success();
+//    }
 
     @GetMapping("/v2/job-data")
     @Operation(
